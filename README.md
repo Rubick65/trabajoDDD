@@ -1,5 +1,5 @@
 # trabajoDDD
-Trabajo sobre la implementación de un sistema de arquitectura DDD con interfaces predefinidas que se deben aplicar
+Trabajo sobre la implementación de un sistema de arquitectura DDD con interfaces predefinidas que se deben aplicar /t
 Creado por: Hugo de Pablo y Lord Programador
 Almacenamiento = JSON
 Lider: Hugo de Pablo
