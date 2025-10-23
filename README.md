@@ -6,8 +6,6 @@ Lider: Rubén Martín Andrade
 Subdito: Puto pringado Hugo De Pablo
 
 # Reglas para la creación del código(Obligatorias)
-¡Claro! Aquí tienes la lista de buenas prácticas de código en texto plano, con los títulos y separadores para facilitar la lectura y el copiado:
-
 ---
 
 # Buenas Prácticas de Código (Revisadas y Ampliadas)
