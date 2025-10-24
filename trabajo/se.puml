@@ -1,0 +1,103 @@
+@startuml
+' Paquetes -> Contextos Delimitados (Bounded Contexts)
+
+package "DominioJugador" {
+   ' Entidad Raíz de Agregado
+   class Jugador {
+       -ID: int
+       -nombre: String
+       -direccionJugar: DireccionDeJuego
+       -personajesID: List<int> ' Solo IDs de Personaje (Raíz de otro Agregado)
+       -- Métodos de Comportamiento --
+       +crearPersonaje(nombre: String, raza: Razas): PersonajeID
+       +cambiarDireccion(nuevaDireccion: DireccionDeJuego)
+       +eliminarPersonaje(personajeID: int)
+   }
+
+   ' Objeto de Valor (Value Object)
+   class DireccionDeJuego <<ValueObject>> {
+        -ciudad: String
+        -calle: String
+        -piso: int
+        -- Inmutabilidad y Comportamiento --
+        +DireccionDeJuego(ciudad: String, calle: String, piso: int)
+        +equals(obj): boolean
+        +getCiudad(): String
+   }
+
+   ' Entidad Raíz de Agregado (Director también es un Jugador)
+   class DirectorDeJuego <<Entidad>> {
+        -aventurasID: List<int> ' Solo IDs de Aventura (Raíz de otro Agregado)
+        -gruposID: List<int> ' Solo IDs de Grupo (Si existe un DominioGrupo)
+        -- Métodos de Comportamiento --
+        +crearNuevaAventura(nombre, duracion, dificultad): AventuraID
+        +iniciarAventura(aventuraID, grupoID)
+   }
+
+   ' El paquete Jugador es su propio Agregado.
+   ' La DirecciónDeJuego es parte del Agregado Jugador (Composición).
+   Jugador "1" *-- "1" DireccionDeJuego
+   Jugador <|-- DirectorDeJuego
+}
+
+package DominioAventura {
+      ' Objeto de Valor
+      enum Dificultades <<ValueObject>> {
+            FACIL
+            NORMAL
+            DIFICIL
+      }
+
+      ' Entidad Raíz de Agregado
+      class Aventura {
+           -ID_AVENTURA: int
+           -nombreAventura: String
+           -duracionAventura: Date
+           -dificultad: Dificultades
+           -- Métodos de Comportamiento --
+           +Aventura(...)
+           +modificarDificultad(nuevaDificultad: Dificultades)
+           +asignarDirector(directorID: int)
+      }
+
+      ' Entidades que extienden Aventura
+      class AventuraAccion extends Aventura {
+            -cantidadEnemigos: int
+            +AventuraAccion(...)
+      }
+
+      class AventuraMisterio extends Aventura {
+            -enigmaPrincipal: String
+            +AventuraMisterio(...)
+      }
+
+      DirectorDeJuego "0..*" -- "1" Aventura: dirigeA
+}
+
+package DominioPersonaje {
+    ' Objeto de Valor
+    enum Razas <<ValueObject>> {
+        ELFO
+        HUMANO
+        ORCO
+        ENANO
+    }
+
+    ' Entidad Raíz de Agregado
+    class Personaje <<Entidad>> {
+        -ID_PERSONAJE: int
+        -jugadorID: int ' Referencia a la Raíz de otro Agregado (Jugador)
+        -nombre: String
+        -descripcion: String
+        -historia: String
+        -raza: Razas
+        -- Métodos de Comportamiento --
+        +Personaje(...)
+        +cambiarDescripcion(nuevaDesc: String)
+        +asignarA(jugadorID: int)
+    }
+
+    ' Relación de referencia entre agregados por ID
+    Jugador "1" -- "0..*" Personaje : posee
+}
+@enduml
