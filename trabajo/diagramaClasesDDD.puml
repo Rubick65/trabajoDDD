@@ -1,0 +1,102 @@
+@startuml
+package AgregadoJugador{
+    class Jugador <<Raiz Agregada>>{
+        -ID_JUGADOR: int
+        -nombre: String
+        -direccionJuego: DireccionJuego
+        -lista
+        +Jugador(...)
+        +gettersYSetters()
+    }
+
+    class DirectorDeJuego extends Jugador{
+        -listaAventuras: List<int>
+    }
+
+    class DireccionJuego<<Value Object>>{
+        -ciudad: String
+        -calle: String
+        -piso: String
+
+        +DireccionJuego()
+        +getters()
+    }
+
+    Jugador "1" *-- "1" DireccionJuego
+
+}
+
+
+package AgregadoPersonaje{
+    enum Raza <<Value Object>>{
+        HUMANO
+        ORCO
+        ELFO
+        ENANO
+    }
+
+    class Personaje<<Raiz Agregada>>{
+        -ID_JUGADOR: int
+        -ID_PERSONAJE: int
+        -nombrePersonaje: String
+        -Inventario: List<ObjetoInventario>
+        -descrpcion: String
+        -historia: String
+        -clase: Clase
+        -raza: Raza
+    }
+
+    class ObjetoInventario<<Entidad Hija>>{
+        -ID_OBJETO: int
+        -nombre: String
+        -descrpcionObjeto: String
+        -peso: double
+    }
+
+    Personaje "1" --> "0..*" ObjetoInventario
+    Personaje "1" *-- "1" Raza
+    Jugador "1" <.. "0..*" Personaje: Pertenecen a
+}
+
+package AgregadoGrupoJuego{
+    class GrupoJuego <<Raíz de Agregado>> {
+        -ID_GRUPO: int
+        -ID_JUGADOR: int
+        -nombreGrupo: String
+        -listaMiembros: List<int> // IDs de Jugador
+
+        +añadirJugador(idJugador: int): void
+        +eliminarJugador(idJugador: int): void
+    }
+}
+
+' La relación es de referencia de IDs
+GrupoJuego "1" ..> "0..*" Jugador : usa / referencia
+
+
+package AgregadoAventura{
+    enum Dificultad<<Value Object>>{
+        FACIL
+        NORMAL
+        DIFICIL
+    }
+    class Aventura<<Raiz Agregada>>{
+        -ID_AVENTURA: int
+        -nombreAventura: String
+        -duracionSesionesAprox: int
+        -dificultad: Dificultad
+        +Aventura(...)
+    }
+
+    class AventuraAccion extends Aventura{
+        -cantidadEnemigos: int
+    }
+
+    class AventuraMisterio extends Aventura{
+            -enigmaPrincipal: String
+    }
+
+    DirectorDeJuego "1" ..> "0..*" Aventura: Dirige
+    Aventura "1" *-- "1" Dificultad
+}
+@enduml
