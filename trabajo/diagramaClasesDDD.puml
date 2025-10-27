@@ -15,7 +15,8 @@ package AgregadoJugador{
         -listaAventuras: List<int>
         -aventuraSelecionada: int
         --Metodos--
-         +AsignarAventura(idAventura: int): void
+         +asignarAventura(idAventura: int): void
+         +crearAventura(new Aventura())
     }
 
     class DireccionJuego<<Value Object>>{
