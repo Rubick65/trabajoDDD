@@ -5,12 +5,17 @@ package AgregadoJugador{
         -nombre: String
         -direccionJuego: DireccionJuego
         -lista
+        --Metodos--
         +Jugador(...)
         +gettersYSetters()
+
     }
 
     class DirectorDeJuego extends Jugador{
         -listaAventuras: List<int>
+        -aventuraSelecionada: int
+        --Metodos--
+         +AsignarAventura(idAventura: int): void
     }
 
     class DireccionJuego<<Value Object>>{
@@ -40,16 +45,20 @@ package AgregadoPersonaje{
         -ID_PERSONAJE: int
         -nombrePersonaje: String
         -Inventario: List<ObjetoInventario>
-        -descrpcion: String
+        -capacidadCarga: double
+        -descripcion: String
         -historia: String
         -clase: Clase
         -raza: Raza
+        --Metodos--
+        +revisarInventario(): void
+        +tirarObjeto(nombreObjeto: String): void
     }
 
     class ObjetoInventario<<Entidad Hija>>{
         -ID_OBJETO: int
         -nombre: String
-        -descrpcionObjeto: String
+        -descripcionObjeto: String
         -peso: double
     }
 
@@ -64,9 +73,11 @@ package AgregadoGrupoJuego{
         -ID_JUGADOR: int
         -nombreGrupo: String
         -listaMiembros: List<int> // IDs de Jugador
-
+        --Metodos--
         +añadirJugador(idJugador: int): void
         +eliminarJugador(idJugador: int): void
+        +sustituirJugador(idJugadorNuevo: int, idJugadorViejo: int): void
+        +cambiarNombreGrupo(nuevoNombre: String): void
     }
 }
 
@@ -85,11 +96,13 @@ package AgregadoAventura{
         -nombreAventura: String
         -duracionSesionesAprox: int
         -dificultad: Dificultad
+        --Metodos--
         +Aventura(...)
     }
 
     class AventuraAccion extends Aventura{
         -cantidadEnemigos: int
+        -cantidadUbicaciones: int
     }
 
     class AventuraMisterio extends Aventura{
