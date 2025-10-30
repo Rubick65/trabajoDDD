@@ -55,7 +55,8 @@ package AgregadoPersonaje{
         --Metodos--
         +revisarInventario(): void
         +tirarObjeto(nombreObjeto: String): void
-    }
+        +ordenarInventario(Reci); Recibe un génerico
+        }
 
     class ObjetoInventario<<Entidad Hija>>{
         -ID_OBJETO: int
