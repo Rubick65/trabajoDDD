@@ -8,6 +8,7 @@ package AgregadoJugador{
         --Metodos--
         +Jugador(...)
         +gettersYSetters()
+        +cambiarDireccion(new DireccionJuego)
 
     }
 
