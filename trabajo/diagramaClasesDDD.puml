@@ -4,7 +4,6 @@ package AgregadoJugador{
         -ID_JUGADOR: int
         -nombre: String
         -direccionJuego: DireccionJuego
-        -lista
         --Metodos--
         +Jugador(...)
         +gettersYSetters()
