@@ -1,17 +1,17 @@
 package AgregadoAventura;
 
 public class AventuraAccion extends Aventura{
-    private int cantidadEnemigosActuales;
+    private int cantidadEnemigos;
     private int cantidadUbicaciones;
 
-    public AventuraAccion(String nombreAventura, int duracionSesionesAprox, Dificultad dificultad, int cantidadEnemigosActuales, int cantidadUbicaciones) throws Exception {
+    public AventuraAccion(String nombreAventura, int duracionSesionesAprox, Dificultad dificultad, int cantidadEnemigos, int cantidadUbicaciones) {
         super(nombreAventura, duracionSesionesAprox, dificultad);
-        setCantidadEnemigos(cantidadEnemigosActuales);
+        setCantidadEnemigos(cantidadEnemigos);
         this.cantidadUbicaciones = cantidadUbicaciones;
     }
 
-    public int getCantidadEnemigosActuales() {
-        return cantidadEnemigosActuales;
+    public int getCantidadEnemigos() {
+        return cantidadEnemigos;
     }
 
     public int getCantidadUbicaciones() {
@@ -22,20 +22,13 @@ public class AventuraAccion extends Aventura{
         if (cantidadEnemigos <= 0) {
             throw new IllegalArgumentException("Error, tiene que haber al menos 1 enemigo");
         }
-        this.cantidadEnemigosActuales = cantidadEnemigos;
-    }
-
-    public void restarEnemigosDerrotados (int derrotados) throws IllegalArgumentException {
-        if (derrotados - cantidadEnemigosActuales < 0) {
-            throw new IllegalArgumentException("Error, enemigos negativos");
-        }
-        cantidadEnemigosActuales -= derrotados;
+        this.cantidadEnemigos = cantidadEnemigos;
     }
 
     @Override
     public String toString() {
         return "AventuraAccion{" +
-                "cantidadEnemigos=" + cantidadEnemigosActuales +
+                "cantidadEnemigos=" + cantidadEnemigos +
                 ", cantidadUbicaciones=" + cantidadUbicaciones +
                 '}';
     }

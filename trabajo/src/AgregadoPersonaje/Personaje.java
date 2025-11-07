@@ -2,7 +2,6 @@ package AgregadoPersonaje;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Scanner;
 
 enum Raza {
     HUMANO,ORCO,ELFO,ENANO
@@ -26,8 +25,8 @@ public class Personaje {
         this.inventario = inventario;
         setCapacidadCarga(capacidadCarga);
         this.nombrePersonaje = nombrePersonaje;
-        this.descripcion = descripcion;
-        this.historia = historia;
+        setDescripcion(descripcion);
+        setHistoria(historia);
         this.clase = clase;
         this.raza = raza;
     }
@@ -36,8 +35,8 @@ public class Personaje {
         this.inventario = inventario;
         setCapacidadCarga(capacidadCarga);
         this.nombrePersonaje = nombrePersonaje;
-        this.descripcion = descripcion;
-        this.historia = historia;
+        setDescripcion(descripcion);
+        setHistoria(historia);
         this.clase = clase;
         this.raza = raza;
     }
@@ -73,8 +72,22 @@ public class Personaje {
         this.capacidadCarga = capacidadCarga;
     }
 
-    public void revisarInventario() {
-        System.out.println(inventario);
+    public void setDescripcion(String descripcion) throws IllegalArgumentException {
+        if (descripcion.isEmpty()) {
+            throw new IllegalArgumentException("Descripcion no puede estar vacio");
+        }
+        this.descripcion = descripcion;
+    }
+
+    public void setHistoria(String historia) throws IllegalArgumentException {
+        if (historia.isEmpty()) {
+            throw new IllegalArgumentException("Historia no puede estar vacio");
+        }
+        this.historia = historia;
+    }
+
+    public String revisarInventario() {
+        return inventario.toString();
     }
 
     public void tirarObjeto(ObjetoInventario objeto) {
@@ -88,7 +101,7 @@ public class Personaje {
     }
 
 
-    public void aniadirObjeto(ObjetoInventario objetoInventario) {
+    public void agregarObjeto(ObjetoInventario objetoInventario) {
         if (!inventario.contains(objetoInventario)) {
             inventario.add(objetoInventario);
             setCapacidadCarga(capacidadCarga - objetoInventario.getPeso());

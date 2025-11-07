@@ -3,7 +3,7 @@ package AgregadoAventura;
 public class AventuraMisterio extends Aventura {
     private String enigmaPrincipal;
 
-    public AventuraMisterio(String nombreAventura, int duracionSesionesAprox, Dificultad dificultad, String enigmaPrincipal) throws Exception {
+    public AventuraMisterio(String nombreAventura, int duracionSesionesAprox, Dificultad dificultad, String enigmaPrincipal) {
         super(nombreAventura, duracionSesionesAprox, dificultad);
         this.enigmaPrincipal = enigmaPrincipal;
     }

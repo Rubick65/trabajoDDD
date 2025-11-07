@@ -1,7 +1,6 @@
 package AgregadoPersonaje;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class mainPruebasPersonaje {
     public static void main(String[] args) {
@@ -14,7 +13,7 @@ public class mainPruebasPersonaje {
 
         //Se busca la descripcion del p1, se añade un objeto y se ve el inventario
         System.out.println(p1.getDescripcion());
-        p1.aniadirObjeto(jarron);
+        p1.agregarObjeto(jarron);
         p1.revisarInventario();
 
         System.out.println();
@@ -26,8 +25,8 @@ public class mainPruebasPersonaje {
         System.out.println();
 
         p1.revisarInventario();
-        p1.aniadirObjeto(jarron);
-        p1.aniadirObjeto(amoniaco);
+        p1.agregarObjeto(jarron);
+        p1.agregarObjeto(amoniaco);
         p1.revisarInventario();
 
         p1.ordenarInventarioPorNombre();

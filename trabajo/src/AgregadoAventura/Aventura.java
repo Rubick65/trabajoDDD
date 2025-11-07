@@ -10,7 +10,7 @@ public class Aventura {
     private int duracionSesionesAprox;
     private Dificultad dificultad;
 
-    public Aventura(String nombreAventura, int duracionSesionesAprox, Dificultad dificultad) throws Exception {
+    public Aventura(String nombreAventura, int duracionSesionesAprox, Dificultad dificultad)  {
         setNombreAventura(nombreAventura);
         setDuracionSesionesAprox(duracionSesionesAprox);
         this.dificultad = dificultad;
@@ -28,9 +28,9 @@ public class Aventura {
         return nombreAventura;
     }
 
-    public void setNombreAventura(String nombreAventura) throws Exception {
+    public void setNombreAventura(String nombreAventura) throws IllegalArgumentException {
         if (nombreAventura.isEmpty()) {
-            throw new Exception("Nombre de aventura vacio");
+            throw new IllegalArgumentException("Nombre de aventura vacio");
         }
         this.nombreAventura = nombreAventura;
     }
