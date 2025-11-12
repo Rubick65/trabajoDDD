@@ -64,7 +64,6 @@ public class mainPruebasRuben {
             }
 
             // Borrar todos
-            repo.deleteAll();
             System.out.println("\nDespués de borrar todos los jugadores:");
             repo.findAllToList().forEach(System.out::println);
 

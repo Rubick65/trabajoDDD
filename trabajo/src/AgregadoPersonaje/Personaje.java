@@ -41,6 +41,8 @@ public class Personaje {
         this.raza = raza;
     }
 
+    public Personaje(){}
+
     public double getCapacidadCarga() {
         return capacidadCarga;
     }
@@ -84,6 +86,22 @@ public class Personaje {
             throw new IllegalArgumentException("Historia no puede estar vacio");
         }
         this.historia = historia;
+    }
+
+    public void setID_PERSONAJE(int ID_PERSONAJE) {
+        this.ID_PERSONAJE = ID_PERSONAJE;
+    }
+
+    public int getID_PERSONAJE() {
+        return ID_PERSONAJE;
+    }
+
+    public int getID_JUGADOR() {
+        return ID_JUGADOR;
+    }
+
+    public void setID_JUGADOR(int ID_JUGADOR) {
+        this.ID_JUGADOR = ID_JUGADOR;
     }
 
     public String revisarInventario() {

@@ -1,10 +1,12 @@
 package AgregadoAventura;
 
 
+import java.util.Objects;
+
 public class Aventura {
 
-    protected enum Dificultad {
-        FACIL, NORMAL, DIFICIL
+    public enum Dificultad {
+        FACIL,NORMAL,DIFICIL
     }
 
     private int ID_AVENTURA;
@@ -17,6 +19,8 @@ public class Aventura {
         setDuracionSesionesAprox(duracionSesionesAprox);
         this.dificultad = dificultad;
     }
+
+    public Aventura() {}
 
     public int getID_AVENTURA() {
         return ID_AVENTURA;
@@ -64,5 +68,17 @@ public class Aventura {
                 ", duracionSesionesAprox=" + duracionSesionesAprox +
                 ", dificultad=" + dificultad +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Aventura aventura = (Aventura) o;
+        return ID_AVENTURA == aventura.ID_AVENTURA && duracionSesionesAprox == aventura.duracionSesionesAprox && Objects.equals(nombreAventura, aventura.nombreAventura) && dificultad == aventura.dificultad;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID_AVENTURA, nombreAventura, duracionSesionesAprox, dificultad);
     }
 }

@@ -1,38 +1,75 @@
 package AgregadoPersonaje;
 
+
+import AgregadoPersonaje.Repositorio.RepoPersonaje;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class mainPruebasPersonaje {
     public static void main(String[] args) {
 
-        Personaje p1 = new Personaje(new ArrayList<ObjetoInventario>(),65.0,"Paco","Feo","Tio fuerte le dejo la novia",Clase.MAGO,Raza.HUMANO);
-        Personaje p2 = new Personaje(new ArrayList<ObjetoInventario>(),65.0,"Hernando","Mas feo","Tio fuerte suspendio interfaces",Clase.BARDO,Raza.ORCO);
+        try {
+            // Crear repositorio
+            RepoPersonaje repo = new RepoPersonaje();
 
-        ObjetoInventario jarron = new ObjetoInventario(1,"jarron",20.00,"Mu bonico");
-        ObjetoInventario amoniaco = new ObjetoInventario(2,"amoniaco",10,"Muy rico");
+            // Borrar todos los jugadores al inicio
+            repo.deleteAll();
+            System.out.println("Fichero inicializado vacío.");
 
-        //Se busca la descripcion del p1, se añade un objeto y se ve el inventario
-        System.out.println(p1.getDescripcion());
-        p1.agregarObjeto(jarron);
-        p1.revisarInventario();
+            List<ObjetoInventario> inventarioDefecto = new ArrayList<ObjetoInventario>();
 
-        System.out.println();
+            Personaje p1 = new Personaje(inventarioDefecto,70.5,"Bartolomeo","Feo a mas no poder","Se perdio",Clase.CLERIGO,Raza.ORCO);
+            Personaje p2 = new Personaje(inventarioDefecto,40.5,"Paca","algo guapa","Se perdio mas",Clase.BARDO,Raza.ELFO);
+            Personaje p3 = new Personaje(inventarioDefecto,20.5,"El tusi","Hipster","Se aburre",Clase.MAGO,Raza.HUMANO);
 
-        System.out.println(p1.getCapacidadCarga());
-        p1.tirarObjeto(jarron);
-        System.out.println(p1.getCapacidadCarga());
+            p1.agregarObjeto(new ObjetoInventario(1,"Jabon",10.0,"Util"));
+            p2.agregarObjeto(new ObjetoInventario(2,"Barril",30.0,"No tan util"));
 
-        System.out.println();
+            repo.save(p1);
+            repo.save(p2);
+            repo.save(p3);
 
-        p1.revisarInventario();
-        p1.agregarObjeto(jarron);
-        p1.agregarObjeto(amoniaco);
-        p1.revisarInventario();
+            System.out.println("\nPersonajes guardados:");
+            repo.findAllToList().forEach(System.out::println);
 
-        p1.ordenarInventarioPorNombre();
-        p1.revisarInventario();
+            // Probar autoincremento al agregar un nuevo personaje
+            Personaje p4 = new Personaje(inventarioDefecto,99.5,"asasas","Titanico","Rey de egipto",Clase.PALADIN,Raza.HUMANO);
+            repo.save(p4);
 
-        p1.ordenarInventarioPorPeso();
-        p1.revisarInventario();
+            System.out.println("\nDespués de guardar un nuevo personaje (autoincremento ID):");
+            repo.findAllToList().forEach(System.out::println);
+
+            // Buscar por ID
+            int buscarId = p2.getID_PERSONAJE();
+            System.out.println("\nBuscar personaje con ID " + buscarId + ":");
+            repo.findByIdOptional(buscarId).ifPresent(System.out::println);
+
+            // Comprobar existencia
+            System.out.println("\nExiste personaje con ID " + p3.getID_PERSONAJE() + "? " + repo.existsById(p3.getID_PERSONAJE()));
+
+            // Contar personajes
+            System.out.println("\nNúmero total de personajes: " + repo.count());
+
+            // Eliminar un personaje
+            repo.deleteById(p2.getID_PERSONAJE());
+            System.out.println("\nDespués de eliminar jugador con ID " + p1.getID_PERSONAJE() + ":");
+            repo.findAllToList().forEach(System.out::println);
+
+            // Intentar guardar personaje duplicado (debería lanzar excepción)
+            try {
+                repo.save(p2);
+            } catch (Exception e) {
+                System.out.println("\nIntento de guardar personaje duplicado: " + e.getMessage());
+            }
+
+            // Borrar todos
+            System.out.println("\nDespués de borrar todas las aventuras:");
+            repo.findAllToList().forEach(System.out::println);
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
     }
 }
