@@ -1,16 +1,18 @@
 package AgregadoAventura;
 
-enum Dificultad{
-    FACIL,NORMAL,DIFICIL
-}
 
 public class Aventura {
-    private int ID_AVENTURA = 0;
+
+    protected enum Dificultad {
+        FACIL, NORMAL, DIFICIL
+    }
+
+    private int ID_AVENTURA;
     private String nombreAventura;
     private int duracionSesionesAprox;
     private Dificultad dificultad;
 
-    public Aventura(String nombreAventura, int duracionSesionesAprox, Dificultad dificultad)  {
+    public Aventura(String nombreAventura, int duracionSesionesAprox, Dificultad dificultad) {
         setNombreAventura(nombreAventura);
         setDuracionSesionesAprox(duracionSesionesAprox);
         this.dificultad = dificultad;
@@ -29,9 +31,9 @@ public class Aventura {
     }
 
     public void setNombreAventura(String nombreAventura) throws IllegalArgumentException {
-        if (nombreAventura.isEmpty()) {
-            throw new IllegalArgumentException("Nombre de aventura vacio");
-        }
+        if (nombreAventura.trim().isEmpty())
+            throw new IllegalArgumentException("Nombre de aventura vacío");
+
         this.nombreAventura = nombreAventura;
     }
 
@@ -40,9 +42,9 @@ public class Aventura {
     }
 
     public void setDuracionSesionesAprox(int duracionSesionesAprox) throws IllegalArgumentException {
-        if (duracionSesionesAprox <= 0) {
-            throw new IllegalArgumentException("Duracion aventura invalida");
-        }
+        if (duracionSesionesAprox <= 0)
+            throw new IllegalArgumentException("Duración aventura invalida");
+
         this.duracionSesionesAprox = duracionSesionesAprox;
     }
 

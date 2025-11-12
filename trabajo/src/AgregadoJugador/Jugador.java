@@ -46,6 +46,8 @@ public class Jugador {
     }
 
     public void setNombre(String nombre) {
+        if (nombre.trim().isEmpty())
+            throw new IllegalArgumentException("El nombre no puede estar vacío");
         this.nombre = nombre;
     }
 
