@@ -36,7 +36,7 @@ public class RepoGrupoJuego implements IRepositorioExtend {
     }
 
     @Override
-    public long count(){
+    public long count() {
         return listaGrupoDeJuego.size();
     }
 
@@ -105,9 +105,12 @@ public class RepoGrupoJuego implements IRepositorioExtend {
         }
     }
 
-//    public buascarGruposPorJugador(){
-//
-//    }
+    public List<GrupoJuego> buascarGruposPorIdJugador(int idJugador) {
+        return listaGrupoDeJuego.values().stream()
+                .filter(grupo -> grupo.getListaMiembros().contains(idJugador))
+                .toList();
+
+    }
 
     private void comprobarExistenciaClave(Object o) {
         if (!existsById(o))
