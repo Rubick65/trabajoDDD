@@ -1,0 +1,8 @@
+{
+  "1" : {
+    "nombreGrupo" : "Heroes",
+    "descripcion" : "Grupo de jugadores de prueba",
+    "listaMiembros" : [ 1, 2, 3 ],
+    "id_GRUPO" : 1
+  }
+}

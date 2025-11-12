@@ -1,5 +1,7 @@
 package AgregadoJugador.Repositorio;
 
+import AgregadoGrupoJuego.GrupoJuego;
+import AgregadoGrupoJuego.Repositorio.RepoGrupoJuego;
 import AgregadoJugador.Jugador;
 import Interfaces.IRepositorioExtend;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -20,19 +22,21 @@ public class RepoJugador implements IRepositorioExtend {
     private final ObjectWriter writer = oM.writerWithDefaultPrettyPrinter();
     private static int contadorID;
     private Map<Integer, Jugador> listaJugadores;
+    RepoGrupoJuego repoGrupoJuego = new RepoGrupoJuego();
+
 
     public RepoJugador() throws IOException {
         recibirDatosFichero();
     }
 
     @Override
-    public Optional findByIdOptional(Object o) {
+    public Optional<Jugador> findByIdOptional(Object o) {
         validacionId(o);
         return Optional.ofNullable(listaJugadores.get(o));
     }
 
     @Override
-    public List findAllToList() {
+    public List<Jugador> findAllToList() {
         return List.copyOf(listaJugadores.values());
     }
 
@@ -45,18 +49,21 @@ public class RepoJugador implements IRepositorioExtend {
     public void deleteById(Object o) throws IOException {
         recibirDatosFichero();
         comprobarExistenciaClave(o);
+        eliminarIdJugadorGrupoJuego(o);
         listaJugadores.remove(o);
+        escribirDatos();
     }
 
     @Override
     public void deleteAll() throws IOException {
         contadorID = 0;
+        repoGrupoJuego.deleteAll();
         listaJugadores = new HashMap<>();
-        oM.writeValue(archivo, new HashMap<Integer, Jugador>());
+        escribirDatos();
     }
 
     @Override
-    public boolean existsById(Object o) throws IOException {
+    public boolean existsById(Object o) {
         validacionId(o);
         return listaJugadores.containsKey(o);
     }
@@ -68,24 +75,33 @@ public class RepoJugador implements IRepositorioExtend {
     }
 
     @Override
-    public Iterable findAll() {
-        return listaJugadores.entrySet();
+    public Iterable<Jugador> findAll() {
+        return listaJugadores.values();
     }
 
     @Override
     public Object save(Object entity) throws IOException {
         if (!(entity instanceof Jugador jugador))
             throw new IllegalArgumentException("El tipo de dato debe ser un Jugador");
-
-        if (listaJugadores.containsValue(jugador))
-            throw new IllegalArgumentException("El jugador ya existe dentro de la lista");
-
         recibirDatosFichero();
+        if (listaJugadores.containsValue(jugador))
+            throw new IllegalArgumentException("El jugador ya existe en el archivo");
+
         jugador.setID_JUGADOR(contadorID);
         listaJugadores.put(jugador.getID_JUGADOR(), jugador);
-        writer.writeValue(archivo, listaJugadores);
+        escribirDatos();
         return jugador;
+    }
 
+    private void escribirDatos() throws IOException {
+        writer.writeValue(archivo, listaJugadores);
+    }
+
+    private void eliminarIdJugadorGrupoJuego(Object idJugador) throws IOException {
+        List<GrupoJuego> listaGrupos = repoGrupoJuego.findAllToList();
+        listaGrupos.forEach(grupoJuego -> {
+            grupoJuego.eliminarJugador((int) idJugador);
+        });
     }
 
     private void recibirDatosFichero() throws IOException {

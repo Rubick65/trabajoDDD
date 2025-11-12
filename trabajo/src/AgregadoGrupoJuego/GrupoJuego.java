@@ -1,5 +1,7 @@
 package AgregadoGrupoJuego;
 
+import AgregadoJugador.Repositorio.RepoJugador;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,9 @@ public class GrupoJuego {
         setNombreGrupo(nombreGrupo);
         setDescripcion(descripcion);
         setListaMiembros(listaMiembros);
+    }
+
+    protected GrupoJuego() {
     }
 
     public String getDescripcion() {
@@ -49,30 +54,38 @@ public class GrupoJuego {
         this.ID_GRUPO = ID_GRUPO;
     }
 
-    public void agregarJugador(int idJugador) {
-        /*
-         Se debe comprobar que el ID del jugador pertenezca realmente a un jugador por ejemplo llamando a una función
-         del gestor que compruebe si el ID existe o no, en caso de no existir lanzamos una excepción
-         */
+    public void agregarJugador(int idJugador, RepoJugador repoJugador) {
+        comprobareExistenciaJugador(idJugador, repoJugador);
 
         listaMiembros.add(idJugador);
     }
 
-    public void eliminarJugador(int idJugador) {
-        comprobarSiJugadorExiste(idJugador);
-
-        listaMiembros.remove(idJugador);
+    private static void comprobareExistenciaJugador(int idJugador, RepoJugador repoJugador) {
+        if (!repoJugador.existsById(idJugador))
+            throw new IllegalArgumentException("No existe ningún jugador con el id introducido");
     }
 
-    private void comprobarSiJugadorExiste(int idJugador) {
+    public void eliminarJugador(int idJugador) {
+        if (listaMiembros.size() == 1)
+            throw new IllegalArgumentException("No puedes eliminar todos los jugadores del grupo " + this.getNombreGrupo() + " con ID " + this.getID_GRUPO() + ", primero elimina el grupo" );
+
+        comprobarSiContineJugador(idJugador);
+
+        listaMiembros = listaMiembros.stream().filter(id -> idJugador == id).toList();
+    }
+
+    private void comprobarSiContineJugador(int idJugador) {
         if (!listaMiembros.contains(idJugador))
             throw new IllegalArgumentException("El jugador introducido no se encuentra en la lista");
     }
 
-    public void sustituirJugador(int idNuevoJugador, int idJugadorViejo) {
-        // Habría que comprobar aquí si el jugador nuevo existe
-        comprobarSiJugadorExiste(idJugadorViejo);
-        eliminarJugador(idJugadorViejo);
-        agregarJugador(idNuevoJugador);
+    @Override
+    public String toString() {
+        return "GrupoJuego{" +
+                "ID_GRUPO=" + ID_GRUPO +
+                ", nombreGrupo='" + nombreGrupo + '\'' +
+                ", descripcion='" + descripcion + '\'' +
+                ", listaMiembros=" + listaMiembros +
+                '}';
     }
 }

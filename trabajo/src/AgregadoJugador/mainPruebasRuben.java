@@ -9,7 +9,7 @@ public class mainPruebasRuben {
             // Crear repositorio
             RepoJugador repo = new RepoJugador();
 
-            // Borrar todos los jugadores al inicio (para empezar limpio)
+            // Borrar todos los jugadores al inicio
             repo.deleteAll();
             System.out.println("Fichero inicializado vacío.");
 
@@ -37,31 +37,31 @@ public class mainPruebasRuben {
             System.out.println("\nDespués de guardar un nuevo jugador (autoincremento ID):");
             repo.findAllToList().forEach(System.out::println);
 
-            // 6️⃣ Buscar por ID
+            // Buscar por ID
             int buscarId = j2.getID_JUGADOR();
             System.out.println("\nBuscar jugador con ID " + buscarId + ":");
             repo.findByIdOptional(buscarId).ifPresent(System.out::println);
 
-            // 7️⃣ Comprobar existencia
+            // Comprobar existencia
             System.out.println("\nExiste jugador con ID " + j3.getID_JUGADOR() + "? " + repo.existsById(j3.getID_JUGADOR()));
 
-            // 8️⃣ Contar jugadores
+            // Contar jugadores
             System.out.println("\nNúmero total de jugadores: " + repo.count());
 
-            // 9️⃣ Eliminar un jugador
-            repo.deleteById(j1.getID_JUGADOR());
+            // Eliminar un jugador
+            repo.deleteById(j2.getID_JUGADOR());
             System.out.println("\nDespués de eliminar jugador con ID " + j1.getID_JUGADOR() + ":");
             repo.findAllToList().forEach(System.out::println);
 
-            // 🔟 Intentar guardar jugador duplicado (debería lanzar excepción)
+            // Intentar guardar jugador duplicado (debería lanzar excepción)
             try {
                 repo.save(j2);
             } catch (Exception e) {
                 System.out.println("\nIntento de guardar jugador duplicado: " + e.getMessage());
             }
 
-            // 1️⃣1️⃣ Borrar todos
-//            repo.deleteAll();
+            // Borrar todos
+            repo.deleteAll();
             System.out.println("\nDespués de borrar todos los jugadores:");
             repo.findAllToList().forEach(System.out::println);
 
