@@ -105,9 +105,9 @@ public class RepoGrupoJuego implements IRepositorioExtend {
         }
     }
 
-    public List<GrupoJuego> buascarGruposPorIdJugador(int idJugador) {
+    public List<GrupoJuego> buascarGruposPorIdJugador(int idJugadorSeleccionado) {
         return listaGrupoDeJuego.values().stream()
-                .filter(grupo -> grupo.getListaMiembros().contains(idJugador))
+                .filter(grupo -> grupo.getListaMiembros().contains(idJugadorSeleccionado))
                 .toList();
 
     }
