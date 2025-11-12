@@ -70,7 +70,7 @@ public class RepoJugador implements IRepositorioExtend {
     }
 
     @Override
-    public Object findById(Object o) throws IOException {
+    public Object findById(Object o){
         comprobarExistenciaClave(o);
         return listaJugadores.get(o);
     }
@@ -120,7 +120,7 @@ public class RepoJugador implements IRepositorioExtend {
         }
     }
 
-    private void comprobarExistenciaClave(Object o) throws IOException {
+    private void comprobarExistenciaClave(Object o) {
         if (!existsById(o))
             throw new IllegalArgumentException("En la lista no existe ningún jugador con este id");
     }

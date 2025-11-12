@@ -72,8 +72,8 @@ public class mainPruebaRubenGrupo {
             // Mostrar estado final
             System.out.println("\nEstado final del grupo:");
             repoGrupo.findAllToList().forEach(System.out::println);
-//
-//            // Eliminar grupo por ID
+
+            // Eliminar grupo por ID
 //            repoGrupo.deleteById(grupo.getID_GRUPO());
 //            System.out.println("\nDespués de eliminar el grupo:");
 //            repoGrupo.findAllToList().forEach(System.out::println);

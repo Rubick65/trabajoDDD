@@ -36,7 +36,7 @@ public class RepoGrupoJuego implements IRepositorioExtend {
     }
 
     @Override
-    public long count() throws IOException {
+    public long count(){
         return listaGrupoDeJuego.size();
     }
 
@@ -63,7 +63,7 @@ public class RepoGrupoJuego implements IRepositorioExtend {
     }
 
     @Override
-    public Object findById(Object o) throws IOException {
+    public Object findById(Object o) {
         comprobarExistenciaClave(o);
         return listaGrupoDeJuego.get(o);
     }
@@ -104,6 +104,10 @@ public class RepoGrupoJuego implements IRepositorioExtend {
             listaGrupoDeJuego = new HashMap<>();
         }
     }
+
+//    public buascarGruposPorJugador(){
+//
+//    }
 
     private void comprobarExistenciaClave(Object o) {
         if (!existsById(o))
