@@ -2,6 +2,8 @@ package AgregadoJugador;
 
 import AgregadoJugador.Repositorio.RepoJugador;
 
+import java.util.List;
+
 public class mainPruebasRuben {
     public static void main(String[] args) {
 
@@ -26,6 +28,9 @@ public class mainPruebasRuben {
             repo.save(j1);
             repo.save(j2);
             repo.save(j3);
+
+
+            System.out.println("Buscamos todos los jugadores por su dirección " + repo.buscarJugadorPorDireccion(d1));
 
             System.out.println("\nJugadores guardados:");
             repo.findAllToList().forEach(System.out::println);

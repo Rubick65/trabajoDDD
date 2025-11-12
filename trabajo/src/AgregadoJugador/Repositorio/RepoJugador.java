@@ -2,6 +2,7 @@ package AgregadoJugador.Repositorio;
 
 import AgregadoGrupoJuego.GrupoJuego;
 import AgregadoGrupoJuego.Repositorio.RepoGrupoJuego;
+import AgregadoJugador.DireccionJuego;
 import AgregadoJugador.Jugador;
 import Interfaces.IRepositorioExtend;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -83,6 +84,7 @@ public class RepoJugador implements IRepositorioExtend {
     public Object save(Object entity) throws IOException {
         if (!(entity instanceof Jugador jugador))
             throw new IllegalArgumentException("El tipo de dato debe ser un Jugador");
+
         recibirDatosFichero();
         if (listaJugadores.containsValue(jugador))
             throw new IllegalArgumentException("El jugador ya existe en el archivo");
@@ -121,6 +123,10 @@ public class RepoJugador implements IRepositorioExtend {
     private void comprobarExistenciaClave(Object o) throws IOException {
         if (!existsById(o))
             throw new IllegalArgumentException("En la lista no existe ningún jugador con este id");
+    }
+
+    public List<Jugador> buscarJugadorPorDireccion(DireccionJuego direccionJuego) {
+        return listaJugadores.values().stream().filter(jugador -> jugador.getDireccionJuego().equals(direccionJuego)).toList();
     }
 
     private static void validacionId(Object o) {

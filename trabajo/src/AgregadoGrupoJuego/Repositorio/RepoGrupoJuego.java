@@ -26,7 +26,7 @@ public class RepoGrupoJuego implements IRepositorioExtend {
     }
 
     @Override
-    public Optional<GrupoJuego> findByIdOptional(Object o) throws IOException {
+    public Optional<GrupoJuego> findByIdOptional(Object o) {
         return Optional.ofNullable(listaGrupoDeJuego.get(o));
     }
 
@@ -105,7 +105,7 @@ public class RepoGrupoJuego implements IRepositorioExtend {
         }
     }
 
-    private void comprobarExistenciaClave(Object o) throws IOException {
+    private void comprobarExistenciaClave(Object o) {
         if (!existsById(o))
             throw new IllegalArgumentException("En la lista no existe ningún grupo de juego con este id");
     }
