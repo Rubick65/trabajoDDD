@@ -24,7 +24,7 @@ public class Jugador {
         setDireccionJuego(direccionJuego);
     }
 
-    public Jugador() {
+    protected Jugador() {
     }
 
 

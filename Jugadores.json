@@ -1,1 +1,35 @@
-{}
+{
+  "1" : {
+    "nombre" : "Carlos",
+    "direccionJuego" : {
+      "ciudad" : "Madrid",
+      "calle" : "Calle Mayor",
+      "piso" : "3A",
+      "codigoPostal" : "28013"
+    },
+    "id_JUGADOR" : 1,
+    "dni" : "12345678A"
+  },
+  "2" : {
+    "nombre" : "Lucía",
+    "direccionJuego" : {
+      "ciudad" : "Barcelona",
+      "calle" : "Rambla 10",
+      "piso" : "2B",
+      "codigoPostal" : "08002"
+    },
+    "id_JUGADOR" : 2,
+    "dni" : "87654321B"
+  },
+  "3" : {
+    "nombre" : "Ana",
+    "direccionJuego" : {
+      "ciudad" : "Valencia",
+      "calle" : "Plaza de la Virgen",
+      "piso" : "1C",
+      "codigoPostal" : "46001"
+    },
+    "id_JUGADOR" : 3,
+    "dni" : "11223344C"
+  }
+}

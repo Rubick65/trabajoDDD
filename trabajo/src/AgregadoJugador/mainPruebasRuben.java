@@ -22,17 +22,19 @@ public class mainPruebasRuben {
             Jugador j1 = new Jugador("12345678A", "Carlos", d1);
             Jugador j2 = new Jugador("87654321B", "Lucía", d2);
             Jugador j3 = new Jugador("11223344C", "Ana", d3);
+//            Jugador j4 = new Jugador("12345678A", "Carlos", d1);
 
             repo.save(j1);
             repo.save(j2);
             repo.save(j3);
+//            repo.save(j4);
 
             System.out.println("\nJugadores guardados:");
             repo.findAllToList().forEach(System.out::println);
 
             // Probar autoincremento al agregar un nuevo jugador
-            Jugador j4 = new Jugador("55667788D", "Miguel", d1);
-            repo.save(j4);
+            Jugador j5 = new Jugador("55667788D", "Miguel", d1);
+            repo.save(j5);
 
             System.out.println("\nDespués de guardar un nuevo jugador (autoincremento ID):");
             repo.findAllToList().forEach(System.out::println);

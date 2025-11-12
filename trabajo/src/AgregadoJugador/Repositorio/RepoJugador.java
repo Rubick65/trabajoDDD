@@ -78,7 +78,7 @@ public class RepoJugador implements IRepositorioExtend {
             throw new IllegalArgumentException("El tipo de dato debe ser un Jugador");
 
         if (listaJugadores.containsValue(jugador))
-            throw new IllegalArgumentException("El jugador ya existe dentro de la lista");
+            throw new IllegalArgumentException("El jugador " + jugador.getNombre() + " con Dni " + jugador.getDNI() + " ya existe dentro de la lista");
 
         recibirDatosFichero();
         jugador.setID_JUGADOR(contadorID);
