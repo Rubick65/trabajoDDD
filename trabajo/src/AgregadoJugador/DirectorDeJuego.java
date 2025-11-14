@@ -1,5 +1,7 @@
 package AgregadoJugador;
 
+import AgregadoAventura.Repositorio.RepoAventura;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +36,10 @@ public class DirectorDeJuego extends Jugador {
         super(DNI, nombre, direccionJuego);
     }
 
+    public DirectorDeJuego() {
+
+    }
+
     public List<Integer> getListaAventuras() {
         return listaAventuras;
     }
@@ -46,8 +52,11 @@ public class DirectorDeJuego extends Jugador {
         return aventuraSeleccionada;
     }
 
-    public void agregarAventura(int idAventura) {
-        // Aquí debería ir una comprobación de que el id de aventura si coincide con un id real de una aventura
+
+    public void agregarAventura(int idAventura, RepoAventura repoAventura) {
+        if (!repoAventura.existsById(idAventura))
+            throw new IllegalArgumentException("No existe ninguna aventura con ese id");
+        listaAventuras.add(idAventura);
     }
 
     /**
@@ -57,7 +66,9 @@ public class DirectorDeJuego extends Jugador {
      * @throws Exception Lanza una excepción en caso de que la aventura no se encuentre en la lista de aventuras del director de juego
      */
     public void setAventuraSeleccionada(int idAventuraSeleccionada) throws Exception {
-        comprobarAventura(idAventuraSeleccionada);
+        if (idAventuraSeleccionada != 0)
+            comprobarAventura(idAventuraSeleccionada);
+
         this.aventuraSeleccionada = idAventuraSeleccionada;
     }
 

@@ -2,6 +2,7 @@ package AgregadoGrupoJuego;
 
 import AgregadoJugador.Repositorio.RepoJugador;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,30 +55,32 @@ public class GrupoJuego {
         this.ID_GRUPO = ID_GRUPO;
     }
 
-    public void agregarJugador(int idJugador, RepoJugador repoJugador) {
+    public void agregarJugador(int idJugador, RepoJugador repoJugador) throws IOException {
         comprobareExistenciaJugador(idJugador, repoJugador);
 
         listaMiembros.add(idJugador);
     }
 
-    private static void comprobareExistenciaJugador(int idJugador, RepoJugador repoJugador) {
+    private static void comprobareExistenciaJugador(int idJugador, RepoJugador repoJugador) throws IOException {
         if (!repoJugador.existsById(idJugador))
             throw new IllegalArgumentException("No existe ningún jugador con el id introducido");
     }
 
-    public void eliminarJugador(int idJugador) {
+    public boolean eliminarJugador(int idJugador) {
         if (listaMiembros.size() == 1)
-            throw new IllegalArgumentException("No puedes eliminar todos los jugadores del grupo " + this.getNombreGrupo() + " con ID " + this.getID_GRUPO() + ", primero elimina el grupo" );
+            throw new IllegalArgumentException("No puedes eliminar todos los jugadores del grupo " + this.getNombreGrupo() + " con ID " + this.getID_GRUPO() + ", primero elimina el grupo");
 
-        comprobarSiContineJugador(idJugador);
-
-        listaMiembros = listaMiembros.stream().filter(id -> idJugador == id).toList();
+        if (listaMiembros.contains(idJugador)) {
+            listaMiembros = listaMiembros.stream().filter(id -> idJugador == id).toList();
+            return true;
+        }
+        return false;
     }
 
-    private void comprobarSiContineJugador(int idJugador) {
-        if (!listaMiembros.contains(idJugador))
-            throw new IllegalArgumentException("El jugador introducido no se encuentra en la lista");
-    }
+//    private void comprobarSiContieneJugador(int idJugador) {
+//        if (!listaMiembros.contains(idJugador))
+//            throw new IllegalArgumentException("El jugador introducido no se encuentra en la lista");
+//    }
 
     @Override
     public String toString() {

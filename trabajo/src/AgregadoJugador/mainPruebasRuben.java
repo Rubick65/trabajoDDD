@@ -22,11 +22,14 @@ public class mainPruebasRuben {
             //Crear y guardar jugadores
             Jugador j1 = new Jugador("12345678A", "Carlos", d1);
             Jugador j2 = new Jugador("87654321B", "Lucía", d2);
+            DirectorDeJuego dir2 = new DirectorDeJuego("12431234L", "Pesdf", d1);
             Jugador j3 = new Jugador("11223344C", "Ana", d3);
+            DirectorDeJuego dir1 = new DirectorDeJuego("12435238B", "Pedro", d2);
 
             repo.save(j1);
             repo.save(j2);
             repo.save(j3);
+            repo.save(dir1);
 
             System.out.println("Buscamos todos los jugadores por su dirección " + repo.buscarJugadorPorDireccion(d1));
 
