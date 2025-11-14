@@ -4,7 +4,8 @@ package AgregadoPersonaje;
 import AgregadoPersonaje.Repositorio.RepoPersonaje;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import static AgregadoPersonaje.Personaje.Clase;
 
 public class mainPruebasPersonaje {
     public static void main(String[] args) {
@@ -18,8 +19,8 @@ public class mainPruebasPersonaje {
             System.out.println("Fichero inicializado vacío.");
 
             Personaje p1 = new Personaje(new ArrayList<ObjetoInventario>(),70.5,"Bartolomeo","Feo a mas no poder","Se perdio",Clase.CLERIGO,Raza.ORCO);
-            Personaje p2 = new Personaje(new ArrayList<ObjetoInventario>(),40.5,"Paca","algo guapa","Se perdio mas",Clase.BARDO,Raza.ELFO);
-            Personaje p3 = new Personaje(new ArrayList<ObjetoInventario>(),20.5,"El tusi","Hipster","Se aburre",Clase.MAGO,Raza.HUMANO);
+            Personaje p2 = new Personaje(new ArrayList<ObjetoInventario>(),40.5,"Paca","algo guapa","Se perdio mas", Clase.BARDO,Raza.ELFO);
+            Personaje p3 = new Personaje(new ArrayList<ObjetoInventario>(),20.5,"El tusi","Hipster","Se aburre", Clase.PALADIN,Raza.HUMANO);
 
             ObjetoInventario jabon = new ObjetoInventario("Jabon",10.0,"Util");
 
@@ -36,6 +37,10 @@ public class mainPruebasPersonaje {
             // Probar autoincremento al agregar un nuevo personaje
             Personaje p4 = new Personaje(new ArrayList<ObjetoInventario>(),99.5,"asasas","Titanico","Rey de egipto",Clase.PALADIN,Raza.HUMANO);
             repo.save(p4);
+
+            System.out.println();
+            System.out.println("Paladines");
+            repo.buscarPersonajesPorClases(Clase.PALADIN).forEach(System.out::println);
 
             System.out.println("\nDespués de guardar un nuevo personaje (autoincremento ID):");
             repo.findAllToList().forEach(System.out::println);

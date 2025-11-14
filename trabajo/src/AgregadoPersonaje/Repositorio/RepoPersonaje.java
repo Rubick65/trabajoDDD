@@ -3,6 +3,7 @@ package AgregadoPersonaje.Repositorio;
 import AgregadoPersonaje.Personaje;
 import Interfaces.IRepositorioExtend;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import java.io.File;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class RepoPersonaje implements IRepositorioExtend {
+public class RepoPersonaje implements IRepositorioExtend<Personaje,Integer> {
 
 
     private final File archivo = new File("Personajes.json");
@@ -26,10 +27,13 @@ public class RepoPersonaje implements IRepositorioExtend {
         recibirDatosFichero();
     }
 
+    public List<Personaje> buscarPersonajesPorClases(Personaje.Clase clase) {
+        return listaPersonajes.values().stream().filter(personaje -> personaje.getClase().equals(clase)).toList();
+    }
+
     @Override
-    public Optional<Personaje> findByIdOptional(Object o) {
-        validacionId(o);
-        return Optional.ofNullable(listaPersonajes.get(o));
+    public Optional<Personaje> findByIdOptional(Integer id) {
+        return Optional.ofNullable(listaPersonajes.get(id));
     }
 
     @Override
@@ -43,10 +47,10 @@ public class RepoPersonaje implements IRepositorioExtend {
     }
 
     @Override
-    public void deleteById(Object o) throws IOException {
+    public void deleteById(Integer id) throws IOException {
         recibirDatosFichero();
-        comprobarExistenciaClave(o);
-        listaPersonajes.remove(o);
+        comprobarExistenciaClave(id);
+        listaPersonajes.remove(id);
         escribirDatos();
     }
 
@@ -58,15 +62,14 @@ public class RepoPersonaje implements IRepositorioExtend {
     }
 
     @Override
-    public boolean existsById(Object o) {
-        validacionId(o);
-        return listaPersonajes.containsKey(o);
+    public boolean existsById(Integer id) {
+        return listaPersonajes.containsKey(id);
     }
 
     @Override
-    public Object findById(Object o){
-        comprobarExistenciaClave(o);
-        return listaPersonajes.get(o);
+    public Personaje findById(Integer id) throws IOException {
+        comprobarExistenciaClave(id);
+        return listaPersonajes.get(id);
     }
 
     @Override
@@ -75,7 +78,7 @@ public class RepoPersonaje implements IRepositorioExtend {
     }
 
     @Override
-    public Object save(Object entity) throws IOException {
+    public <S extends Personaje> S save(S entity) throws Exception {
         if (!(entity instanceof Personaje personaje))
             throw new IllegalArgumentException("El tipo de dato debe ser un personaje");
 
@@ -86,11 +89,15 @@ public class RepoPersonaje implements IRepositorioExtend {
         personaje.setID_PERSONAJE(contadorID);
         listaPersonajes.put(personaje.getID_PERSONAJE(), personaje);
         escribirDatos();
-        return personaje;
+        return entity;
     }
 
     private void escribirDatos() throws IOException {
-        writer.writeValue(archivo, listaPersonajes);
+        Map<Integer, JsonNode> jsonMap = new HashMap<>();
+        for (Map.Entry<Integer, Personaje> entry : listaPersonajes.entrySet()) {
+            jsonMap.put(entry.getKey(), oM.valueToTree(entry.getValue()));
+        }
+        oM.writerWithDefaultPrettyPrinter().writeValue(archivo, jsonMap);
     }
 
     private void recibirDatosFichero() throws IOException {
@@ -107,7 +114,7 @@ public class RepoPersonaje implements IRepositorioExtend {
         }
     }
 
-    private void comprobarExistenciaClave(Object o) {
+    private void comprobarExistenciaClave(Integer o) throws IOException {
         if (!existsById(o))
             throw new IllegalArgumentException("En la lista no existe ningún personaje con este id");
     }

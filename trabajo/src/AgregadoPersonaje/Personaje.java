@@ -7,11 +7,13 @@ enum Raza {
     HUMANO,ORCO,ELFO,ENANO
 }
 
-enum Clase {
-    MAGO,GUERRERO,PALADIN,PICARO,DRUIDA,BARDO,CLERIGO,RANGER
-}
 
 public class Personaje {
+
+    public enum Clase {
+        MAGO,GUERRERO,PALADIN,PICARO,DRUIDA,BARDO,CLERIGO,RANGER
+    }
+
     private int ID_JUGADOR;
     private int ID_PERSONAJE = 0;
     private List <ObjetoInventario> inventario;
