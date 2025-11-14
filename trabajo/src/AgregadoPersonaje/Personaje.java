@@ -67,6 +67,14 @@ public class Personaje {
         return raza;
     }
 
+    public List<ObjetoInventario> getInventario() {
+        return inventario;
+    }
+
+    public void setInventario(List<ObjetoInventario> inventario) {
+        this.inventario = inventario;
+    }
+
     public void setCapacidadCarga(double capacidadCarga) throws IllegalArgumentException  {
         if (capacidadCarga < 0) {
             throw new IllegalArgumentException("Error, llevas mas de lo que puedes cargar");
@@ -118,16 +126,11 @@ public class Personaje {
         }
     }
 
-
     public void agregarObjeto(ObjetoInventario objetoInventario) {
         if (!inventario.contains(objetoInventario)) {
             inventario.add(objetoInventario);
             setCapacidadCarga(capacidadCarga - objetoInventario.getPeso());
         }
-    }
-
-    public void ordenarInventarioPorID() {
-        inventario.sort((a, b) -> Integer.compare(a.getIdObjeto(), b.getIdObjeto()));
     }
 
     public void ordenarInventarioPorNombre() {
@@ -141,12 +144,14 @@ public class Personaje {
     @Override
     public String toString() {
         return "Personaje{" +
-                ", capacidadCarga= " + capacidadCarga +
-                ", nombrePersonaje= " + nombrePersonaje + '\'' +
-                ", descripcion= " + descripcion + '\'' +
-                ", historia= " + historia + '\'' +
-                ", clase= " + clase +
-                ", raza= " + raza +
+                ", ID_PERSONAJE=" + ID_PERSONAJE +
+                ", inventario=" + inventario +
+                ", capacidadCarga=" + capacidadCarga +
+                ", nombrePersonaje='" + nombrePersonaje + '\'' +
+                ", descripcion='" + descripcion + '\'' +
+                ", historia='" + historia + '\'' +
+                ", clase=" + clase +
+                ", raza=" + raza +
                 '}';
     }
 }
