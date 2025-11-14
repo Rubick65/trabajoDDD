@@ -81,8 +81,8 @@ public class mainPruebaRubenGrupo {
 
         } catch (IOException | IllegalArgumentException e) {
             System.out.println(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-
     }
 }

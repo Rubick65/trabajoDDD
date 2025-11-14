@@ -1,11 +1,10 @@
 package AgregadoJugador.Repositorio;
 
-import AgregadoGrupoJuego.GrupoJuego;
-import AgregadoGrupoJuego.Repositorio.RepoGrupoJuego;
 import AgregadoJugador.DireccionJuego;
 import AgregadoJugador.Jugador;
 import Interfaces.IRepositorioExtend;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -16,24 +15,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class RepoJugador implements IRepositorioExtend {
+public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
 
     private final File archivo = new File("Jugadores.json");
     private final ObjectMapper oM = new ObjectMapper();
     private final ObjectWriter writer = oM.writerWithDefaultPrettyPrinter();
     private static int contadorID;
     private Map<Integer, Jugador> listaJugadores;
-    RepoGrupoJuego repoGrupoJuego = new RepoGrupoJuego();
-
 
     public RepoJugador() throws IOException {
         recibirDatosFichero();
     }
 
+    private void comprobarExistenciaClave(Integer o) throws IOException {
+        if (!existsById(o))
+            throw new IllegalArgumentException("En la lista no existe ningún jugador con este id");
+    }
+
+    public List<Jugador> buscarJugadorPorDireccion(DireccionJuego direccionJuego) {
+        return listaJugadores.values().stream().filter(jugador -> jugador.getDireccionJuego().equals(direccionJuego)).toList();
+    }
+
     @Override
-    public Optional<Jugador> findByIdOptional(Object o) {
-        validacionId(o);
-        return Optional.ofNullable(listaJugadores.get(o));
+    public Optional<Jugador> findByIdOptional(Integer id) {
+        return Optional.ofNullable(listaJugadores.get(id));
     }
 
     @Override
@@ -42,37 +47,34 @@ public class RepoJugador implements IRepositorioExtend {
     }
 
     @Override
-    public long count() throws IOException {
+    public long count() {
         return listaJugadores.size();
     }
 
     @Override
-    public void deleteById(Object o) throws IOException {
+    public void deleteById(Integer id) throws IOException {
         recibirDatosFichero();
-        comprobarExistenciaClave(o);
-        eliminarIdJugadorGrupoJuego(o);
-        listaJugadores.remove(o);
+        comprobarExistenciaClave(id);
+        listaJugadores.remove(id);
         escribirDatos();
     }
 
     @Override
     public void deleteAll() throws IOException {
         contadorID = 0;
-        repoGrupoJuego.deleteAll();
         listaJugadores = new HashMap<>();
         escribirDatos();
     }
 
     @Override
-    public boolean existsById(Object o) {
-        validacionId(o);
-        return listaJugadores.containsKey(o);
+    public boolean existsById(Integer id) {
+        return listaJugadores.containsKey(id);
     }
 
     @Override
-    public Object findById(Object o){
-        comprobarExistenciaClave(o);
-        return listaJugadores.get(o);
+    public Jugador findById(Integer id) throws IOException {
+        comprobarExistenciaClave(id);
+        return listaJugadores.get(id);
     }
 
     @Override
@@ -81,7 +83,7 @@ public class RepoJugador implements IRepositorioExtend {
     }
 
     @Override
-    public Object save(Object entity) throws IOException {
+    public <S extends Jugador> S save(S entity) throws Exception {
         if (!(entity instanceof Jugador jugador))
             throw new IllegalArgumentException("El tipo de dato debe ser un Jugador");
 
@@ -92,19 +94,21 @@ public class RepoJugador implements IRepositorioExtend {
         jugador.setID_JUGADOR(contadorID);
         listaJugadores.put(jugador.getID_JUGADOR(), jugador);
         escribirDatos();
-        return jugador;
+        return entity;
     }
+
 
     private void escribirDatos() throws IOException {
-        writer.writeValue(archivo, listaJugadores);
+        Map<Integer, JsonNode> jsonMap = new HashMap<>();
+        for (Map.Entry<Integer, Jugador> entry : listaJugadores.entrySet()) {
+            // aquí usamos ObjectMapper directamente
+            jsonMap.put(entry.getKey(), oM.valueToTree(entry.getValue()));
+        }
+
+        // Guardar JSON en archivo con pretty print
+        oM.writerWithDefaultPrettyPrinter().writeValue(archivo, jsonMap);
     }
 
-    private void eliminarIdJugadorGrupoJuego(Object idJugador) throws IOException {
-        List<GrupoJuego> listaGrupos = repoGrupoJuego.findAllToList();
-        listaGrupos.forEach(grupoJuego -> {
-            grupoJuego.eliminarJugador((int) idJugador);
-        });
-    }
 
     private void recibirDatosFichero() throws IOException {
         if (archivo.exists() && archivo.length() > 0) {
@@ -118,19 +122,6 @@ public class RepoJugador implements IRepositorioExtend {
         } else {
             listaJugadores = new HashMap<>();
         }
-    }
-
-    private void comprobarExistenciaClave(Object o) {
-        if (!existsById(o))
-            throw new IllegalArgumentException("En la lista no existe ningún jugador con este id");
-    }
-
-    public List<Jugador> buscarJugadorPorDireccion(DireccionJuego direccionJuego) {
-        return listaJugadores.values().stream().filter(jugador -> jugador.getDireccionJuego().equals(direccionJuego)).toList();
-    }
-
-    private static void validacionId(Object o) {
-        if (!(o instanceof Integer)) throw new IllegalArgumentException("El ID debe ser numérico");
     }
 
 }

@@ -1,9 +1,20 @@
 package AgregadoJugador;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.Objects;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.CLASS,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "@type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = DirectorDeJuego.class, name = "DirectorDeJuego"),
+        @JsonSubTypes.Type(value = Jugador.class, name = "Jugador")
+})
 public class Jugador {
     private int ID_JUGADOR;// Id del jugador
     @JsonProperty("dni")
