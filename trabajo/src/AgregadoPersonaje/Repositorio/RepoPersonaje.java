@@ -112,9 +112,5 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
         if (!existsById(o))
             throw new IllegalArgumentException("En la lista no existe ningún personaje con este id");
     }
-
-    private static void validacionId(Object o) {
-        if (!(o instanceof Integer)) throw new IllegalArgumentException("El ID debe ser numérico");
-    }
 }
 
