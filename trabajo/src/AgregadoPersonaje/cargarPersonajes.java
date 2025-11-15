@@ -25,14 +25,14 @@ public class cargarPersonajes {
         inv3.add(new ObjetoInventario("Libro de hechizos", 1.5, "Libro antiguo de magia"));
 
         // Personajes
-        Personaje p1 = new Personaje(1, inv1, 20, "Thorin", "Guerrero valiente", "Sobrevivió a mil batallas", Personaje.Clase.GUERRERO, Raza.ENANO);
-        Personaje p2 = new Personaje(2, inv2, 15, "Legolas", "Arquero experto", "Protector del bosque", Personaje.Clase.RANGER, Raza.ELFO);
-        Personaje p3 = new Personaje(3, inv3, 12, "Gandalf", "Mago sabio", "Viajero de tierras lejanas", Personaje.Clase.MAGO, Raza.HUMANO);
+        Personaje p1 = new Personaje(1, inv1, 20, "Thorin", "Guerrero valiente", "Sobrevivió a mil batallas", Personaje.Clase.GUERRERO, Personaje.Raza.ENANO);
+        Personaje p2 = new Personaje(2, inv2, 15, "Legolas", "Arquero experto", "Protector del bosque", Personaje.Clase.RANGER, Personaje.Raza.ELFO);
+        Personaje p3 = new Personaje(3, inv3, 12, "Gandalf", "Mago sabio", "Viajero de tierras lejanas", Personaje.Clase.MAGO, Personaje.Raza.HUMANO);
 
-        Personaje p4 = new Personaje(new ArrayList<>(), 10, "Aragorn", "Líder de hombres", "Descendiente de reyes", Personaje.Clase.GUERRERO, Raza.HUMANO);
-        Personaje p5 = new Personaje(new ArrayList<>(), 8, "Frodo", "Pequeño pero valiente", "Portador del anillo", Personaje.Clase.PICARO, Raza.HUMANO);
+        Personaje p4 = new Personaje(new ArrayList<>(), 10, "Aragorn", "Líder de hombres", "Descendiente de reyes", Personaje.Clase.GUERRERO, Personaje.Raza.HUMANO);
+        Personaje p5 = new Personaje(new ArrayList<>(), 8, "Frodo", "Pequeño pero valiente", "Portador del anillo", Personaje.Clase.PICARO, Personaje.Raza.HUMANO);
 
-        Personaje p6 = new Personaje(new ArrayList<>(), 14, "Elrond", "Sabio y anciano", "Señor de Rivendel", Personaje.Clase.CLERIGO, Raza.ELFO);
+        Personaje p6 = new Personaje(new ArrayList<>(), 14, "Elrond", "Sabio y anciano", "Señor de Rivendel", Personaje.Clase.CLERIGO, Personaje.Raza.ELFO);
 
         // Guardarlos en el repo
         repo.save(p1);

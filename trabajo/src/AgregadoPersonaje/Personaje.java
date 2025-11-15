@@ -4,9 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-enum Raza {
-    HUMANO, ORCO, ELFO, ENANO
-}
 
 
 public class Personaje {
@@ -14,6 +11,10 @@ public class Personaje {
     public enum Clase {
         MAGO, GUERRERO, PALADIN, PICARO, DRUIDA, BARDO, CLERIGO, RANGER
     }
+    public enum Raza {
+        HUMANO, ORCO, ELFO, ENANO
+    }
+
 
     private int ID_JUGADOR;
     private int ID_PERSONAJE = 0;
