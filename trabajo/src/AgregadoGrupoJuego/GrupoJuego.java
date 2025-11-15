@@ -5,16 +5,17 @@ import AgregadoJugador.Repositorio.RepoJugador;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GrupoJuego {
     private int ID_GRUPO;
     private String nombreGrupo, descripcion;
     private List<Integer> listaMiembros = new ArrayList<>();
 
-    public GrupoJuego(String nombreGrupo, String descripcion, List<Integer> listaMiembros) {
+    public GrupoJuego(String nombreGrupo, String descripcion, List<Integer> listaMiembros) throws IOException {
         setNombreGrupo(nombreGrupo);
         setDescripcion(descripcion);
-        setListaMiembros(listaMiembros);
+        inicializarMiembros(listaMiembros, new RepoJugador());
     }
 
     protected GrupoJuego() {
@@ -40,11 +41,15 @@ public class GrupoJuego {
         return listaMiembros;
     }
 
-    public void setListaMiembros(List<Integer> listaMiembros) {
-        if (listaMiembros == null || listaMiembros.isEmpty())
-            throw new IllegalArgumentException("La lista no puede estar vacía el grupo tiene que tener por lo menos un jugador.");
 
-        this.listaMiembros = new ArrayList<>(listaMiembros);
+    public void inicializarMiembros(List<Integer> listaMiembros, RepoJugador repoJugador) throws IOException {
+        if (listaMiembros.isEmpty())
+            throw new IllegalArgumentException("La lista de jugadores debe tener por lo menos un jugador");
+
+        this.listaMiembros.clear();
+        for (Integer id : listaMiembros) {
+            agregarJugador(id, repoJugador);
+        }
     }
 
     public int getID_GRUPO() {
@@ -57,7 +62,6 @@ public class GrupoJuego {
 
     public void agregarJugador(int idJugador, RepoJugador repoJugador) throws IOException {
         comprobareExistenciaJugador(idJugador, repoJugador);
-
         listaMiembros.add(idJugador);
     }
 
@@ -70,17 +74,21 @@ public class GrupoJuego {
         if (listaMiembros.size() == 1)
             throw new IllegalArgumentException("No puedes eliminar todos los jugadores del grupo " + this.getNombreGrupo() + " con ID " + this.getID_GRUPO() + ", primero elimina el grupo");
 
-        if (listaMiembros.contains(idJugador)) {
-            listaMiembros = listaMiembros.stream().filter(id -> idJugador == id).toList();
-            return true;
-        }
-        return false;
+        return listaMiembros.removeIf(id -> id == idJugador);
     }
 
-//    private void comprobarSiContieneJugador(int idJugador) {
-//        if (!listaMiembros.contains(idJugador))
-//            throw new IllegalArgumentException("El jugador introducido no se encuentra en la lista");
-//    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        GrupoJuego that = (GrupoJuego) o;
+        return ID_GRUPO == that.ID_GRUPO && Objects.equals(nombreGrupo, that.nombreGrupo) && Objects.equals(descripcion, that.descripcion) && Objects.equals(listaMiembros, that.listaMiembros);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID_GRUPO, nombreGrupo, descripcion, listaMiembros);
+    }
 
     @Override
     public String toString() {

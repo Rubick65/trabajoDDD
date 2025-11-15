@@ -78,10 +78,10 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
         if (!(entity instanceof GrupoJuego grupoJuego))
             throw new IllegalArgumentException("El tipo de dato debe ser un Grupo de juego");
         recibirDatosFichero();
-        if (!listaGrupoDeJuego.containsKey(grupoJuego.getID_GRUPO()))
-            grupoJuego.setID_GRUPO(contadorID);
+        if (listaGrupoDeJuego.containsValue(grupoJuego))
+            throw new IllegalArgumentException("El grupo de juego ya existe en el archivo");
 
-
+        grupoJuego.setID_GRUPO(contadorID);
         listaGrupoDeJuego.put(grupoJuego.getID_GRUPO(), grupoJuego);
         escribirDatos();
         return entity;
@@ -111,7 +111,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
         }
     }
 
-    public List<GrupoJuego> buascarGruposPorIdJugador(int idJugadorSeleccionado) {
+    public List<GrupoJuego> buscarGruposPorIdJugador(int idJugadorSeleccionado) {
         return listaGrupoDeJuego.values().stream()
                 .filter(grupo -> grupo.getListaMiembros().contains(idJugadorSeleccionado))
                 .toList();
