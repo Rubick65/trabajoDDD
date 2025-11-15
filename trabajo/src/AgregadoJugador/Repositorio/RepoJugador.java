@@ -161,7 +161,6 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      * @throws IOException Lanza excepción en caso de que la escritura falle
      */
     public void actualizar() throws IOException {
-        recibirDatosFichero();
         // Escribimos los datos
         escribirDatos();
     }
