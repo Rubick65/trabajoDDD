@@ -1,5 +1,7 @@
 package AgregadoJugador;
 
+import AgregadoGrupoJuego.GrupoJuego;
+import AgregadoGrupoJuego.Repositorio.RepoGrupoJuego;
 import AgregadoJugador.Repositorio.RepoJugador;
 
 import java.io.IOException;
@@ -16,14 +18,15 @@ public class mainJugador {
         jugs.add(new Jugador("02790162D", "Rubén", new DireccionJuego("Madrid", "Calle del besito 32", "1C", "28017")));
         try {
             RepoJugador repoJugador = new RepoJugador();
-            menuPrincipal(repoJugador);
+            RepoGrupoJuego repoGrupoJuego = new RepoGrupoJuego();
+            menuPrincipal(repoJugador, repoGrupoJuego);
         } catch (IOException e) {
             System.err.println("Fallo a la hora de leer el archivo " + e.getMessage());
         }
 
     }
 
-    private static void menuPrincipal(RepoJugador repoJugador) {
+    private static void menuPrincipal(RepoJugador repoJugador, RepoGrupoJuego repoGrupoJuego) {
         int opcionJugador = 0;
         while (opcionJugador != 13) {
             try {
@@ -41,11 +44,11 @@ public class mainJugador {
                 System.out.println("9.Sacar todos los jugadores a un Iterable");
                 System.out.println("10.Guardar jugador");
                 System.out.println("11.Buscar jugadores por calle");
-                System.out.println("12.Actualizar un jugador");
+                System.out.println("12.Actualizar un jugadores");
                 System.out.println("-------------------------------------------------------");
 
                 opcionJugador = teclado.nextInt();
-                opcionesPrincipales(opcionJugador, repoJugador);
+                opcionesPrincipales(opcionJugador, repoJugador, repoGrupoJuego);
 
             } catch (InputMismatchException e) {
                 System.err.println("Introduce solo números del 1-11 " + e.getMessage());
@@ -59,7 +62,7 @@ public class mainJugador {
         }
     }
 
-    private static void opcionesPrincipales(int opcionJugador, RepoJugador repoJugador) throws IllegalArgumentException, IOException {
+    private static void opcionesPrincipales(int opcionJugador, RepoJugador repoJugador, RepoGrupoJuego repoGrupoJuego) throws IllegalArgumentException, IOException {
         switch (opcionJugador) {
             case 1:
                 menuCreacionJugador();
@@ -74,10 +77,10 @@ public class mainJugador {
                 System.out.println("La cantidad de jugadores es: " + repoJugador.count());
                 break;
             case 5:
-                eliminarJugadorPorId(repoJugador);
+                eliminarJugadorPorId(repoJugador, repoGrupoJuego);
                 break;
             case 6:
-                eliminarTodosLosJugadores(repoJugador);
+                eliminarTodosLosJugadores(repoJugador, repoGrupoJuego);
                 break;
             case 7:
                 comprobarSiJugadorExiste(repoJugador);
@@ -95,6 +98,8 @@ public class mainJugador {
                 buscarJugadoresPorCalle(repoJugador);
                 break;
             case 12:
+                repoJugador.actualizarDatos();
+                System.out.println("Datos actualizados");
                 break;
             default:
                 break;
@@ -175,6 +180,7 @@ public class mainJugador {
         System.out.println("Introduce el DNI del jugador:");
         dni = teclado.next();
         jugs.add(new DirectorDeJuego(dni, nombre, direccionJuego));
+        teclado.nextLine();
 
     }
 
@@ -186,22 +192,44 @@ public class mainJugador {
 
     }
 
-    private static void eliminarJugadorPorId(RepoJugador repoJugador) throws IOException, IllegalArgumentException {
+    private static void eliminarJugadorPorId(RepoJugador repoJugador, RepoGrupoJuego repoGrupoJuego) throws IOException, IllegalArgumentException {
         int idJugador;
         System.out.println("Introduce el id del jugador que quieras eliminar:");
         idJugador = teclado.nextInt();
         repoJugador.deleteById(idJugador);
         System.out.println("El jugador ha sido eliminado con éxito");
+        System.out.println("Ahora voy a eliminar todas las referencias a este jugador en los grupos: ");
+        eliminarJugadoresDeGrupos(idJugador, repoGrupoJuego);
+
     }
 
-    private static void eliminarTodosLosJugadores(RepoJugador repoJugador) throws IOException {
+    private static void eliminarJugadoresDeGrupos(int idJugador, RepoGrupoJuego repoGrupoJuego) {
+        List<GrupoJuego> listaGrupos = repoGrupoJuego.findAllToList();
+
+        listaGrupos.forEach(grupo -> {
+            if (grupo.getListaMiembros().contains(idJugador)) {
+                try {
+                    grupo.eliminarJugador(idJugador);
+
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getMessage());
+                }
+            }
+        });
+    }
+
+    private static void eliminarTodosLosJugadores(RepoJugador repoJugador, RepoGrupoJuego repoGrupoJuego) throws IOException {
         int opcion;
-        System.out.println("Estas seguro de que quieres eliminar todos los jugadores, no hay marcha atrás");
+        System.out.println("Estas seguro de que quieres eliminar todos los jugadores, no hay marcha atrás, también se eliminarán todos los grupos de juego");
         System.out.println("1.Sí");
         System.out.println("2.No");
         opcion = teclado.nextInt();
-        if (opcion == 1)
+        if (opcion == 1) {
             repoJugador.deleteAll();
+            repoGrupoJuego.deleteAll();
+        }
+
+
     }
 
     private static void comprobarSiJugadorExiste(RepoJugador repoJugador) {
@@ -241,8 +269,10 @@ public class mainJugador {
                 System.err.println(e.getMessage());
             }
 
+
             System.out.println("Se ha terminado el guardado");
         }
+        jugs.clear();
     }
 
     private static void buscarJugadoresPorCalle(RepoJugador repoJugador) {
