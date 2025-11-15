@@ -10,6 +10,8 @@ public class AventuraAccion extends Aventura{
         this.cantidadUbicaciones = cantidadUbicaciones;
     }
 
+    public AventuraAccion() {}
+
     public int getCantidadEnemigos() {
         return cantidadEnemigos;
     }
@@ -27,7 +29,7 @@ public class AventuraAccion extends Aventura{
 
     @Override
     public String toString() {
-        return "AventuraAccion{" +
+        return super.toString() + " AventuraAccion{" +
                 "cantidadEnemigos=" + cantidadEnemigos +
                 ", cantidadUbicaciones=" + cantidadUbicaciones +
                 '}';

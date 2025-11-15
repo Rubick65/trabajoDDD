@@ -8,13 +8,15 @@ public class AventuraMisterio extends Aventura {
         this.enigmaPrincipal = enigmaPrincipal;
     }
 
+    public AventuraMisterio() {}
+
     public String getEnigmaPrincipal() {
         return enigmaPrincipal;
     }
 
     @Override
     public String toString() {
-        return "AventuraMisterio{" +
+        return super.toString() + " AventuraMisterio{" +
                 "enigmaPrincipal='" + enigmaPrincipal + '\'' +
                 '}';
     }
