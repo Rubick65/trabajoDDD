@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class RepoAventura implements IRepositorioExtend<Aventura,Integer> {
+public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
 
     private final File archivo = new File("Aventuras.json");
     private final ObjectMapper oM = new ObjectMapper();
@@ -51,14 +51,14 @@ public class RepoAventura implements IRepositorioExtend<Aventura,Integer> {
         recibirDatosFichero();
         comprobarExistenciaClave(id);
         listaAventuras.remove(id);
-        escribirDatos();
+        actualizarDatos();
     }
 
     @Override
     public void deleteAll() throws IOException {
         contadorID = 0;
         listaAventuras = new HashMap<>();
-        escribirDatos();
+        actualizarDatos();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura,Integer> {
     }
 
     @Override
-    public Aventura findById(Integer id) throws IOException{
+    public Aventura findById(Integer id) throws IOException {
         comprobarExistenciaClave(id);
         return listaAventuras.get(id);
     }
@@ -79,20 +79,17 @@ public class RepoAventura implements IRepositorioExtend<Aventura,Integer> {
 
     @Override
     public <S extends Aventura> S save(S entity) throws Exception {
-        if (!(entity instanceof Aventura aventura))
-            throw new IllegalArgumentException("El tipo de dato debe ser una aventura");
-
         recibirDatosFichero();
-        if (listaAventuras.containsValue(aventura))
+        if (listaAventuras.containsValue(entity))
             throw new IllegalArgumentException("La aventura ya existe en el archivo");
 
-        aventura.setID_AVENTURA(contadorID);
-        listaAventuras.put(aventura.getID_AVENTURA(), aventura);
-        escribirDatos();
+        entity.setID_AVENTURA(contadorID);
+        listaAventuras.put(entity.getID_AVENTURA(), entity);
+        actualizarDatos();
         return entity;
     }
 
-    private void escribirDatos() throws IOException {
+    public void actualizarDatos() throws IOException {
         Map<Integer, JsonNode> jsonMap = new HashMap<>();
         for (Map.Entry<Integer, Aventura> entry : listaAventuras.entrySet()) {
             jsonMap.put(entry.getKey(), oM.valueToTree(entry.getValue()));

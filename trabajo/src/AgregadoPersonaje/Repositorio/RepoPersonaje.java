@@ -3,9 +3,9 @@ package AgregadoPersonaje.Repositorio;
 import AgregadoPersonaje.Personaje;
 import Interfaces.IRepositorioExtend;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class RepoPersonaje implements IRepositorioExtend<Personaje,Integer> {
+public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
 
 
     private final File archivo = new File("Personajes.json");
@@ -51,14 +51,14 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje,Integer> {
         recibirDatosFichero();
         comprobarExistenciaClave(id);
         listaPersonajes.remove(id);
-        escribirDatos();
+        actualizarDatos();
     }
 
     @Override
     public void deleteAll() throws IOException {
         contadorID = 0;
         listaPersonajes = new HashMap<>();
-        escribirDatos();
+        actualizarDatos();
     }
 
     @Override
@@ -79,25 +79,19 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje,Integer> {
 
     @Override
     public <S extends Personaje> S save(S entity) throws Exception {
-        if (!(entity instanceof Personaje personaje))
-            throw new IllegalArgumentException("El tipo de dato debe ser un personaje");
-
         recibirDatosFichero();
-        if (listaPersonajes.containsValue(personaje))
+        if (listaPersonajes.containsValue(entity))
             throw new IllegalArgumentException("El personaje ya existe en el archivo");
 
-        personaje.setID_PERSONAJE(contadorID);
-        listaPersonajes.put(personaje.getID_PERSONAJE(), personaje);
-        escribirDatos();
+        entity.setID_PERSONAJE(contadorID);
+        listaPersonajes.put(entity.getID_PERSONAJE(), entity);
+        actualizarDatos();
         return entity;
     }
 
-    private void escribirDatos() throws IOException {
-        Map<Integer, JsonNode> jsonMap = new HashMap<>();
-        for (Map.Entry<Integer, Personaje> entry : listaPersonajes.entrySet()) {
-            jsonMap.put(entry.getKey(), oM.valueToTree(entry.getValue()));
-        }
-        oM.writerWithDefaultPrettyPrinter().writeValue(archivo, jsonMap);
+
+    public void actualizarDatos() throws IOException {
+        writer.writeValue(archivo, listaPersonajes);
     }
 
     private void recibirDatosFichero() throws IOException {

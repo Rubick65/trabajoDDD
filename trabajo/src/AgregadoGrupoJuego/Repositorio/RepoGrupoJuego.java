@@ -47,14 +47,14 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
         recibirDatosFichero();
         comprobarExistenciaClave(id);
         listaGrupoDeJuego.remove(id);
-        escribirDatos();
+        actualizarDatos();
 
     }
 
     @Override
     public void deleteAll() throws IOException {
         listaGrupoDeJuego = new HashMap<>();
-        escribirDatos();
+        actualizarDatos();
     }
 
     @Override
@@ -83,7 +83,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
 
         grupoJuego.setID_GRUPO(contadorID);
         listaGrupoDeJuego.put(grupoJuego.getID_GRUPO(), grupoJuego);
-        escribirDatos();
+        actualizarDatos();
         return entity;
     }
 
@@ -93,7 +93,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
     }
 
 
-    private void escribirDatos() throws IOException {
+    public void actualizarDatos() throws IOException {
         writer.writeValue(archivo, listaGrupoDeJuego);
     }
 

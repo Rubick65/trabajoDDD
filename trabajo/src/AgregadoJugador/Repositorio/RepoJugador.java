@@ -75,7 +75,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
         // En caso de si existir lo elimina
         listaJugadores.remove(id);
         // Y escribe esos datos en el fichero
-        escribirDatos();
+        actualizarDatos();
     }
 
     /**
@@ -88,7 +88,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
         // Primero vacía la lista de jugadores
         listaJugadores = new HashMap<>();
         // Luego escribe esa lista vacía en el fichero
-        escribirDatos();
+        actualizarDatos();
     }
 
     /**
@@ -147,22 +147,9 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
         // Se añade el jugador a la lista
         listaJugadores.put(entity.getID_JUGADOR(), entity);
         // Y se sobreescribe la lista en el fichero
-        escribirDatos();
+        actualizarDatos();
         // Devolvemos la entidad guardada
         return entity;
-    }
-
-    /**
-     * Actualiza los datos de un jugador
-     *
-     * @param entity Jugador a actualizar
-     * @param <S>    Jugador o clases hijas
-     * @return Devuelve el jugador actualizado
-     * @throws IOException Lanza excepción en caso de que la escritura falle
-     */
-    public void actualizar() throws IOException {
-        // Escribimos los datos
-        escribirDatos();
     }
 
 
@@ -171,7 +158,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      *
      * @throws IOException Lanza excepción en caso de que la escritura falle
      */
-    private void escribirDatos() throws IOException {
+    public void actualizarDatos() throws IOException {
         // Creamos un map con Json node
         Map<Integer, JsonNode> jsonMap = new HashMap<>();
         // Recorremos toda la lista de jugadores
