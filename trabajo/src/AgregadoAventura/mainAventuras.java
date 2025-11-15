@@ -36,25 +36,24 @@ public class mainAventuras {
 
     private static void menuPrincipal(RepoAventura repo) {
         int opcion = 0;
-        while (opcion != 14) {
+        while (opcion != 13) {
             try {
                 System.out.println("\n-------------------------------------------------------");
                 System.out.println("Menú Aventuras");
                 System.out.println("-------------------------------------------------------");
-                System.out.println("1. Ver todos los jugadores");
+                System.out.println("1. Mostrar aventuras");
                 System.out.println("2. Crear aventura normal");
                 System.out.println("3. Crear aventura de acción");
                 System.out.println("4. Crear aventura de misterio");
-                System.out.println("5. Mostrar todas las aventuras findAllToList");
-                System.out.println("6. Mostrar todas las aventuras findAll - Iterable");
-                System.out.println("7. Buscar aventura por ID");
-                System.out.println("8. Buscar aventuras por dificultad");
-                System.out.println("9. Eliminar aventura por ID");
-                System.out.println("10. Eliminar todas las aventuras");
-                System.out.println("11. Contar aventuras");
-                System.out.println("12. Comprobar existencia de ID");
-                System.out.println("13. Forzar actualización de datos en archivo");
-                System.out.println("14. Salir");
+                System.out.println("5. Buscar aventura por ID");
+                System.out.println("6. Mostrar aventuras con iterable");
+                System.out.println("7. Buscar aventuras por dificultad");
+                System.out.println("8. Eliminar aventura por ID");
+                System.out.println("9. Eliminar todas las aventuras");
+                System.out.println("10. Contar aventuras");
+                System.out.println("11. Comprobar existencia de ID");
+                System.out.println("12. Forzar actualización de datos en archivo");
+                System.out.println("13. Salir");
                 System.out.println("-------------------------------------------------------");
 
                 opcion = teclado.nextInt();
@@ -77,29 +76,21 @@ public class mainAventuras {
 
     private static void ejecutarOpcion(int opcion, RepoAventura repo) throws Exception {
         switch (opcion) {
-            case 1 -> verTodosLosJugadores();
+            case 1 -> mostrarTodasToList(repo);
             case 2 -> crearAventuraNormal(repo);
             case 3 -> crearAventuraAccion(repo);
             case 4 -> crearAventuraMisterio(repo);
-            case 5 -> mostrarTodasToList(repo);
-            case 6 -> mostrarTodasIterable(repo);
-            case 7 -> buscarPorIDOptional(repo);
-            case 8 -> buscarPorDificultad(repo);
-            case 9 -> eliminarAventuraPorId(repo);
-            case 10 -> eliminarTodas(repo);
-            case 11 -> contarAventuras(repo);
-            case 12 -> comprobarExistenciaId(repo);
-            case 13 -> actualizarDatosArchivo(repo);
-            case 14 -> System.out.println("Saliendo...");
+            case 5 -> buscarPorIDOptional(repo);
+            case 6 -> mostrarTodasIterableCorrecto(repo);
+            case 7 -> buscarPorDificultad(repo);
+            case 8 -> eliminarAventuraPorId(repo);
+            case 9 -> eliminarTodas(repo);
+            case 10 -> contarAventuras(repo);
+            case 11 -> comprobarExistenciaId(repo);
+            case 12 -> actualizarDatosArchivo(repo);
+            case 13 -> System.out.println("Saliendo...");
             default -> System.out.println("Opción no válida.");
         }
-    }
-
-    // NUEVA FUNCIÓN DE EJEMPLO: ver todos los jugadores
-    private static void verTodosLosJugadores() {
-        System.out.println("Ejemplo de todos los jugadores:");
-        // Aquí podrías cargar tu lista de jugadores real
-        System.out.println("Jugador1, Jugador2, Jugador3...");
     }
 
     // Crear aventuras
@@ -156,9 +147,9 @@ public class mainAventuras {
         System.out.println("Aventura de misterio creada:\n" + a);
     }
 
-    // Mostrar
+    // Mostrar aventuras con List
     private static void mostrarTodasToList(RepoAventura repo) {
-        System.out.println("Mostrando todas las aventuras:");
+        System.out.println("Mostrando todas las aventuras (List):");
         List<Aventura> todas = repo.findAllToList();
         if (todas.isEmpty()) {
             System.out.println("No hay aventuras.");
@@ -167,10 +158,21 @@ public class mainAventuras {
         }
     }
 
-    private static void mostrarTodasIterable(RepoAventura repo) {
-        System.out.println("Mostrando todas las aventuras Iterable:");
-        for (Aventura a : repo.findAll()) {
-            System.out.println(a);
+    // Mostrar aventuras con Iterable
+    private static void mostrarTodasIterableCorrecto(RepoAventura repo) {
+        System.out.println("Mostrando todas las aventuras (Iterable):");
+        try {
+            Iterable<Aventura> iterable = repo.findAll();
+            boolean hay = false;
+            for (Aventura a : iterable) {
+                System.out.println(a);
+                hay = true;
+            }
+            if (!hay) {
+                System.out.println("No hay aventuras.");
+            }
+        } catch (Exception e) {
+            System.err.println("Error mostrando aventuras con Iterable: " + e.getMessage());
         }
     }
 
