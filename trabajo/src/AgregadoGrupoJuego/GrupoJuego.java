@@ -60,14 +60,14 @@ public class GrupoJuego {
         this.ID_GRUPO = ID_GRUPO;
     }
 
-    public void agregarJugador(int idJugador, RepoJugador repoJugador) throws IOException {
+    public void agregarJugador(int idJugador, RepoJugador repoJugador) {
         comprobareExistenciaJugador(idJugador, repoJugador);
         listaMiembros.add(idJugador);
     }
 
-    private static void comprobareExistenciaJugador(int idJugador, RepoJugador repoJugador) throws IOException {
+    private static void comprobareExistenciaJugador(int idJugador, RepoJugador repoJugador) {
         if (!repoJugador.existsById(idJugador))
-            throw new IllegalArgumentException("No existe ningún jugador con el id introducido");
+            throw new IllegalArgumentException("No existe ningún jugador con id: " +  idJugador);
     }
 
     public boolean eliminarJugador(int idJugador) {
