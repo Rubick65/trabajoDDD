@@ -1,12 +1,26 @@
 package AgregadoAventura;
 
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.util.Objects;
 
+
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.CLASS,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "@type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = AventuraAccion.class, name = "AventuraAccion"),
+        @JsonSubTypes.Type(value = AventuraMisterio.class, name = "AventuraMisterio"),
+        @JsonSubTypes.Type(value = Aventura.class, name = "Aventura")
+})
 public class Aventura {
 
     public enum Dificultad {
-        FACIL,NORMAL,DIFICIL
+        FACIL, NORMAL, DIFICIL
     }
 
     private int ID_AVENTURA;
@@ -20,7 +34,8 @@ public class Aventura {
         this.dificultad = dificultad;
     }
 
-    public Aventura() {}
+    public Aventura() {
+    }
 
     public int getID_AVENTURA() {
         return ID_AVENTURA;

@@ -2,23 +2,24 @@ package AgregadoPersonaje;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 enum Raza {
-    HUMANO,ORCO,ELFO,ENANO
+    HUMANO, ORCO, ELFO, ENANO
 }
 
 
 public class Personaje {
 
     public enum Clase {
-        MAGO,GUERRERO,PALADIN,PICARO,DRUIDA,BARDO,CLERIGO,RANGER
+        MAGO, GUERRERO, PALADIN, PICARO, DRUIDA, BARDO, CLERIGO, RANGER
     }
 
     private int ID_JUGADOR;
     private int ID_PERSONAJE = 0;
-    private List <ObjetoInventario> inventario;
+    private List<ObjetoInventario> inventario;
     private double capacidadCarga;
-    private String nombrePersonaje,descripcion,historia;
+    private String nombrePersonaje, descripcion, historia;
     private Clase clase;
     private Raza raza;
 
@@ -43,7 +44,8 @@ public class Personaje {
         this.raza = raza;
     }
 
-    public Personaje(){}
+    public Personaje() {
+    }
 
     public double getCapacidadCarga() {
         return capacidadCarga;
@@ -77,7 +79,7 @@ public class Personaje {
         this.inventario = inventario;
     }
 
-    public void setCapacidadCarga(double capacidadCarga) throws IllegalArgumentException  {
+    public void setCapacidadCarga(double capacidadCarga) throws IllegalArgumentException {
         if (capacidadCarga < 0) {
             throw new IllegalArgumentException("Error, llevas mas de lo que puedes cargar");
         }
@@ -122,8 +124,7 @@ public class Personaje {
         if (inventario.contains(objeto)) {
             setCapacidadCarga(capacidadCarga + inventario.get(inventario.indexOf(objeto)).getPeso());
             inventario.remove(inventario.indexOf(objeto));
-        }
-        else {
+        } else {
             System.out.println("Objeto no encontrado");
         }
     }
@@ -136,11 +137,24 @@ public class Personaje {
     }
 
     public void ordenarInventarioPorNombre() {
-        inventario.sort((a, b) -> a.getNombre().compareTo(b.getNombre()));
+        inventario.sort(Comparator.comparing(ObjetoInventario::getNombre));
     }
 
     public void ordenarInventarioPorPeso() {
         inventario.sort(Comparator.comparingDouble(a -> a.getPeso()));
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Personaje personaje = (Personaje) o;
+        return Objects.equals(nombrePersonaje, personaje.nombrePersonaje) && Objects.equals(descripcion, personaje.descripcion) && Objects.equals(historia, personaje.historia);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nombrePersonaje, descripcion, historia);
     }
 
     @Override
