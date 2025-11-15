@@ -2,7 +2,8 @@ package AgregadoAventura;
 
 
 import AgregadoAventura.Repositorio.RepoAventura;
-import AgregadoPersonaje.Repositorio.RepoPersonaje;
+
+import static AgregadoAventura.Aventura.Dificultad;
 
 public class mainPruebasAventura {
     public static void main(String[] args) {
@@ -15,9 +16,9 @@ public class mainPruebasAventura {
             repo.deleteAll();
             System.out.println("Fichero inicializado vacío.");
 
-            Aventura a1 = new Aventura("El comeCocos",3, Aventura.Dificultad.FACIL);
-            Aventura a2 = new Aventura("El lameVacas",1, Aventura.Dificultad.NORMAL);
-            Aventura a3 = new Aventura("El PateaPerros",5, Aventura.Dificultad.DIFICIL);
+            Aventura a1 = new Aventura("El comeCocos",3, Dificultad.FACIL);
+            Aventura a2 = new Aventura("El lameVacas",1, Dificultad.NORMAL);
+            Aventura a3 = new Aventura("El PateaPerros",5, Dificultad.DIFICIL);
 
 
             repo.save(a1);
@@ -28,8 +29,12 @@ public class mainPruebasAventura {
             repo.findAllToList().forEach(System.out::println);
 
             // Probar autoincremento al agregar una nueva aventura
-            Aventura a4 = new Aventura("INAZUMA ELEVEN VICTORY ROAD",5, Aventura.Dificultad.DIFICIL);
+            Aventura a4 = new Aventura("INAZUMA ELEVEN VICTORY ROAD",5, Dificultad.DIFICIL);
             repo.save(a4);
+
+            System.out.println();
+            System.out.println("Aventuras dificiles:");
+            repo.buscarAventuraPorDificultad(Dificultad.DIFICIL).forEach(System.out::println);
 
             System.out.println("\nDespués de guardar una nueva aventura (autoincremento ID):");
             repo.findAllToList().forEach(System.out::println);

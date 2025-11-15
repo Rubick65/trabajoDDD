@@ -1,9 +1,9 @@
 package AgregadoAventura.Repositorio;
 
 import AgregadoAventura.Aventura;
-import AgregadoPersonaje.Personaje;
 import Interfaces.IRepositorioExtend;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class RepoAventura implements IRepositorioExtend {
+public class RepoAventura implements IRepositorioExtend<Aventura,Integer> {
 
     private final File archivo = new File("Aventuras.json");
     private final ObjectMapper oM = new ObjectMapper();
@@ -27,10 +27,13 @@ public class RepoAventura implements IRepositorioExtend {
         recibirDatosFichero();
     }
 
+    public List<Aventura> buscarAventuraPorDificultad(Aventura.Dificultad dificultad) {
+        return listaAventuras.values().stream().filter(aventura -> aventura.getDificultad().equals(dificultad)).toList();
+    }
+
     @Override
-    public Optional<Aventura> findByIdOptional(Object o) {
-        validacionId(o);
-        return Optional.ofNullable(listaAventuras.get(o));
+    public Optional<Aventura> findByIdOptional(Integer id) {
+        return Optional.ofNullable(listaAventuras.get(id));
     }
 
     @Override
@@ -44,10 +47,10 @@ public class RepoAventura implements IRepositorioExtend {
     }
 
     @Override
-    public void deleteById(Object o) throws IOException {
+    public void deleteById(Integer id) throws IOException {
         recibirDatosFichero();
-        comprobarExistenciaClave(o);
-        listaAventuras.remove(o);
+        comprobarExistenciaClave(id);
+        listaAventuras.remove(id);
         escribirDatos();
     }
 
@@ -59,15 +62,14 @@ public class RepoAventura implements IRepositorioExtend {
     }
 
     @Override
-    public boolean existsById(Object o) {
-        validacionId(o);
-        return listaAventuras.containsKey(o);
+    public boolean existsById(Integer id) {
+        return listaAventuras.containsKey(id);
     }
 
     @Override
-    public Object findById(Object o){
-        comprobarExistenciaClave(o);
-        return listaAventuras.get(o);
+    public Aventura findById(Integer id) throws IOException{
+        comprobarExistenciaClave(id);
+        return listaAventuras.get(id);
     }
 
     @Override
@@ -76,7 +78,7 @@ public class RepoAventura implements IRepositorioExtend {
     }
 
     @Override
-    public Object save(Object entity) throws IOException {
+    public <S extends Aventura> S save(S entity) throws Exception {
         if (!(entity instanceof Aventura aventura))
             throw new IllegalArgumentException("El tipo de dato debe ser una aventura");
 
@@ -87,11 +89,15 @@ public class RepoAventura implements IRepositorioExtend {
         aventura.setID_AVENTURA(contadorID);
         listaAventuras.put(aventura.getID_AVENTURA(), aventura);
         escribirDatos();
-        return aventura;
+        return entity;
     }
 
     private void escribirDatos() throws IOException {
-        writer.writeValue(archivo, listaAventuras);
+        Map<Integer, JsonNode> jsonMap = new HashMap<>();
+        for (Map.Entry<Integer, Aventura> entry : listaAventuras.entrySet()) {
+            jsonMap.put(entry.getKey(), oM.valueToTree(entry.getValue()));
+        }
+        oM.writerWithDefaultPrettyPrinter().writeValue(archivo, jsonMap);
     }
 
     private void recibirDatosFichero() throws IOException {
@@ -108,13 +114,9 @@ public class RepoAventura implements IRepositorioExtend {
         }
     }
 
-    private void comprobarExistenciaClave(Object o) {
+    private void comprobarExistenciaClave(Integer o) {
         if (!existsById(o))
             throw new IllegalArgumentException("En la lista no existe ninguna aventura con este id");
-    }
-
-    private static void validacionId(Object o) {
-        if (!(o instanceof Integer)) throw new IllegalArgumentException("El ID debe ser numérico");
     }
 }
 
