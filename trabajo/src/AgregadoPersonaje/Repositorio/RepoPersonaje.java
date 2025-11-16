@@ -89,8 +89,7 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
         return entity;
     }
 
-
-    public void actualizarDatos() throws IOException {
+    private void actualizarDatos() throws IOException {
         writer.writeValue(archivo, listaPersonajes);
     }
 

@@ -173,7 +173,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      *
      * @throws IOException Lanza una excepción si a la hora de actualizar ocurre algún problema con el fichero
      */
-    public void actualizarDatos() throws IOException {
+    private void actualizarDatos() throws IOException {
         writer.writeValue(archivo, listaGrupoDeJuego);
     }
 

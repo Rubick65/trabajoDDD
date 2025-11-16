@@ -158,7 +158,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      *
      * @throws IOException Lanza excepción en caso de que la escritura falle
      */
-    public void actualizarDatos() throws IOException {
+    private void actualizarDatos() throws IOException {
         // Creamos un map con Json node
         Map<Integer, JsonNode> jsonMap = new HashMap<>();
         // Recorremos toda la lista de jugadores

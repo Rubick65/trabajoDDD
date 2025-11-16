@@ -60,7 +60,7 @@ public class mainAventuras {
                 System.out.println("9. Eliminar todas las aventuras");
                 System.out.println("10. Contar aventuras");
                 System.out.println("11. Comprobar existencia de ID");
-                System.out.println("12. Forzar actualización de datos en archivo");
+                System.out.println("12. Guardar");
                 System.out.println("13. Salir");
                 System.out.println("-------------------------------------------------------");
 
@@ -95,7 +95,7 @@ public class mainAventuras {
             case 9 -> eliminarTodas(repoAventura,repoJugador);
             case 10 -> contarAventuras(repoAventura);
             case 11 -> comprobarExistenciaId(repoAventura);
-            case 12 -> actualizarDatosArchivo(repoAventura);
+//            case 12 -> actualizarDatosArchivo(repoAventura); // esta mal
             case 13 -> System.out.println("Saliendo...");
             default -> System.out.println("Opción no válida.");
         }
@@ -259,10 +259,6 @@ public class mainAventuras {
         System.out.println("Existe ID " + id + ": " + existe);
     }
 
-    private static void actualizarDatosArchivo(RepoAventura repo) throws IOException {
-        repo.actualizarDatos();
-        System.out.println("Datos actualizados en archivo manualmente.");
-    }
 
     private static void guardarAventuras(RepoAventura repo) {
         try {

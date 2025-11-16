@@ -36,7 +36,7 @@ public class mainPersonajes {
 
     private static void menuPrincipal(RepoPersonaje repo) {
         int opcion = 0;
-        while (opcion != 13) {
+        while (opcion != 12) {
             try {
                 System.out.println("\n-------------------------------------------------------");
                 System.out.println("Menú Personajes, para salir introduce 13");
@@ -52,7 +52,7 @@ public class mainPersonajes {
                 System.out.println("9. Contar personajes");
                 System.out.println("10. Guardar personajes");
                 System.out.println("11. Mostrar iterable de personajes");
-                System.out.println("12. Actualizar datos en JSON");
+                System.out.println("12.Salir");
                 System.out.println("-------------------------------------------------------");
 
                 opcion = teclado.nextInt();
@@ -84,9 +84,8 @@ public class mainPersonajes {
             case 7 -> eliminarTodos(repo);
             case 8 -> comprobarExistencia(repo);
             case 9 -> contarPersonajes(repo);
-            case 10 -> guardarPersonajes(repo);
+            case 10 -> guardarPersonajes(repo); // Este está mal
             case 11 -> mostrarIterable(repo);
-            case 12 -> actualizarDatos(repo);
             case 13 -> System.out.println("Saliendo del menú...");
             default -> System.out.println("Opción no válida.");
         }
@@ -194,9 +193,10 @@ public class mainPersonajes {
     }
 
     private static void guardarPersonajes(RepoPersonaje repo) throws IOException {
-        // Sobrescribe todo
-        repo.actualizarDatos();
-        System.out.println("Guardado completado.");
+
+//        // Sobrescribe todo
+//        repo.actualizarDatos();
+//        System.out.println("Guardado completado.");
     }
 
     private static void mostrarIterable(RepoPersonaje repo) {
@@ -206,8 +206,4 @@ public class mainPersonajes {
         }
     }
 
-    private static void actualizarDatos(RepoPersonaje repo) throws IOException {
-        repo.actualizarDatos();
-        System.out.println("Datos actualizados en JSON.");
-    }
 }

@@ -24,7 +24,7 @@ public class mainGrupoJuego {
 
     private static void menuPrincipal(RepoGrupoJuego repoGrupoJuego) {
         int opcionJugador = 0;
-        while (opcionJugador != 13) {
+        while (opcionJugador != 12) {
             try {
                 System.out.println("-------------------------------------------------------");
                 System.out.println("Menú, para salir introduce 12");
@@ -40,6 +40,7 @@ public class mainGrupoJuego {
                 System.out.println("9.Sacar todos los Grupos de juego a un Iterable");
                 System.out.println("10.Guardar Grupos de juego");
                 System.out.println("11.Filtrar grupos de juego por jugador");
+                System.out.println("12.Salir");
                 System.out.println("-------------------------------------------------------");
 
                 opcionJugador = teclado.nextInt();
@@ -91,10 +92,6 @@ public class mainGrupoJuego {
                 break;
             case 11:
                 buscarGruposPorJugador(repoGrupoJuego);
-                break;
-            case 12:
-                repoGrupoJuego.actualizarDatos();
-                System.out.println("Datos actualizados");
                 break;
             default:
                 break;

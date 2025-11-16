@@ -89,7 +89,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
         return entity;
     }
 
-    public void actualizarDatos() throws IOException {
+    private void actualizarDatos() throws IOException {
         Map<Integer, JsonNode> jsonMap = new HashMap<>();
         for (Map.Entry<Integer, Aventura> entry : listaAventuras.entrySet()) {
             jsonMap.put(entry.getKey(), oM.valueToTree(entry.getValue()));
