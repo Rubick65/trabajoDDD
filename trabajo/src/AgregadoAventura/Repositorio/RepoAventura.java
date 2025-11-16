@@ -51,14 +51,14 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
         recibirDatosFichero();
         comprobarExistenciaClave(id);
         listaAventuras.remove(id);
-        actualizarDatos();
+        guardarDatos();
     }
 
     @Override
     public void deleteAll() throws IOException {
         contadorID = 0;
         listaAventuras = new HashMap<>();
-        actualizarDatos();
+        guardarDatos();
     }
 
     @Override
@@ -85,11 +85,26 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
 
         entity.setID_AVENTURA(contadorID);
         listaAventuras.put(entity.getID_AVENTURA(), entity);
-        actualizarDatos();
+        guardarDatos();
         return entity;
     }
 
-    private void actualizarDatos() throws IOException {
+    /**
+     * Actualiza la entidad si ya existía antes
+     *
+     * @param entity Entidad a actualizar
+     * @param <S>    Entidad he hijos
+     * @return Devuelve la entidad actualizada
+     * @throws IOException Lanza excepción en caso de problemas a la hora de la escritura
+     */
+    public <S extends Aventura> S actualizarDatos(S entity) throws IOException {
+        comprobarExistenciaClave(entity.getID_AVENTURA());
+        listaAventuras.put(entity.getID_AVENTURA(), entity);
+        guardarDatos();
+        return entity;
+    }
+
+    private void guardarDatos() throws IOException {
         Map<Integer, JsonNode> jsonMap = new HashMap<>();
         for (Map.Entry<Integer, Aventura> entry : listaAventuras.entrySet()) {
             jsonMap.put(entry.getKey(), oM.valueToTree(entry.getValue()));

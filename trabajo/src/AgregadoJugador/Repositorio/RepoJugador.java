@@ -75,7 +75,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
         // En caso de si existir lo elimina
         listaJugadores.remove(id);
         // Y escribe esos datos en el fichero
-        actualizarDatos();
+        guardarDatos();
     }
 
     /**
@@ -88,7 +88,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
         // Primero vacía la lista de jugadores
         listaJugadores = new HashMap<>();
         // Luego escribe esa lista vacía en el fichero
-        actualizarDatos();
+        guardarDatos();
     }
 
     /**
@@ -147,8 +147,23 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
         // Se añade el jugador a la lista
         listaJugadores.put(entity.getID_JUGADOR(), entity);
         // Y se sobreescribe la lista en el fichero
-        actualizarDatos();
+        guardarDatos();
         // Devolvemos la entidad guardada
+        return entity;
+    }
+
+    /**
+     * Actualiza la entidad si ya existía antes
+     *
+     * @param entity Entidad a actualizar
+     * @param <S>    Entidad he hijos
+     * @return Devuelve la entidad actualizada
+     * @throws IOException Lanza excepción en caso de problemas a la hora de la escritura
+     */
+    public <S extends Jugador> S actualizarDatos(S entity) throws IOException {
+        comprobarExistenciaClave(entity.getID_JUGADOR());
+        listaJugadores.put(entity.getID_JUGADOR(), entity);
+        guardarDatos();
         return entity;
     }
 
@@ -158,7 +173,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      *
      * @throws IOException Lanza excepción en caso de que la escritura falle
      */
-    private void actualizarDatos() throws IOException {
+    private void guardarDatos() throws IOException {
         // Creamos un map con Json node
         Map<Integer, JsonNode> jsonMap = new HashMap<>();
         // Recorremos toda la lista de jugadores

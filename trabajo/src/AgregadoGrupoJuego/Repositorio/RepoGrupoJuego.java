@@ -80,7 +80,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
         // Si exsite lo eliminamos
         listaGrupoDeJuego.remove(id);
         // Actulizamos los datos
-        actualizarDatos();
+        guardarDatos();
     }
 
     /**
@@ -93,7 +93,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
         // Vaciamos la lista
         listaGrupoDeJuego = new HashMap<>();
         // Actualizamos los datos del fichero
-        actualizarDatos();
+        guardarDatos();
     }
 
     /**
@@ -152,7 +152,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
         // Introducimos el grupo a la lista
         listaGrupoDeJuego.put(entity.getID_GRUPO(), entity);
         // Actualizamos los datos del grupo
-        actualizarDatos();
+        guardarDatos();
         // Devolvemos la entidad guardada
         return entity;
     }
@@ -169,11 +169,26 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
 
 
     /**
+     * Actualiza la entidad si ya existía antes
+     *
+     * @param entity Entidad a actualizar
+     * @param <S>    Entidad he hijos
+     * @return Devuelve la entidad actualizada
+     * @throws IOException Lanza excepción en caso de problemas a la hora de la escritura
+     */
+    public <S extends GrupoJuego> S actualizarDatos(S entity) throws IOException {
+        comprobarExistenciaClave(entity.getID_GRUPO());
+        listaGrupoDeJuego.put(entity.getID_GRUPO(), entity);
+        guardarDatos();
+        return entity;
+    }
+
+    /**
      * Actualiza los datos del fichero
      *
      * @throws IOException Lanza una excepción si a la hora de actualizar ocurre algún problema con el fichero
      */
-    private void actualizarDatos() throws IOException {
+    private void guardarDatos() throws IOException {
         writer.writeValue(archivo, listaGrupoDeJuego);
     }
 
