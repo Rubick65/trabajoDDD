@@ -95,7 +95,7 @@ public class mainAventuras {
             case 9 -> eliminarTodas(repoAventura,repoJugador);
             case 10 -> contarAventuras(repoAventura);
             case 11 -> comprobarExistenciaId(repoAventura);
-//            case 12 -> actualizarDatosArchivo(repoAventura); // esta mal
+            case 12 -> guardarManualmente(repoAventura, repoJugador);
             case 13 -> System.out.println("Saliendo...");
             default -> System.out.println("Opción no válida.");
         }
@@ -259,6 +259,27 @@ public class mainAventuras {
         System.out.println("Existe ID " + id + ": " + existe);
     }
 
+    private static void guardarManualmente(RepoAventura repoAventura, RepoJugador repoJugador) {
+        try {
+            // --- Guardar aventuras ---
+            repoAventura.deleteAll();   // Borramos todas para evitar duplicados
+            for (Aventura aventura : aventuras) {
+                repoAventura.save(aventura);
+            }
+
+            // --- Guardar jugadores ---
+            repoJugador.deleteAll();
+            for (Jugador jugador : jugadores) {
+                repoJugador.save(jugador);
+            }
+
+            System.out.println("Se ha guardado correctamente.");
+
+        } catch (Exception e) {
+            System.err.println("Error guardando datos: " + e.getMessage());
+        }
+    }
+
 
     private static void guardarAventuras(RepoAventura repo) {
         try {
@@ -277,17 +298,15 @@ public class mainAventuras {
             System.out.println("Aún no has creado ningún jugador");
             return;
         }
-        System.out.println("Vamos a intentar guardar todos los jugadores que has creado");
+        repoJugador.deleteAll();
         for (Jugador jugador : jugadores) {
             try {
                 repoJugador.save(jugador);
             } catch (IllegalArgumentException e) {
                 System.err.println(e.getMessage());
             }
-
-
-            System.out.println("Se ha terminado el guardado");
         }
+        System.out.println("Se ha terminado el guardado");
         jugadores.clear();
     }
 }

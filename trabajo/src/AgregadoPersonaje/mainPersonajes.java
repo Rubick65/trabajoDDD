@@ -84,7 +84,7 @@ public class mainPersonajes {
             case 7 -> eliminarTodos(repo);
             case 8 -> comprobarExistencia(repo);
             case 9 -> contarPersonajes(repo);
-            case 10 -> guardarPersonajes(repo); // Este está mal
+            case 10 -> guardarPersonajes(repo);
             case 11 -> mostrarIterable(repo);
             case 13 -> System.out.println("Saliendo del menú...");
             default -> System.out.println("Opción no válida.");
@@ -193,10 +193,18 @@ public class mainPersonajes {
     }
 
     private static void guardarPersonajes(RepoPersonaje repo) throws IOException {
+        try {
+            // Borrar todo para evitar duplicados
+            repo.deleteAll();
 
-//        // Sobrescribe todo
-//        repo.actualizarDatos();
-//        System.out.println("Guardado completado.");
+            // Guardar todos los personajes actuales
+            for (Personaje p : personajes) {
+                repo.save(p);
+            }
+            System.out.println("Se han guardado todos los personajes correctamente.");
+        } catch (Exception e) {
+            System.err.println("Error guardando personajes: " + e.getMessage());
+        }
     }
 
     private static void mostrarIterable(RepoPersonaje repo) {
