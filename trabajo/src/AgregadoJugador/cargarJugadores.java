@@ -1,8 +1,10 @@
 package AgregadoJugador;
 
+import AgregadoAventura.Aventura;
 import AgregadoJugador.Repositorio.RepoJugador;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class cargarJugadores {
     public static void main(String[] args) throws IOException {
@@ -27,7 +29,10 @@ public class cargarJugadores {
         DireccionJuego dd3 = new DireccionJuego("Valencia", "Serranos", "3ºC", "46002");
 
         // Directores de juego
-        DirectorDeJuego dj1 = new DirectorDeJuego("12345678A", "Roberto", dd1);
+        DirectorDeJuego dj1 = new DirectorDeJuego("12345678A", "Roberto", dd1, new ArrayList<>());
+        Aventura a1 = new Aventura("Clasicos del mazmorreo",3, Aventura.Dificultad.DIFICIL);
+
+
         DirectorDeJuego dj2 = new DirectorDeJuego("87654321B", "Elena", dd2);
         DirectorDeJuego dj3 = new DirectorDeJuego("11223344C", "Fernando", dd3);
 

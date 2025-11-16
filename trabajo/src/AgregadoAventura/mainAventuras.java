@@ -1,6 +1,9 @@
 package AgregadoAventura;
 
 import AgregadoAventura.Repositorio.RepoAventura;
+import AgregadoJugador.DirectorDeJuego;
+import AgregadoJugador.Jugador;
+import AgregadoJugador.Repositorio.RepoJugador;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,20 +14,25 @@ import java.util.Scanner;
 public class mainAventuras {
     static Scanner teclado = new Scanner(System.in);
     static List<Aventura> aventuras = new ArrayList<>();
+    static List<Jugador> jugadores = new ArrayList<>();
 
     public static void main(String[] args) {
-        RepoAventura repo;
+        RepoAventura repoAventura;
+        RepoJugador repoJugador;
         try {
-            repo = new RepoAventura();
+            repoAventura = new RepoAventura();
+            repoJugador = new RepoJugador();
 
             // Cargar aventuras desde JSON
-            aventuras = new ArrayList<>(repo.findAllToList());
+            aventuras = new ArrayList<>(repoAventura.findAllToList());
+            jugadores = new ArrayList<>(repoJugador.findAllToList());
             System.out.println("Se han cargado " + aventuras.size() + " aventuras del archivo.");
 
-            menuPrincipal(repo);
+            menuPrincipal(repoAventura,repoJugador);
 
             // Guardado automático al salir
-            guardarAventuras(repo);
+            guardarAventuras(repoAventura);
+            guardarJugador(repoJugador);
 
         } catch (IOException e) {
             System.err.println("Error al leer o crear el archivo: " + e.getMessage());
@@ -34,7 +42,7 @@ public class mainAventuras {
         }
     }
 
-    private static void menuPrincipal(RepoAventura repo) {
+    private static void menuPrincipal(RepoAventura repoAventura, RepoJugador repoJugador) {
         int opcion = 0;
         while (opcion != 13) {
             try {
@@ -58,7 +66,7 @@ public class mainAventuras {
 
                 opcion = teclado.nextInt();
                 teclado.nextLine();
-                ejecutarOpcion(opcion, repo);
+                ejecutarOpcion(opcion, repoAventura,repoJugador);
 
             } catch (InputMismatchException e) {
                 System.err.println("Introduce solo números válidos.");
@@ -74,20 +82,20 @@ public class mainAventuras {
         }
     }
 
-    private static void ejecutarOpcion(int opcion, RepoAventura repo) throws Exception {
+    private static void ejecutarOpcion(int opcion, RepoAventura repoAventura, RepoJugador repoJugador) throws Exception {
         switch (opcion) {
-            case 1 -> mostrarTodasToList(repo);
-            case 2 -> crearAventuraNormal(repo);
-            case 3 -> crearAventuraAccion(repo);
-            case 4 -> crearAventuraMisterio(repo);
-            case 5 -> buscarPorIDOptional(repo);
-            case 6 -> mostrarTodasIterableCorrecto(repo);
-            case 7 -> buscarPorDificultad(repo);
-            case 8 -> eliminarAventuraPorId(repo);
-            case 9 -> eliminarTodas(repo);
-            case 10 -> contarAventuras(repo);
-            case 11 -> comprobarExistenciaId(repo);
-            case 12 -> actualizarDatosArchivo(repo);
+            case 1 -> mostrarTodasToList(repoAventura);
+            case 2 -> crearAventuraNormal(repoAventura);
+            case 3 -> crearAventuraAccion(repoAventura);
+            case 4 -> crearAventuraMisterio(repoAventura);
+            case 5 -> buscarPorIDOptional(repoAventura);
+            case 6 -> mostrarTodasIterableCorrecto(repoAventura);
+            case 7 -> buscarPorDificultad(repoAventura);
+            case 8 -> eliminarAventuraPorId(repoAventura,repoJugador);
+            case 9 -> eliminarTodas(repoAventura,repoJugador);
+            case 10 -> contarAventuras(repoAventura);
+            case 11 -> comprobarExistenciaId(repoAventura);
+            case 12 -> actualizarDatosArchivo(repoAventura);
             case 13 -> System.out.println("Saliendo...");
             default -> System.out.println("Opción no válida.");
         }
@@ -199,19 +207,43 @@ public class mainAventuras {
     }
 
     // Eliminar
-    private static void eliminarAventuraPorId(RepoAventura repo) throws IOException {
+    private static void eliminarAventuraPorId(RepoAventura repoAventura,RepoJugador repoJugador) throws IOException {
         System.out.println("Introduce ID de la aventura a eliminar:");
         int id = teclado.nextInt();
         teclado.nextLine();
-        repo.deleteById(id);
+        repoAventura.deleteById(id);
         aventuras.removeIf(a -> a.getID_AVENTURA() == id);
-        System.out.println("Aventura eliminada.");
+
+        // Eliminar la referencia en todos los Directores de Juego
+        for (Jugador jugador : repoJugador.findAllToList()) {
+            if (jugador instanceof DirectorDeJuego director) {
+                try {
+                    director.eliminarAventura(id); // Usa el método que ya lanza excepción si no existe
+                } catch (Exception ignored) {
+                    // La excepción indica que ese director no tenía esa aventura, se ignora
+                }
+            }
+        }
+        System.out.println("Aventura eliminada y referencias en Directores de Juego actualizadas.");
     }
 
-    private static void eliminarTodas(RepoAventura repo) throws IOException {
-        repo.deleteAll();
+    private static void eliminarTodas(RepoAventura repoAventura,RepoJugador repoJugador) throws IOException {
+        repoAventura.deleteAll();
         aventuras.clear();
-        System.out.println("Se han eliminado todas las aventuras.");
+
+        // Eliminar todas las referencias de aventuras en todos los Directores de Juego
+        for (Jugador jugador : repoJugador.findAllToList()) {
+            if (jugador instanceof DirectorDeJuego director) {
+                for (int idAventura : new ArrayList<>(director.getListaAventuras())) {
+                    try {
+                        director.eliminarAventura(idAventura);
+                    } catch (Exception ignored) {
+                        // Si por alguna razón no existía, se ignora
+                    }
+                }
+            }
+        }
+        System.out.println("Se han eliminado todas las aventuras y todas las referencias en Directores de Juego.");
     }
 
     // Otras funciones del repo
@@ -242,5 +274,24 @@ public class mainAventuras {
         } catch (Exception e) {
             System.err.println("Error guardando aventuras: " + e.getMessage());
         }
+    }
+
+    private static void guardarJugador(RepoJugador repoJugador) throws IOException {
+        if (jugadores.isEmpty()) {
+            System.out.println("Aún no has creado ningún jugador");
+            return;
+        }
+        System.out.println("Vamos a intentar guardar todos los jugadores que has creado");
+        for (Jugador jugador : jugadores) {
+            try {
+                repoJugador.save(jugador);
+            } catch (IllegalArgumentException e) {
+                System.err.println(e.getMessage());
+            }
+
+
+            System.out.println("Se ha terminado el guardado");
+        }
+        jugadores.clear();
     }
 }
