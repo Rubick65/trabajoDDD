@@ -51,14 +51,14 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
         recibirDatosFichero();
         comprobarExistenciaClave(id);
         listaPersonajes.remove(id);
-        actualizarDatos();
+        guardarDatos();
     }
 
     @Override
     public void deleteAll() throws IOException {
         contadorID = 0;
         listaPersonajes = new HashMap<>();
-        actualizarDatos();
+        guardarDatos();
     }
 
     @Override
@@ -85,12 +85,26 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
 
         entity.setID_PERSONAJE(contadorID);
         listaPersonajes.put(entity.getID_PERSONAJE(), entity);
-        actualizarDatos();
+        guardarDatos();
         return entity;
     }
 
+    /**
+     * Actualiza la entidad si ya existía antes
+     *
+     * @param entity Entidad a actualizar
+     * @param <S>    Entidad he hijos
+     * @return Devuelve la entidad actualizada
+     * @throws IOException Lanza excepción en caso de problemas a la hora de la escritura
+     */
+    public <S extends Personaje> S actualizarDatos(S entity) throws IOException {
+        comprobarExistenciaClave(entity.getID_PERSONAJE());
+        listaPersonajes.put(entity.getID_PERSONAJE(), entity);
+        guardarDatos();
+        return entity;
+    }
 
-    public void actualizarDatos() throws IOException {
+    private void guardarDatos() throws IOException {
         writer.writeValue(archivo, listaPersonajes);
     }
 

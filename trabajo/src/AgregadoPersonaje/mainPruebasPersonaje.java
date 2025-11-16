@@ -18,9 +18,9 @@ public class mainPruebasPersonaje {
             repo.deleteAll();
             System.out.println("Fichero inicializado vacío.");
 
-            Personaje p1 = new Personaje(new ArrayList<ObjetoInventario>(),70.5,"Bartolomeo","Feo a mas no poder","Se perdio",Clase.CLERIGO,Raza.ORCO);
-            Personaje p2 = new Personaje(new ArrayList<ObjetoInventario>(),40.5,"Paca","algo guapa","Se perdio mas", Clase.BARDO,Raza.ELFO);
-            Personaje p3 = new Personaje(new ArrayList<ObjetoInventario>(),20.5,"El tusi","Hipster","Se aburre", Clase.PALADIN,Raza.HUMANO);
+            Personaje p1 = new Personaje(new ArrayList<ObjetoInventario>(),70.5,"Bartolomeo","Feo a mas no poder","Se perdio",Clase.CLERIGO, Personaje.Raza.ORCO);
+            Personaje p2 = new Personaje(new ArrayList<ObjetoInventario>(),40.5,"Paca","algo guapa","Se perdio mas", Clase.BARDO,Personaje.Raza.ELFO);
+            Personaje p3 = new Personaje(new ArrayList<ObjetoInventario>(),20.5,"El tusi","Hipster","Se aburre", Clase.PALADIN,Personaje.Raza.HUMANO);
 
             ObjetoInventario jabon = new ObjetoInventario("Jabon",10.0,"Util");
 
@@ -35,7 +35,7 @@ public class mainPruebasPersonaje {
             repo.findAllToList().forEach(System.out::println);
 
             // Probar autoincremento al agregar un nuevo personaje
-            Personaje p4 = new Personaje(new ArrayList<ObjetoInventario>(),99.5,"asasas","Titanico","Rey de egipto",Clase.PALADIN,Raza.HUMANO);
+            Personaje p4 = new Personaje(new ArrayList<ObjetoInventario>(),99.5,"asasas","Titanico","Rey de egipto",Clase.PALADIN,Personaje.Raza.HUMANO);
             repo.save(p4);
 
             System.out.println();
