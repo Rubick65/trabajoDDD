@@ -81,7 +81,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
     public <S extends Aventura> S save(S entity) throws Exception {
         recibirDatosFichero();
         if (listaAventuras.containsValue(entity))
-            throw new IllegalArgumentException("La aventura ya existe en el archivo");
+            throw new IllegalArgumentException("La aventura " + entity.getNombreAventura() + " ya existe en el archivo");
 
         entity.setID_AVENTURA(contadorID);
         listaAventuras.put(entity.getID_AVENTURA(), entity);

@@ -81,7 +81,7 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
     public <S extends Personaje> S save(S entity) throws Exception {
         recibirDatosFichero();
         if (listaPersonajes.containsValue(entity))
-            throw new IllegalArgumentException("El personaje ya existe en el archivo");
+            throw new IllegalArgumentException("El personaje " + entity.getNombrePersonaje() + " ya existe en el archivo");
 
         entity.setID_PERSONAJE(contadorID);
         listaPersonajes.put(entity.getID_PERSONAJE(), entity);
