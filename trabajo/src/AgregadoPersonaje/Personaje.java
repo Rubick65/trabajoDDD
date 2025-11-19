@@ -8,22 +8,37 @@ import java.util.Objects;
 
 public class Personaje {
 
+    //Posibles clases a elegir
     public enum Clase {
         MAGO, GUERRERO, PALADIN, PICARO, DRUIDA, BARDO, CLERIGO, RANGER
     }
+    //Posibles razas a elegir
     public enum Raza {
         HUMANO, ORCO, ELFO, ENANO
     }
-    private int ID_JUGADOR;
-    private int ID_PERSONAJE = 0;
-    private List<ObjetoInventario> inventario;
-    private double capacidadCarga;
-    private String nombrePersonaje, descripcion, historia;
-    private Clase clase;
-    private Raza raza;
 
+
+    private int ID_JUGADOR; //Id de jugador
+    private int ID_PERSONAJE = 0; //Id del personaje
+    private List<ObjetoInventario> inventario; //Inventario de objetos
+    private double capacidadCarga; //Capacidad de carga de objetos
+    private String nombrePersonaje, descripcion, historia; //Nombre,descripcion e historia del personaje
+    private Clase clase; //Clase del personaje
+    private Raza raza; //Raza del personaje
+
+    /**
+     * Constructor que da valores iniciales a los atributos de clase
+     * @param ID_JUGADOR id del jugador
+     * @param inventario inventario de objetos
+     * @param capacidadCarga capacidad de carga de objetos del personaje
+     * @param nombrePersonaje nombre del personaje
+     * @param descripcion descripcion del personaje
+     * @param historia historia de trasfondo del personaje
+     * @param clase clase del personaje
+     * @param raza raza del personaje
+     */
     public Personaje(int ID_JUGADOR, List<ObjetoInventario> inventario, double capacidadCarga, String nombrePersonaje, String descripcion, String historia, Clase clase, Raza raza) {
-        setID_JUGADOR(ID_JUGADOR);
+        this.ID_JUGADOR = ID_JUGADOR;
         this.inventario = inventario;
         setCapacidadCarga(capacidadCarga);
         this.nombrePersonaje = nombrePersonaje;
@@ -45,6 +60,8 @@ public class Personaje {
 
     public Personaje() {
     }
+
+    //Getters y setters
 
     public double getCapacidadCarga() {
         return capacidadCarga;
@@ -78,6 +95,11 @@ public class Personaje {
         this.inventario = inventario;
     }
 
+    /**
+     * Se modifica la capacidad de carga
+     * @param capacidadCarga capacidad actualizada
+     * @throws IllegalArgumentException si es carga negativa da error
+     */
     public void setCapacidadCarga(double capacidadCarga) throws IllegalArgumentException {
         if (capacidadCarga < 0) {
             throw new IllegalArgumentException("Error, llevas mas de lo que puedes cargar");
@@ -85,6 +107,11 @@ public class Personaje {
         this.capacidadCarga = capacidadCarga;
     }
 
+    /**
+     * Se modifica la descripcion
+     * @param descripcion a actualizar
+     * @throws IllegalArgumentException en caso de estar vacia
+     */
     public void setDescripcion(String descripcion) throws IllegalArgumentException {
         if (descripcion.isEmpty()) {
             throw new IllegalArgumentException("Descripcion no puede estar vacio");
@@ -92,6 +119,11 @@ public class Personaje {
         this.descripcion = descripcion;
     }
 
+    /**
+     * Se modifica la historia
+     * @param historia a actualizar
+     * @throws IllegalArgumentException no puede estar vacia
+     */
     public void setHistoria(String historia) throws IllegalArgumentException {
         if (historia.isEmpty()) {
             throw new IllegalArgumentException("Historia no puede estar vacio");
@@ -119,6 +151,10 @@ public class Personaje {
         return inventario.toString();
     }
 
+    /**
+     * Se tira un objeto del inventario en caso de tenerlo, se actualiza la capacidad de carga
+     * @param objeto objeto a tirar
+     */
     public void tirarObjeto(ObjetoInventario objeto) {
         if (inventario.contains(objeto)) {
             setCapacidadCarga(capacidadCarga + inventario.get(inventario.indexOf(objeto)).getPeso());
@@ -128,6 +164,10 @@ public class Personaje {
         }
     }
 
+    /**
+     * Se agrega un objeto al inventario en caso de no tenerlo, se actualiza la capacidad de carga
+     * @param objetoInventario
+     */
     public void agregarObjeto(ObjetoInventario objetoInventario) {
         if (!inventario.contains(objetoInventario)) {
             inventario.add(objetoInventario);
@@ -135,10 +175,16 @@ public class Personaje {
         }
     }
 
+    /**
+     * Se ordena el inventario alfabeticamente
+     */
     public void ordenarInventarioPorNombre() {
         inventario.sort(Comparator.comparing(ObjetoInventario::getNombre));
     }
 
+    /**
+     * Se ordena el inventario por peso
+     */
     public void ordenarInventarioPorPeso() {
         inventario.sort(Comparator.comparingDouble(a -> a.getPeso()));
     }
