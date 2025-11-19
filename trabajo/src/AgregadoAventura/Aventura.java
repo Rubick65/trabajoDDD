@@ -19,15 +19,22 @@ import java.util.Objects;
 })
 public class Aventura {
 
+    //Dificultad a elegir
     public enum Dificultad {
         FACIL, NORMAL, DIFICIL
     }
 
-    private int ID_AVENTURA;
-    private String nombreAventura;
-    private int duracionSesionesAprox;
-    private Dificultad dificultad;
+    private int ID_AVENTURA; //Id de la aventura
+    private String nombreAventura; //Nombre de la aventura
+    private int duracionSesionesAprox; //Duracion aproximada de las sesiones
+    private Dificultad dificultad; //Dificultad de aventura
 
+    /**
+     * Constructor que da valores iniciales a los atributos de clase
+     * @param nombreAventura nombre de aventura
+     * @param duracionSesionesAprox duracion aproximada de las seiones
+     * @param dificultad dificultad de aventura
+     */
     public Aventura(String nombreAventura, int duracionSesionesAprox, Dificultad dificultad) {
         setNombreAventura(nombreAventura);
         setDuracionSesionesAprox(duracionSesionesAprox);
@@ -36,6 +43,8 @@ public class Aventura {
 
     public Aventura() {
     }
+
+    //Getters y setters
 
     public int getID_AVENTURA() {
         return ID_AVENTURA;
@@ -49,6 +58,11 @@ public class Aventura {
         return nombreAventura;
     }
 
+    /**
+     * Se actualiza el nombre de la aventura
+     * @param nombreAventura nombre actualizado
+     * @throws IllegalArgumentException en caso de estar vacio
+     */
     public void setNombreAventura(String nombreAventura) throws IllegalArgumentException {
         if (nombreAventura.trim().isEmpty())
             throw new IllegalArgumentException("Nombre de aventura vacío");
@@ -60,6 +74,11 @@ public class Aventura {
         return duracionSesionesAprox;
     }
 
+    /**
+     * Se actualiza la duracion aproximada de las sesiones
+     * @param duracionSesionesAprox duracion aproximada
+     * @throws IllegalArgumentException en caso de ser cero o negativa
+     */
     public void setDuracionSesionesAprox(int duracionSesionesAprox) throws IllegalArgumentException {
         if (duracionSesionesAprox <= 0)
             throw new IllegalArgumentException("Duración aventura invalida");

@@ -4,9 +4,15 @@ import java.util.List;
 import java.util.Objects;
 
 public class ObjetoInventario {
-    private String nombre, descripcionObjeto;
-    private double peso;
+    private String nombre, descripcionObjeto; //Nombre y descripcion del objeto
+    private double peso; //Peso del objeto
 
+    /**
+     * Constructor que da valores iniciales a los atributos de clase
+     * @param nombre del objeto
+     * @param peso peso del objeto
+     * @param descripcionObjeto descripcion del objeto
+     */
     public ObjetoInventario(String nombre, double peso, String descripcionObjeto) {
         this.nombre = nombre;
         this.peso = peso;
@@ -15,6 +21,8 @@ public class ObjetoInventario {
 
     public ObjetoInventario() {
     }
+
+    //Getters y setters
 
     public String getNombre() {
         return nombre;
