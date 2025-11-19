@@ -19,15 +19,22 @@ import java.util.Objects;
 })
 public class Aventura {
 
+    //Dificultades a elegir
     public enum Dificultad {
         FACIL, NORMAL, DIFICIL
     }
 
-    private int ID_AVENTURA;
-    private String nombreAventura;
-    private int duracionSesionesAprox;
-    private Dificultad dificultad;
+    private int ID_AVENTURA; //Id de la aventura
+    private String nombreAventura; //Nombre de la aventura
+    private int duracionSesionesAprox; //Duracion aproximada de las sesiones
+    private Dificultad dificultad; //Dificultad de la aventura
 
+    /**
+     * Constructor que da valores iniciales a los atributos de clase
+     * @param nombreAventura nombre de la aventura
+     * @param duracionSesionesAprox duracion aproximada de las sesiones
+     * @param dificultad dificultad de la aventura
+     */
     public Aventura(String nombreAventura, int duracionSesionesAprox, Dificultad dificultad) {
         setNombreAventura(nombreAventura);
         setDuracionSesionesAprox(duracionSesionesAprox);
@@ -36,6 +43,8 @@ public class Aventura {
 
     public Aventura() {
     }
+
+    //Getters y setters
 
     public int getID_AVENTURA() {
         return ID_AVENTURA;
