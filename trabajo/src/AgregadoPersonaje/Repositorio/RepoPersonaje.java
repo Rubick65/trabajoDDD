@@ -22,30 +22,57 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
     private static int contadorID;
     private Map<Integer, Personaje> listaPersonajes;
 
-
+    /**
+     * Se cargan los datos del json
+     * @throws IOException si ocurre un error al cargar
+     */
     public RepoPersonaje() throws IOException {
         recibirDatosFichero();
     }
 
+    /**
+     * Se buscan los personajes por su clase
+     * @param clase a buscar
+     * @return lista filtrada por clases
+     */
     public List<Personaje> buscarPersonajesPorClases(Personaje.Clase clase) {
         return listaPersonajes.values().stream().filter(personaje -> personaje.getClase().equals(clase)).toList();
     }
 
+    /**
+     * Se obtiene mediante optional un personaje
+     * @param id a buscar
+     * @return personaje a buscar
+     */
     @Override
     public Optional<Personaje> findByIdOptional(Integer id) {
         return Optional.ofNullable(listaPersonajes.get(id));
     }
 
+    /**
+     * Se obtiene una lista de todos los personajes
+     * @return lista de personajes
+     */
     @Override
     public List<Personaje> findAllToList() {
         return List.copyOf(listaPersonajes.values());
     }
 
+    /**
+     * Se cuenta la cantidad de personajes
+     * @return cantidad
+     * @throws IOException si no hay personajes
+     */
     @Override
     public long count() throws IOException {
         return listaPersonajes.size();
     }
 
+    /**
+     * Se elimina un personaje mediante su id
+     * @param id del personaje a eliminar
+     * @throws IOException si no existe el id
+     */
     @Override
     public void deleteById(Integer id) throws IOException {
         recibirDatosFichero();
@@ -54,6 +81,10 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
         guardarDatos();
     }
 
+    /**
+     * Se eliminan todos los personajes
+     * @throws IOException si ocurre un error al guardar
+     */
     @Override
     public void deleteAll() throws IOException {
         contadorID = 0;
@@ -61,22 +92,44 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
         guardarDatos();
     }
 
+    /**
+     * Se comprueba la existencia de un personaje mediante su id
+     * @param id a comprobar
+     * @return si existe o no
+     */
     @Override
     public boolean existsById(Integer id) {
         return listaPersonajes.containsKey(id);
     }
 
+    /**
+     * Se obtiene un personaje por su id
+     * @param id a buscar
+     * @return personaje con ese id
+     * @throws IOException si no existe ese id
+     */
     @Override
     public Personaje findById(Integer id) throws IOException {
         comprobarExistenciaClave(id);
         return listaPersonajes.get(id);
     }
 
+    /**
+     * Se obtiene la lista de personajes mediante iterable
+     * @return lista de personajes
+     */
     @Override
     public Iterable<Personaje> findAll() {
         return listaPersonajes.values();
     }
 
+    /**
+     * Se guardan los datos en el json
+     * @param entity personaje a actualizar
+     * @return devuelve el personaje actualizado
+     * @param <S> entidad e hijos
+     * @throws Exception en caso de problemas al actualizar
+     */
     @Override
     public <S extends Personaje> S save(S entity) throws Exception {
         recibirDatosFichero();
@@ -104,10 +157,18 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
         return entity;
     }
 
+    /**
+     * Se guardan los datos en el json
+     * @throws IOException en caso de error de escritura
+     */
     private void guardarDatos() throws IOException {
         writer.writeValue(archivo, listaPersonajes);
     }
 
+    /**
+     * Se cargan los datos del json
+     * @throws IOException en caso de error al cargar los datos
+     */
     private void recibirDatosFichero() throws IOException {
         if (archivo.exists() && archivo.length() > 0) {
             listaPersonajes = oM.readValue(archivo, new TypeReference<Map<Integer, Personaje>>() {
@@ -122,8 +183,13 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
         }
     }
 
-    private void comprobarExistenciaClave(Integer o) throws IOException {
-        if (!existsById(o))
+    /**
+     * Se comprueba la existencia del personaje mediante su id
+     * @param id id a buscar
+     * @throws IOException en caso de no existir
+     */
+    private void comprobarExistenciaClave(Integer id) throws IOException {
+        if (!existsById(id))
             throw new IllegalArgumentException("En la lista no existe ningún personaje con este id");
     }
 }
