@@ -14,8 +14,6 @@ public class Personaje {
     public enum Raza {
         HUMANO, ORCO, ELFO, ENANO
     }
-
-
     private int ID_JUGADOR;
     private int ID_PERSONAJE = 0;
     private List<ObjetoInventario> inventario;
@@ -25,7 +23,7 @@ public class Personaje {
     private Raza raza;
 
     public Personaje(int ID_JUGADOR, List<ObjetoInventario> inventario, double capacidadCarga, String nombrePersonaje, String descripcion, String historia, Clase clase, Raza raza) {
-        this.ID_JUGADOR = ID_JUGADOR;
+        setID_JUGADOR(ID_JUGADOR);
         this.inventario = inventario;
         setCapacidadCarga(capacidadCarga);
         this.nombrePersonaje = nombrePersonaje;

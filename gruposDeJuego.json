@@ -1,26 +1,8 @@
 {
   "1" : {
     "nombreGrupo" : "Los capis",
-    "descripcion" : "Son capis muy culones",
-    "listaMiembros" : [ 1, 2, 3, 4 ],
+    "descripcion" : "son bebitos",
+    "listaMiembros" : [ 1, 2 ],
     "id_GRUPO" : 1
-  },
-  "2" : {
-    "nombreGrupo" : "Los capis",
-    "descripcion" : "Los capis mas culones de viejo oeste",
-    "listaMiembros" : [ 1, 2, 3, 4, 5 ],
-    "id_GRUPO" : 2
-  },
-  "3" : {
-    "nombreGrupo" : "Los capis",
-    "descripcion" : "Los capis culones más bebotes",
-    "listaMiembros" : [ 1, 2, 3, 12 ],
-    "id_GRUPO" : 3
-  },
-  "4" : {
-    "nombreGrupo" : "Los bebitos",
-    "descripcion" : "si son",
-    "listaMiembros" : [ 2, 3, 5, 6 ],
-    "id_GRUPO" : 4
   }
 }

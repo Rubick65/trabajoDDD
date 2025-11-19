@@ -15,6 +15,7 @@ public class mainGrupoJuego {
     public static void main(String[] args) {
         try {
             RepoGrupoJuego repoGrupoJuego = new RepoGrupoJuego();
+            repoGrupoJuego.deleteAll();
             menuPrincipal(repoGrupoJuego);
         } catch (IOException e) {
             System.err.println("Fallo a la hora de leer el archivo " + e.getMessage());
@@ -22,6 +23,11 @@ public class mainGrupoJuego {
 
     }
 
+    /**
+     * Función que muestra el menú principal al usuario
+     *
+     * @param repoGrupoJuego Repositorio del grupo de juego
+     */
     private static void menuPrincipal(RepoGrupoJuego repoGrupoJuego) {
         int opcionJugador = 0;
         while (opcionJugador != 12) {
@@ -58,16 +64,29 @@ public class mainGrupoJuego {
         }
     }
 
+    /**
+     * Función que indica que función del repo se va a ejecutar
+     *
+     * @param opcion         Opción que selecciona el usuario
+     * @param repoGrupoJuego Repositorio del grupo de juego
+     * @throws IllegalArgumentException Lanza excepción en caso de que se introduzcan datos incorrectos
+     * @throws IOException              Lanza la excepción en caso de problemas con lectura o escritura de los archivos
+     */
     private static void opcionesPrincipales(int opcion, RepoGrupoJuego repoGrupoJuego) throws IllegalArgumentException, IOException {
         switch (opcion) {
             case 1:
-                crearGrupoJuego(repoGrupoJuego);
+                crearGrupoJuego();
                 break;
             case 2:
                 buscarPorIDOpcional(repoGrupoJuego);
                 break;
             case 3:
-                System.out.println(repoGrupoJuego.findAllToList());
+                List<GrupoJuego> listaGrupos = repoGrupoJuego.findAllToList();
+                for (GrupoJuego jugador : listaGrupos) {
+                    System.out.println(jugador);
+                }
+                if (listaGrupos.isEmpty())
+                    System.out.println("La lista está vacía");
                 break;
             case 4:
                 System.out.println("La cantidad de jugadores es: " + repoGrupoJuego.count());
@@ -99,7 +118,12 @@ public class mainGrupoJuego {
 
     }
 
-    private static void crearGrupoJuego(RepoGrupoJuego repoGrupoJuego) throws IOException {
+    /**
+     * Función que permite crear un grupo de juego
+     *
+     * @throws IOException Lanza excepción en caso de problemas a la hora de leer el archivo
+     */
+    private static void crearGrupoJuego() throws IOException {
         String nombreGrupo, descripcion;
         int jugadorId = 1;
         while (true) {
@@ -125,21 +149,31 @@ public class mainGrupoJuego {
 
             }
 
-
         }
 
-
     }
 
-
+    /**
+     * Función que busca al grupo de juego en el archivo
+     *
+     * @param repoGrupoJuego Repositorio del grupo de juego
+     * @throws IllegalArgumentException Lanza excepción si el id pasado no existe
+     */
     private static void buscarPorIDOpcional(RepoGrupoJuego repoGrupoJuego) throws IllegalArgumentException {
-        int idJugador;
+        int idGrupoJugador;
         System.out.println("Introduce el id del grupo de juego que quieras buscar:");
-        idJugador = teclado.nextInt();
-        System.out.println(repoGrupoJuego.findByIdOptional(idJugador));
+        idGrupoJugador = teclado.nextInt();
+        System.out.println(repoGrupoJuego.findByIdOptional(idGrupoJugador));
 
     }
 
+    /**
+     * Función que elimina un grupo por ID
+     *
+     * @param repoGrupoJuego Repositorio del grupo de juego
+     * @throws IOException              Lanza excepción en caso de problemas con la lectura o escritura de archivos
+     * @throws IllegalArgumentException En caso de ser el id no válido o no pertenezca a ningún jugador
+     */
     private static void eliminarGrupoJuegoPorId(RepoGrupoJuego repoGrupoJuego) throws IOException, IllegalArgumentException {
         int idJugador;
         System.out.println("Introduce el id del grupo de juego que quieras eliminar:");
@@ -148,6 +182,12 @@ public class mainGrupoJuego {
         System.out.println("El grupo de juego ha sido eliminado con éxito");
     }
 
+    /**
+     * Función que elimina a todos los grupos de juego
+     *
+     * @param repoGrupoJuego Repositorio del grupo de juego
+     * @throws IOException Lanza excepción en caso de que falle la escritura o lectura de datos
+     */
     private static void eliminarTodosLosGruposJuego(RepoGrupoJuego repoGrupoJuego) throws IOException {
         int opcion;
         System.out.println("Estas seguro de que quieres eliminar todos los grupos de juego, no hay marcha atrás");
@@ -158,6 +198,11 @@ public class mainGrupoJuego {
             repoGrupoJuego.deleteAll();
     }
 
+    /**
+     * Función que comprueba si un grupo de juego existe
+     *
+     * @param repoGrupoJuego Repositorio del grupo de juego
+     */
     private static void comprobarSiGrupoJuegoExiste(RepoGrupoJuego repoGrupoJuego) {
         int idJugador;
         System.out.println("Introduce el id del grupo de juego cuya existencia quieras comprobar");
@@ -168,6 +213,12 @@ public class mainGrupoJuego {
             System.out.println("El grupo de juego con id " + idJugador + " no existe");
     }
 
+    /**
+     * Función que busca un grupo de juego por ID
+     *
+     * @param repoGrupoJuego Repositorio del grupo de juego
+     * @throws IllegalArgumentException Lanza una excepción en caso de que el id no sea válido
+     */
     private static void buscarGrupoJuegoPorID(RepoGrupoJuego repoGrupoJuego) throws IllegalArgumentException {
         int idJugador;
         System.out.println("Introduce el id del grupo de juego que quieras buscar");
@@ -175,13 +226,29 @@ public class mainGrupoJuego {
         System.out.println(repoGrupoJuego.findById(idJugador));
     }
 
+    /**
+     * Función que saca todos los grupos de juego a un Iterable
+     *
+     * @param repoGrupoJuego Repositorio de grupo de juego
+     */
     private static void sacarGrupoJuegoIterable(RepoGrupoJuego repoGrupoJuego) {
-        for (GrupoJuego grupoJuego : repoGrupoJuego.findAll()) {
-            System.out.println(grupoJuego);
+        Iterable<GrupoJuego> grupos = repoGrupoJuego.findAll();
+        boolean vacio = true;
+        for (GrupoJuego j : grupos) {
+            System.out.println(j);
+            vacio = false;
         }
 
+        if (vacio)
+            System.out.println("La lista está vacía");
     }
 
+    /**
+     * Guarda los grupos de juego creados en el fichero
+     *
+     * @param repoGrupoJuego Repositorio del grupo de juego
+     * @throws IOException Lanza una excepción en caso de que ocurran problemas cuando se intenta guardar el grupo o grupos
+     */
     private static void guardarGrupoJuego(RepoGrupoJuego repoGrupoJuego) throws IOException {
         if (grupoJugs.isEmpty()) {
             System.out.println("Aún no has creado ningún grupo de juego");
@@ -194,13 +261,16 @@ public class mainGrupoJuego {
             } catch (IllegalArgumentException e) {
                 System.err.println(e.getMessage());
             }
-
-
         }
         System.out.println("Se ha terminado el guardado");
         grupoJugs.clear();
     }
 
+    /**
+     * Función que busca los grupos de juego a los que pertenece un jugador
+     *
+     * @param repoGrupoJuego Repositorio de grupos de juego
+     */
     private static void buscarGruposPorJugador(RepoGrupoJuego repoGrupoJuego) {
         int idJugador;
         System.out.println("Introduce el id del jugador que quieras buscar en los grupos: ");
@@ -209,6 +279,8 @@ public class mainGrupoJuego {
         for (GrupoJuego grupo : listaGruposJugador) {
             System.out.println(grupo);
         }
+        if (listaGruposJugador.isEmpty())
+            System.out.println("No existe ningún grupo con ese jugador");
 
     }
 
