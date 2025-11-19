@@ -1,5 +1,8 @@
 package AgregadoPersonaje;
 
+import AgregadoAventura.Aventura;
+import AgregadoAventura.Repositorio.RepoAventura;
+import AgregadoJugador.Jugador;
 import AgregadoPersonaje.Repositorio.RepoPersonaje;
 
 import java.io.IOException;
@@ -23,9 +26,6 @@ public class mainPersonajes {
 
             menuPrincipal(repo);
 
-            // Guardado automático al salir, sobrescribiendo todo
-            guardarPersonajes(repo);
-
         } catch (IOException e) {
             System.err.println("Error al leer o crear el archivo: " + e.getMessage());
         } catch (Exception e) {
@@ -34,6 +34,10 @@ public class mainPersonajes {
         }
     }
 
+    /**
+     * Se muestra el menu de opciones
+     * @param repo repositorio de personajes
+     */
     private static void menuPrincipal(RepoPersonaje repo) {
         int opcion = 0;
         while (opcion != 12) {
@@ -73,9 +77,15 @@ public class mainPersonajes {
         }
     }
 
+    /**
+     * Se ejecuta la opcion seleccionada
+     * @param opcion opcion seleccionada
+     * @param repo repositorio de personajes
+     * @throws Exception en caso de error en alguna de las funciones
+     */
     private static void ejecutarOpcion(int opcion, RepoPersonaje repo) throws Exception {
         switch (opcion) {
-            case 1 -> mostrarTodos();
+            case 1 -> mostrarTodos(repo);
             case 2 -> crearPersonaje(repo);
             case 3 -> buscarPorClase(repo);
             case 4 -> buscarPorIDOpcional(repo);
@@ -86,19 +96,30 @@ public class mainPersonajes {
             case 9 -> contarPersonajes(repo);
             case 10 -> guardarPersonajes(repo);
             case 11 -> mostrarIterable(repo);
-            case 13 -> System.out.println("Saliendo del menú...");
+            case 12 -> System.out.println("Saliendo del menu");
             default -> System.out.println("Opción no válida.");
         }
     }
 
-    private static void mostrarTodos() {
-        if (personajes.isEmpty()) {
+    /**
+     * Se muestran todos los personajes
+     * @param repo repositorio de personajes
+     */
+    private static void mostrarTodos(RepoPersonaje repo) {
+        System.out.println("Mostrando todas los personajes (List):");
+        List<Personaje> todas = repo.findAllToList();
+        if (todas.isEmpty()) {
             System.out.println("No hay personajes.");
-            return;
+        } else {
+            todas.forEach(System.out::println);
         }
-        personajes.forEach(System.out::println);
     }
 
+    /**
+     * Se crea un personaje
+     * @param repo repositorio de personajes
+     * @throws Exception en caso de error al introducir los datos o al crearlo
+     */
     private static void crearPersonaje(RepoPersonaje repo) throws Exception {
         try {
             System.out.println("Introduce nombre del personaje:");
@@ -119,18 +140,19 @@ public class mainPersonajes {
 
             Personaje p = new Personaje(new ArrayList<>(), carga, nombre, descripcion, historia, clase, raza);
 
-            // Se guarda usando repo para asignar ID correctamente
-            repo.save(p);
-
             // Recargar lista actualizada
-            personajes = new ArrayList<>(repo.findAllToList());
-            System.out.println("Personaje creado:\n" + p);
+            personajes.add(p);
+            System.out.println("Personaje creado:\n");
 
         } catch (IllegalArgumentException e) {
             System.err.println("Error al crear personaje: " + e.getMessage());
         }
     }
 
+    /**
+     * Se buscan personajes segun su clase
+     * @param repo repositorio personajes
+     */
     private static void buscarPorClase(RepoPersonaje repo) {
         try {
             System.out.println("Introduce clase a buscar:");
@@ -146,6 +168,10 @@ public class mainPersonajes {
         }
     }
 
+    /**
+     * Se busca un personaje mediante id usando optional
+     * @param repo repositorio personajes
+     */
     private static void buscarPorIDOpcional(RepoPersonaje repo) {
         try {
             System.out.println("Introduce ID del personaje:");
@@ -158,6 +184,11 @@ public class mainPersonajes {
         }
     }
 
+    /**
+     * Se busca un personaje mediante id
+     * @param repo repositorio personajes
+     * @throws IOException si no encuentra el id
+     */
     private static void buscarPorID(RepoPersonaje repo) throws IOException {
         System.out.println("Introduce ID del personaje:");
         int id = teclado.nextInt();
@@ -166,6 +197,11 @@ public class mainPersonajes {
         System.out.println(p);
     }
 
+    /**
+     * Se elimina un personaje mediante un id
+     * @param repo repositorio personajes
+     * @throws IOException en caso de no eliminar o dato invalido
+     */
     private static void eliminarPersonajePorId(RepoPersonaje repo) throws IOException {
         System.out.println("Introduce ID del personaje a eliminar:");
         int id = teclado.nextInt();
@@ -175,12 +211,21 @@ public class mainPersonajes {
         System.out.println("Personaje eliminado.");
     }
 
+    /**
+     * Se eliminan todas las aventuras
+     * @param repo repositorio personajes
+     * @throws IOException en caso de error al eliminar
+     */
     private static void eliminarTodos(RepoPersonaje repo) throws IOException {
         repo.deleteAll();
         personajes.clear();
         System.out.println("Todos los personajes eliminados.");
     }
 
+    /**
+     * Se comprueba la existencia mediante id de un personaje
+     * @param repo repositorio personajes
+     */
     private static void comprobarExistencia(RepoPersonaje repo) {
         System.out.println("Introduce ID a comprobar:");
         int id = teclado.nextInt();
@@ -188,25 +233,42 @@ public class mainPersonajes {
         System.out.println("Existe ID? " + repo.existsById(id));
     }
 
+    /**
+     * Se cuenta la cantidad de personajes
+     * @param repo repositorio personajes
+     * @throws IOException en caso de estar vacio
+     */
     private static void contarPersonajes(RepoPersonaje repo) throws IOException {
         System.out.println("Cantidad de personajes: " + repo.count());
     }
 
+    /**
+     * Se guardan los personajes
+     * @param repo repositorio personajes
+     * @throws IOException en caso de error al guardar
+     */
     private static void guardarPersonajes(RepoPersonaje repo) throws IOException {
-        try {
-            // Borrar todo para evitar duplicados
-            repo.deleteAll();
-
-            // Guardar todos los personajes actuales
-            for (Personaje p : personajes) {
-                repo.save(p);
-            }
-            System.out.println("Se han guardado todos los personajes correctamente.");
-        } catch (Exception e) {
-            System.err.println("Error guardando personajes: " + e.getMessage());
+        if (personajes.isEmpty()) {
+            System.out.println("Aún no has creado ningún personaje");
+            return;
         }
+        for (Personaje personaje : personajes) {
+            try {
+                repo.save(personaje);
+                System.out.println("El personaje " + personaje.getNombrePersonaje() + " se ha guardado");
+            } catch (IllegalArgumentException e) {
+                System.err.println(e.getMessage());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        System.out.println("Se ha terminado el guardado");
     }
 
+    /**
+     * Se muestran los personajes mediante un iterable
+     * @param repo repositorio personajes
+     */
     private static void mostrarIterable(RepoPersonaje repo) {
         System.out.println("Iterable de personajes:");
         for (Personaje p : repo.findAll()) {
