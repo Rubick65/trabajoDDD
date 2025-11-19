@@ -22,30 +22,57 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
     private static int contadorID;
     private Map<Integer, Aventura> listaAventuras;
 
-
+    /**
+     * Se cargan los datos al crear el repositorio
+     * @throws IOException si hay un error al cargar
+     */
     public RepoAventura() throws IOException {
         recibirDatosFichero();
     }
 
+    /**
+     * Se buscan las aventuras por su dificultad
+     * @param dificultad dificultad a buscar
+     * @return lista filtrada con todas esas dificultades
+     */
     public List<Aventura> buscarAventuraPorDificultad(Aventura.Dificultad dificultad) {
         return listaAventuras.values().stream().filter(aventura -> aventura.getDificultad().equals(dificultad)).toList();
     }
 
+    /**
+     * Se busca una aventura por id usando optional
+     * @param id a buscar
+     * @return la aventura con ese id
+     */
     @Override
     public Optional<Aventura> findByIdOptional(Integer id) {
         return Optional.ofNullable(listaAventuras.get(id));
     }
 
+    /**
+     * Se muestran todas las aventuras
+     * @return todas las aventuras
+     */
     @Override
     public List<Aventura> findAllToList() {
         return List.copyOf(listaAventuras.values());
     }
 
+    /**
+     * Se cuentan todas las aventuras
+     * @return cantidad
+     * @throws IOException si esta vacio
+     */
     @Override
     public long count() throws IOException {
         return listaAventuras.size();
     }
 
+    /**
+     * Se elimina una aventura mediante su id
+     * @param id de la aventura a eliminar
+     * @throws IOException si no existe.
+     */
     @Override
     public void deleteById(Integer id) throws IOException {
         recibirDatosFichero();
@@ -54,6 +81,10 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
         guardarDatos();
     }
 
+    /**
+     * Se borran todas las aventuras
+     * @throws IOException
+     */
     @Override
     public void deleteAll() throws IOException {
         contadorID = 0;
@@ -61,22 +92,44 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
         guardarDatos();
     }
 
+    /**
+     * Se comprueba si existe una aventura con el id dado
+     * @param id a buscar
+     * @return si existe o no
+     */
     @Override
     public boolean existsById(Integer id) {
         return listaAventuras.containsKey(id);
     }
 
+    /**
+     * Se busca una aventura mediante su id
+     * @param id a buscar
+     * @return aventura con ese id
+     * @throws IOException si no existe una aventura con ese id
+     */
     @Override
     public Aventura findById(Integer id) throws IOException {
         comprobarExistenciaClave(id);
         return listaAventuras.get(id);
     }
 
+    /**
+     * Se obtienen todas las aventuras con iterable
+     * @return todas las aventuras
+     */
     @Override
     public Iterable<Aventura> findAll() {
         return listaAventuras.values();
     }
 
+    /**
+     * Se guardan las aventuras en la lista y se guardan
+     * @param entity aventura a guardar
+     * @return aventura a guardar
+     * @param <S> entidad e hijos
+     * @throws Exception en caso de problema al guardar
+     */
     @Override
     public <S extends Aventura> S save(S entity) throws Exception {
         recibirDatosFichero();
@@ -104,6 +157,10 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
         return entity;
     }
 
+    /**
+     * Se guardan los datos en el json
+     * @throws IOException si ocurre un error al guardar
+     */
     private void guardarDatos() throws IOException {
         Map<Integer, JsonNode> jsonMap = new HashMap<>();
         for (Map.Entry<Integer, Aventura> entry : listaAventuras.entrySet()) {
@@ -112,6 +169,10 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
         oM.writerWithDefaultPrettyPrinter().writeValue(archivo, jsonMap);
     }
 
+    /**
+     * Se cargan los datos del json
+     * @throws IOException si ocurre un error al cargar
+     */
     private void recibirDatosFichero() throws IOException {
         if (archivo.exists() && archivo.length() > 0) {
             listaAventuras = oM.readValue(archivo, new TypeReference<Map<Integer, Aventura>>() {
@@ -126,8 +187,12 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
         }
     }
 
-    private void comprobarExistenciaClave(Integer o) {
-        if (!existsById(o))
+    /**
+     * Se comprueba si existe una aventura por su id
+     * @param id id a buscar
+     */
+    private void comprobarExistenciaClave(Integer id) {
+        if (!existsById(id))
             throw new IllegalArgumentException("En la lista no existe ninguna aventura con este id");
     }
 }
