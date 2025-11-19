@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.Objects;
 
+
+// Anotaciones necesarias para poder parsear tanto Jugadores como clases hijo
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.CLASS,
         include = JsonTypeInfo.As.PROPERTY,
@@ -35,6 +37,9 @@ public class Jugador {
         setDireccionJuego(direccionJuego);
     }
 
+    /**
+     * Constructor vacío para poder parsear con Json
+     */
     public Jugador() {
     }
 
@@ -56,6 +61,10 @@ public class Jugador {
         this.ID_JUGADOR = ID_JUGADOR;
     }
 
+    /**
+     * Setter que comprueba que el nombre pasado como parámetro no esté vacío
+     * @param nombre Nombre del jugador
+     */
     public void setNombre(String nombre) {
         if (nombre.trim().isEmpty())
             throw new IllegalArgumentException("El nombre no puede estar vacío");
@@ -86,6 +95,11 @@ public class Jugador {
     }
 
 
+    /**
+     * Compara un jugador con este por el DNI
+     * @param o   the reference object with which to compare.
+     * @return Devuleve true si son iguales y false en caso contrario
+     */
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

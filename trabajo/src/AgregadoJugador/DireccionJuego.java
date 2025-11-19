@@ -19,8 +19,10 @@ public class DireccionJuego {
         setCodigoPostal(codigoPostal);
     }
 
-    public DireccionJuego(){
-
+    /**
+     * Constructor por defecto para poder parsear los datos del json
+     */
+    public DireccionJuego() {
     }
 
     // Getters y Setters de los atributos
@@ -52,6 +54,11 @@ public class DireccionJuego {
         return codigoPostal;
     }
 
+    /**
+     * Comprueba que el código postal tenga exactamente 5 números
+     * @param codigoPostal Codigo postal de la dirección
+     * @throws IllegalArgumentException Lanza esta excepción en caso de que el código postal no sea válido
+     */
     public void setCodigoPostal(String codigoPostal) throws IllegalArgumentException {
         if (codigoPostal.length() != 5)
             throw new IllegalArgumentException("El código postal debe tener 5 dígitos");

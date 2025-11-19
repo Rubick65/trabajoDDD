@@ -11,7 +11,6 @@ public class cargarJugadores {
         RepoJugador repo = new RepoJugador();
         repo.deleteAll();
 
-
         // Direcciones
         DireccionJuego d1 = new DireccionJuego("Madrid", "Gran Vía", "3ºB", "28001");
         DireccionJuego d2 = new DireccionJuego("Barcelona", "Diagonal", "2ºA", "08019");

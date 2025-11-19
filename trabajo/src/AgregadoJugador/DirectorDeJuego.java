@@ -36,10 +36,14 @@ public class DirectorDeJuego extends Jugador {
         super(DNI, nombre, direccionJuego);
     }
 
+    /**
+     * Constructor por defecto para él parseo de datos del json
+     */
     public DirectorDeJuego() {
 
     }
 
+    // Getters y Setters de los atributos
     public List<Integer> getListaAventuras() {
         return listaAventuras;
     }
@@ -53,6 +57,12 @@ public class DirectorDeJuego extends Jugador {
     }
 
 
+    /**
+     * Agrega una aventura al director de juego si y solo si la aventura existe
+     *
+     * @param idAventura   id de la aventura a agregar
+     * @param repoAventura Repositorio de aventuras para comprobar
+     */
     public void agregarAventura(int idAventura, RepoAventura repoAventura) {
         if (!repoAventura.existsById(idAventura))
             throw new IllegalArgumentException("No existe ninguna aventura con ese id");
