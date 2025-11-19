@@ -10,7 +10,6 @@ import java.util.List;
 public class cargarGrupos {
     public static void main(String[] args) throws IOException {
         RepoGrupoJuego repoGrupo = new RepoGrupoJuego();
-        RepoJugador repoJugador = new RepoJugador();
 
         List<GrupoJuego> grupos = Arrays.asList(
                 new GrupoJuego("Los Valientes del Norte", "Grupo especializado en exploraciones árticas", List.of(1, 2, 3)),
