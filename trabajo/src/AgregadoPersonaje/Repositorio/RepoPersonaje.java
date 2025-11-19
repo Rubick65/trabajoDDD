@@ -16,7 +16,7 @@ import java.util.Optional;
 public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
 
 
-    private final File archivo = new File("Personajes.json");
+    private final File archivo = new File("trabajo/src/AgregadoPersonaje/Personajes.json");
     private final ObjectMapper oM = new ObjectMapper();
     private final ObjectWriter writer = oM.writerWithDefaultPrettyPrinter();
     private static int contadorID;

@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
 
-    private final File archivo = new File("Aventuras.json");
+    private final File archivo = new File("trabajo/src/AgregadoAventura/Aventura.json");
     private final ObjectMapper oM = new ObjectMapper();
     private final ObjectWriter writer = oM.writerWithDefaultPrettyPrinter();
     private static int contadorID;

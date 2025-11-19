@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
 
-    private final File archivo = new File("Jugadores.json");// Fichero donde se guardan los jugadores
+    private final File archivo = new File("trabajo/src/AgregadoJugador/Jugadores.json");// Fichero donde se guardan los jugadores
     private final ObjectMapper oM = new ObjectMapper(); // Objeto que permite parsear los datos a json y de json a java
     private static int contadorID;// Contador autoincremental para los jugadores
     private Map<Integer, Jugador> listaJugadores; // Clave id de jugadores y el valor el jugador

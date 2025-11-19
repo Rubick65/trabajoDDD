@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
 
-    private final File archivo = new File("gruposDeJuego.json");// Archivo donde se guardan los grupos
+    private final File archivo = new File("trabajo/src/AgregadoGrupoJuego/GruposDeJuego.json");// Archivo donde se guardan los grupos
     private final ObjectMapper oM = new ObjectMapper(); // Mapper para leer y guardar los datos
     private final ObjectWriter writer = oM.writerWithDefaultPrettyPrinter(); // Para escribir y que quede bonito
     private static int contadorID; // Contador para el id de cada grupo
