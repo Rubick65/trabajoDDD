@@ -37,7 +37,6 @@ public class MainTrabajo {
             }
 
         }
-
     }
 
     private static void lanzar_menus(int opcion) {
