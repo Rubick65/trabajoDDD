@@ -176,14 +176,16 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
         if (archivo.exists() && archivo.length() > 0) {
             listaAventuras = oM.readValue(archivo, new TypeReference<Map<Integer, Aventura>>() {
             });
-            /*
-             Saca todos los ids del Hash Map y los compara en caso de que la lista este vacía se pondrá por defecto 1
-             en caso contrario se pondrá último id + 1
-             */
-            contadorID = listaAventuras.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
-        } else {
+        }
+        else {
+
             listaAventuras = new HashMap<>();
         }
+        /*
+         Saca todos los ids del Hash Map y los compara en caso de que la lista este vacía se pondrá por defecto 1
+          en caso contrario se pondrá último id + 1
+          */
+        contadorID = listaAventuras.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
     }
 
     /**

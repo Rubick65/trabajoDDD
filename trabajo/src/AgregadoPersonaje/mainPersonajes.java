@@ -43,7 +43,7 @@ public class mainPersonajes {
         while (opcion != 12) {
             try {
                 System.out.println("\n-------------------------------------------------------");
-                System.out.println("Menú Personajes, para salir introduce 13");
+                System.out.println("Menú Personajes, para salir introduce 12");
                 System.out.println("-------------------------------------------------------");
                 System.out.println("1. Ver todos los personajes");
                 System.out.println("2. Crear personaje");

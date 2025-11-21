@@ -31,9 +31,10 @@ public class Aventura {
 
     /**
      * Constructor que da valores iniciales a los atributos de clase
-     * @param nombreAventura nombre de aventura
+     *
+     * @param nombreAventura        nombre de aventura
      * @param duracionSesionesAprox duracion aproximada de las seiones
-     * @param dificultad dificultad de aventura
+     * @param dificultad            dificultad de aventura
      */
     public Aventura(String nombreAventura, int duracionSesionesAprox, Dificultad dificultad) {
         setNombreAventura(nombreAventura);
@@ -60,6 +61,7 @@ public class Aventura {
 
     /**
      * Se actualiza el nombre de la aventura
+     *
      * @param nombreAventura nombre actualizado
      * @throws IllegalArgumentException en caso de estar vacio
      */
@@ -76,6 +78,7 @@ public class Aventura {
 
     /**
      * Se actualiza la duracion aproximada de las sesiones
+     *
      * @param duracionSesionesAprox duracion aproximada
      * @throws IllegalArgumentException en caso de ser cero o negativa
      */
@@ -108,11 +111,11 @@ public class Aventura {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Aventura aventura = (Aventura) o;
-        return ID_AVENTURA == aventura.ID_AVENTURA && duracionSesionesAprox == aventura.duracionSesionesAprox && Objects.equals(nombreAventura, aventura.nombreAventura) && dificultad == aventura.dificultad;
+        return duracionSesionesAprox == aventura.duracionSesionesAprox && Objects.equals(nombreAventura, aventura.nombreAventura) && dificultad == aventura.dificultad;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ID_AVENTURA, nombreAventura, duracionSesionesAprox, dificultad);
+        return Objects.hash(nombreAventura, duracionSesionesAprox, dificultad);
     }
 }
