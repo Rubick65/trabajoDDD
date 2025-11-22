@@ -35,7 +35,8 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      * @param clase a buscar
      * @return lista filtrada por clases
      */
-    public List<Personaje> buscarPersonajesPorClases(Personaje.Clase clase) {
+    public List<Personaje> buscarPersonajesPorClases(Personaje.Clase clase) throws IOException {
+        recibirDatosFichero();
         return listaPersonajes.values().stream().filter(personaje -> personaje.getClase().equals(clase)).toList();
     }
 
@@ -45,7 +46,8 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      * @return personaje a buscar
      */
     @Override
-    public Optional<Personaje> findByIdOptional(Integer id) {
+    public Optional<Personaje> findByIdOptional(Integer id) throws IOException {
+        recibirDatosFichero();
         return Optional.ofNullable(listaPersonajes.get(id));
     }
 
@@ -65,6 +67,7 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      */
     @Override
     public long count() throws IOException {
+        recibirDatosFichero();
         return listaPersonajes.size();
     }
 
@@ -98,7 +101,8 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      * @return si existe o no
      */
     @Override
-    public boolean existsById(Integer id) {
+    public boolean existsById(Integer id) throws IOException {
+        recibirDatosFichero();
         return listaPersonajes.containsKey(id);
     }
 
@@ -119,7 +123,8 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      * @return lista de personajes
      */
     @Override
-    public Iterable<Personaje> findAll() {
+    public Iterable<Personaje> findAll() throws IOException {
+        recibirDatosFichero();
         return listaPersonajes.values();
     }
 
@@ -175,7 +180,6 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
             });
         }
         else {
-
             listaPersonajes = new HashMap<>();
         }
         /*
