@@ -215,7 +215,7 @@ public class mainAventuras {
      * Se busca una aventura mediante id usando Optional
      * @param repo repositorio de aventuras donde se valida si el id existe
      */
-    private static void buscarPorIDOptional(RepoAventura repo) {
+    private static void buscarPorIDOptional(RepoAventura repo) throws IOException {
         System.out.println("Introduce ID de la aventura:");
         int id = teclado.nextInt();
         teclado.nextLine();
@@ -229,7 +229,7 @@ public class mainAventuras {
      * Se busca una funcion mediante la dificultad
      * @param repo repositorio donde se cargan las aventuras con esa dificultad
      */
-    private static void buscarPorDificultad(RepoAventura repo) {
+    private static void buscarPorDificultad(RepoAventura repo) throws IOException {
         System.out.println("Introduce dificultad a buscar FACIL, NORMAL, DIFICIL:");
         Aventura.Dificultad dificultad = Aventura.Dificultad.valueOf(teclado.nextLine().toUpperCase());
         List<Aventura> encontrados = repo.buscarAventuraPorDificultad(dificultad);
@@ -306,7 +306,7 @@ public class mainAventuras {
      * Se comprueba la existencia de una aventura mediante un id
      * @param repo repositorio de aventuras
      */
-    private static void comprobarExistenciaId(RepoAventura repo) {
+    private static void comprobarExistenciaId(RepoAventura repo) throws IOException {
         System.out.println("Introduce ID a comprobar:");
         int id = teclado.nextInt();
         teclado.nextLine();

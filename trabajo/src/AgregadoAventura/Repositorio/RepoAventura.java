@@ -34,7 +34,8 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      * @param dificultad dificultad a buscar
      * @return lista filtrada con todas esas dificultades
      */
-    public List<Aventura> buscarAventuraPorDificultad(Aventura.Dificultad dificultad) {
+    public List<Aventura> buscarAventuraPorDificultad(Aventura.Dificultad dificultad) throws IOException {
+        recibirDatosFichero();
         return listaAventuras.values().stream().filter(aventura -> aventura.getDificultad().equals(dificultad)).toList();
     }
 
@@ -44,7 +45,8 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      * @return la aventura con ese id
      */
     @Override
-    public Optional<Aventura> findByIdOptional(Integer id) {
+    public Optional<Aventura> findByIdOptional(Integer id) throws IOException {
+        recibirDatosFichero();
         return Optional.ofNullable(listaAventuras.get(id));
     }
 
@@ -53,7 +55,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      * @return todas las aventuras
      */
     @Override
-    public List<Aventura> findAllToList() {
+    public List<Aventura> findAllToList()  {
         return List.copyOf(listaAventuras.values());
     }
 
@@ -64,6 +66,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public long count() throws IOException {
+        recibirDatosFichero();
         return listaAventuras.size();
     }
 
@@ -97,7 +100,8 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      * @return si existe o no
      */
     @Override
-    public boolean existsById(Integer id) {
+    public boolean existsById(Integer id) throws IOException {
+        recibirDatosFichero();
         return listaAventuras.containsKey(id);
     }
 
@@ -118,7 +122,8 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      * @return todas las aventuras
      */
     @Override
-    public Iterable<Aventura> findAll() {
+    public Iterable<Aventura> findAll() throws IOException {
+        recibirDatosFichero();
         return listaAventuras.values();
     }
 
@@ -178,7 +183,6 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
             });
         }
         else {
-
             listaAventuras = new HashMap<>();
         }
         /*
@@ -192,7 +196,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      * Se comprueba si existe una aventura por su id
      * @param id id a buscar
      */
-    private void comprobarExistenciaClave(Integer id) {
+    private void comprobarExistenciaClave(Integer id) throws IOException {
         if (!existsById(id))
             throw new IllegalArgumentException("En la lista no existe ninguna aventura con este id");
     }
