@@ -23,6 +23,6 @@ public interface IRepositorioExtend<T, ID> extends
      * @return todas las instancias.
      *
      */
-    List<T> findAllToList();
+    List<T> findAllToList() throws IOException;
 
 }

@@ -227,7 +227,7 @@ public class mainJugador {
      * @param repoJugador Repositorio del jugador
      * @throws IllegalArgumentException Lanza una excepción en caso de tener un id no válido
      */
-    private static void buscarPorIDOpcional(RepoJugador repoJugador) throws IllegalArgumentException {
+    private static void buscarPorIDOpcional(RepoJugador repoJugador) throws IllegalArgumentException, IOException {
         int idJugador;
         System.out.println("Introduce el id del jugador que quieras buscar:");
         idJugador = teclado.nextInt();
@@ -263,7 +263,7 @@ public class mainJugador {
      * @param idJugador      ID del jugador a eliminar
      * @param repoGrupoJuego Repositorio de los grupos de juego
      */
-    private static void eliminarJugadoresDeGrupos(int idJugador, RepoGrupoJuego repoGrupoJuego) {
+    private static void eliminarJugadoresDeGrupos(int idJugador, RepoGrupoJuego repoGrupoJuego) throws IOException {
         List<GrupoJuego> listaGrupos = repoGrupoJuego.findAllToList();
 
         listaGrupos.forEach(grupo -> {
@@ -342,7 +342,7 @@ public class mainJugador {
      *
      * @param repoJugador Repositorio del jugador
      */
-    private static void comprobarSiJugadorExiste(RepoJugador repoJugador) {
+    private static void comprobarSiJugadorExiste(RepoJugador repoJugador) throws IOException {
         int idJugador;
         System.out.println("Introduce el id del jugador cuya existencia quieras comprobar");
         idJugador = teclado.nextInt();
@@ -358,7 +358,7 @@ public class mainJugador {
      * @param repoJugador Respositorio del jugador
      * @throws IllegalArgumentException Lanza una excepción en caso de que el id no sea válido
      */
-    private static void buscarJugadorPorID(RepoJugador repoJugador) throws IllegalArgumentException {
+    private static void buscarJugadorPorID(RepoJugador repoJugador) throws IllegalArgumentException, IOException {
         int idJugador;
         System.out.println("Introduce el id del jugador que quieras buscar");
         idJugador = teclado.nextInt();
@@ -370,7 +370,7 @@ public class mainJugador {
      *
      * @param repoJugador Respositorio de jugadores
      */
-    private static void sacarJugadoresIterable(RepoJugador repoJugador) {
+    private static void sacarJugadoresIterable(RepoJugador repoJugador) throws IOException {
         Iterable<Jugador> jugadores = repoJugador.findAll();
         boolean vacio = true;
         for (Jugador j : jugadores) {
@@ -414,7 +414,7 @@ public class mainJugador {
      *
      * @param repoJugador Repositorio de jugadores
      */
-    private static void buscarJugadoresPorCalle(RepoJugador repoJugador) {
+    private static void buscarJugadoresPorCalle(RepoJugador repoJugador) throws IOException {
         String calle;
         List<Jugador> jugadores;
         teclado.nextLine();

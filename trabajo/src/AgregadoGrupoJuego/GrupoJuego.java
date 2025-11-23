@@ -85,7 +85,7 @@ public class GrupoJuego {
      * @param idJugador   Id del jugador a añadir
      * @param repoJugador Repositorio del jugador a añadir
      */
-    public void agregarJugador(int idJugador, RepoJugador repoJugador) {
+    public void agregarJugador(int idJugador, RepoJugador repoJugador) throws IOException {
         comprobareExistenciaJugador(idJugador, repoJugador);
         listaMiembros.add(idJugador);
     }
@@ -96,7 +96,7 @@ public class GrupoJuego {
      * @param idJugador   Id del jugador a comprobar
      * @param repoJugador Repositorio que guarda al jugador
      */
-    private static void comprobareExistenciaJugador(int idJugador, RepoJugador repoJugador) {
+    private static void comprobareExistenciaJugador(int idJugador, RepoJugador repoJugador) throws IOException {
         if (!repoJugador.existsById(idJugador))
             throw new IllegalArgumentException("No existe ningún jugador con id: " + idJugador);
     }
