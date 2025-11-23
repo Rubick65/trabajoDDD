@@ -2,6 +2,7 @@ package AgregadoJugador;
 
 import AgregadoAventura.Repositorio.RepoAventura;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class DirectorDeJuego extends Jugador {
      * @param idAventura   id de la aventura a agregar
      * @param repoAventura Repositorio de aventuras para comprobar
      */
-    public void agregarAventura(int idAventura, RepoAventura repoAventura) {
+    public void agregarAventura(int idAventura, RepoAventura repoAventura) throws IOException {
         if (!repoAventura.existsById(idAventura))
             throw new IllegalArgumentException("No existe ninguna aventura con ese id");
         listaAventuras.add(idAventura);

@@ -153,7 +153,7 @@ public class mainPersonajes {
      * Se buscan personajes segun su clase
      * @param repo repositorio personajes
      */
-    private static void buscarPorClase(RepoPersonaje repo) {
+    private static void buscarPorClase(RepoPersonaje repo) throws IOException {
         try {
             System.out.println("Introduce clase a buscar:");
             Personaje.Clase clase = Personaje.Clase.valueOf(teclado.nextLine().trim().toUpperCase());
@@ -172,7 +172,7 @@ public class mainPersonajes {
      * Se busca un personaje mediante id usando optional
      * @param repo repositorio personajes
      */
-    private static void buscarPorIDOpcional(RepoPersonaje repo) {
+    private static void buscarPorIDOpcional(RepoPersonaje repo) throws IOException {
         try {
             System.out.println("Introduce ID del personaje:");
             int id = teclado.nextInt();
@@ -226,7 +226,7 @@ public class mainPersonajes {
      * Se comprueba la existencia mediante id de un personaje
      * @param repo repositorio personajes
      */
-    private static void comprobarExistencia(RepoPersonaje repo) {
+    private static void comprobarExistencia(RepoPersonaje repo) throws IOException {
         System.out.println("Introduce ID a comprobar:");
         int id = teclado.nextInt();
         teclado.nextLine();
@@ -269,7 +269,7 @@ public class mainPersonajes {
      * Se muestran los personajes mediante un iterable
      * @param repo repositorio personajes
      */
-    private static void mostrarIterable(RepoPersonaje repo) {
+    private static void mostrarIterable(RepoPersonaje repo) throws IOException {
         System.out.println("Iterable de personajes:");
         for (Personaje p : repo.findAll()) {
             System.out.println(p);
