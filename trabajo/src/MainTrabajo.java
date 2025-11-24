@@ -35,7 +35,6 @@ public class MainTrabajo {
                 teclado.nextLine();
                 System.err.println("Introduce solo números del 1-5");
             }
-
         }
     }
 
@@ -46,6 +45,5 @@ public class MainTrabajo {
             case 3 -> mainAventuras.main(new String[0]);
             case 4 -> mainPersonajes.main(new String[0]);
         }
-
     }
 }

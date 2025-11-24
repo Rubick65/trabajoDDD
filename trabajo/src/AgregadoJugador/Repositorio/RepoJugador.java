@@ -36,7 +36,8 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      * @return En caso de existir el jugador devuelve ese jugador, en caso contrario Optional.empty()
      */
     @Override
-    public Optional<Jugador> findByIdOptional(Integer id) {
+    public Optional<Jugador> findByIdOptional(Integer id) throws IOException {
+        recibirDatosFichero();
         return Optional.ofNullable(listaJugadores.get(id));
     }
 
@@ -46,7 +47,8 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      * @return Devuelve los jugadores en un objeto tipo List
      */
     @Override
-    public List<Jugador> findAllToList() {
+    public List<Jugador> findAllToList() throws IOException {
+        recibirDatosFichero();
         return List.copyOf(listaJugadores.values());
     }
 
@@ -56,7 +58,8 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      * @return Devuelve la cantidad de jugadores en la lista
      */
     @Override
-    public long count() {
+    public long count() throws IOException {
+        recibirDatosFichero();
         return listaJugadores.size();
     }
 
@@ -98,7 +101,8 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      * @return Devuelve true en caso de que si exista y false en caso contrario
      */
     @Override
-    public boolean existsById(Integer id) {
+    public boolean existsById(Integer id) throws IOException {
+        recibirDatosFichero();
         return listaJugadores.containsKey(id);
     }
 
@@ -109,7 +113,8 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      * @return Devuelve en caso de encontrarlo el jugador buscado
      */
     @Override
-    public Jugador findById(Integer id) {
+    public Jugador findById(Integer id) throws IOException {
+        recibirDatosFichero();
         comprobarExistenciaClave(id);
         return listaJugadores.get(id);
     }
@@ -120,7 +125,8 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      * @return Devuelve una colección con todos los jugadores
      */
     @Override
-    public Iterable<Jugador> findAll() {
+    public Iterable<Jugador> findAll() throws IOException {
+        recibirDatosFichero();
         return listaJugadores.values();
     }
 
@@ -198,16 +204,18 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
             // Sacamos del archivo la lista de jugadores
             listaJugadores = oM.readValue(archivo, new TypeReference<Map<Integer, Jugador>>() {
             });
-            /*
-             Saca todos los ids del Hash Map y los compara, sacando el mayor
-             en caso de que la lista este vacía se pondrá por defecto 1,
-             en caso contrario se pondrá último id + 1
-             */
-            contadorID = listaJugadores.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
+
         } else {
             // En caso contrario inicializamos la lista vacía
             listaJugadores = new HashMap<>();
         }
+         /*
+             Saca todos los ids del Hash Map y los compara, sacando el mayor
+             en caso de que la lista este vacía se pondrá por defecto 1,
+             en caso contrario se pondrá último id + 1
+             */
+        contadorID = listaJugadores.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
+
     }
 
     /**
@@ -215,7 +223,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      *
      * @param id a comprobar
      */
-    private void comprobarExistenciaClave(Integer id) throws IllegalArgumentException {
+    private void comprobarExistenciaClave(Integer id) throws IllegalArgumentException, IOException {
         if (!existsById(id))
             throw new IllegalArgumentException("En la lista no existe ningún jugador con id " + id);
     }
@@ -226,7 +234,8 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      * @param calle Calle introducida por el usuario para buscar todos los jugadores que tengan esa calle como dirección de juego
      * @return Devuelve una lista con todos los jugadores que viven en la calle seleccionada
      */
-    public List<Jugador> buscarJugadorPorDireccion(String calle) {
+    public List<Jugador> buscarJugadorPorDireccion(String calle) throws IOException {
+        recibirDatosFichero();
         // Filtramos la lista de jugadores por aquellos que vivan en la calle pasada como parámetro
         return listaJugadores.values().stream().filter(jugador -> jugador.getDireccionJuego().getCalle().equalsIgnoreCase(calle)).toList();
     }

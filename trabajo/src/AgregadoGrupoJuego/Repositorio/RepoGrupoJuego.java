@@ -27,7 +27,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      *
      * @param id id a comprobar
      */
-    private void comprobarExistenciaClave(Integer id) {
+    private void comprobarExistenciaClave(Integer id) throws IOException {
         // Si el id no existe
         if (!existsById(id))
             // Lanza una excepción
@@ -41,7 +41,8 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      * @return Devuelve el jugador si existe y un optional.empty() en caso contrario
      */
     @Override
-    public Optional<GrupoJuego> findByIdOptional(Integer id) {
+    public Optional<GrupoJuego> findByIdOptional(Integer id) throws IOException {
+        recibirDatosFichero();
         return Optional.ofNullable(listaGrupoDeJuego.get(id));
     }
 
@@ -51,7 +52,8 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      * @return Una lista con todos los jugadores
      */
     @Override
-    public List<GrupoJuego> findAllToList() {
+    public List<GrupoJuego> findAllToList() throws IOException {
+        recibirDatosFichero();
         return List.copyOf(listaGrupoDeJuego.values());
     }
 
@@ -61,7 +63,8 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      * @return Devuelve la cantidad de jugadores totales
      */
     @Override
-    public long count() {
+    public long count() throws IOException {
+        recibirDatosFichero();
         return listaGrupoDeJuego.size();
     }
 
@@ -103,7 +106,8 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      * @return Si existe devuelve true y si no devuelve false
      */
     @Override
-    public boolean existsById(Integer id) {
+    public boolean existsById(Integer id) throws IOException {
+        recibirDatosFichero();
         return listaGrupoDeJuego.containsKey(id);
     }
 
@@ -114,7 +118,8 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      * @return Devuelve el jugador buscado si lo encuentra
      */
     @Override
-    public GrupoJuego findById(Integer id) {
+    public GrupoJuego findById(Integer id) throws IOException {
+        recibirDatosFichero();
         comprobarExistenciaClave(id);
         return listaGrupoDeJuego.get(id);
     }
@@ -125,7 +130,8 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      * @return Devuelve una lista de valores iterables
      */
     @Override
-    public Iterable<GrupoJuego> findAll() {
+    public Iterable<GrupoJuego> findAll() throws IOException {
+        recibirDatosFichero();
         return listaGrupoDeJuego.values();
     }
 
@@ -203,15 +209,17 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
             // Cargamos los datos
             listaGrupoDeJuego = oM.readValue(archivo, new TypeReference<>() {
             });
-            /*
-             Saca todos los ids del Hash Map y los compara en caso de que la lista este vacía se pondrá por defecto 1
-             en caso contrario se pondrá último id + 1
-             */
-            contadorID = listaGrupoDeJuego.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
+
         } else {
             // Si no simplemente inicializamos vacío
             listaGrupoDeJuego = new HashMap<>();
         }
+
+         /*
+             Saca todos los ids del Hash Map y los compara en caso de que la lista este vacía se pondrá por defecto 1
+             en caso contrario se pondrá último id + 1
+          */
+        contadorID = listaGrupoDeJuego.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
     }
 
     /**

@@ -159,7 +159,7 @@ public class mainGrupoJuego {
      * @param repoGrupoJuego Repositorio del grupo de juego
      * @throws IllegalArgumentException Lanza excepción si el id pasado no existe
      */
-    private static void buscarPorIDOpcional(RepoGrupoJuego repoGrupoJuego) throws IllegalArgumentException {
+    private static void buscarPorIDOpcional(RepoGrupoJuego repoGrupoJuego) throws IllegalArgumentException, IOException {
         int idGrupoJugador;
         System.out.println("Introduce el id del grupo de juego que quieras buscar:");
         idGrupoJugador = teclado.nextInt();
@@ -203,7 +203,7 @@ public class mainGrupoJuego {
      *
      * @param repoGrupoJuego Repositorio del grupo de juego
      */
-    private static void comprobarSiGrupoJuegoExiste(RepoGrupoJuego repoGrupoJuego) {
+    private static void comprobarSiGrupoJuegoExiste(RepoGrupoJuego repoGrupoJuego) throws IOException {
         int idJugador;
         System.out.println("Introduce el id del grupo de juego cuya existencia quieras comprobar");
         idJugador = teclado.nextInt();
@@ -219,7 +219,7 @@ public class mainGrupoJuego {
      * @param repoGrupoJuego Repositorio del grupo de juego
      * @throws IllegalArgumentException Lanza una excepción en caso de que el id no sea válido
      */
-    private static void buscarGrupoJuegoPorID(RepoGrupoJuego repoGrupoJuego) throws IllegalArgumentException {
+    private static void buscarGrupoJuegoPorID(RepoGrupoJuego repoGrupoJuego) throws IllegalArgumentException, IOException {
         int idJugador;
         System.out.println("Introduce el id del grupo de juego que quieras buscar");
         idJugador = teclado.nextInt();
@@ -231,7 +231,7 @@ public class mainGrupoJuego {
      *
      * @param repoGrupoJuego Repositorio de grupo de juego
      */
-    private static void sacarGrupoJuegoIterable(RepoGrupoJuego repoGrupoJuego) {
+    private static void sacarGrupoJuegoIterable(RepoGrupoJuego repoGrupoJuego) throws IOException {
         Iterable<GrupoJuego> grupos = repoGrupoJuego.findAll();
         boolean vacio = true;
         for (GrupoJuego j : grupos) {
