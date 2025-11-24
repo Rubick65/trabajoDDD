@@ -180,7 +180,7 @@ public class mainAventuras {
      * Se muestran las aventuras con ToList
      * @param repo repositorio donde se cargan las aventuras
      */
-    private static void mostrarTodasToList(RepoAventura repo) {
+    private static void mostrarTodasToList(RepoAventura repo) throws IOException {
         System.out.println("Mostrando todas las aventuras (List):");
         List<Aventura> todas = repo.findAllToList();
         if (todas.isEmpty()) {

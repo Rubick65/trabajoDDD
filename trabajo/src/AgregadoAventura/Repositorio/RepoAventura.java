@@ -55,7 +55,8 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      * @return todas las aventuras
      */
     @Override
-    public List<Aventura> findAllToList()  {
+    public List<Aventura> findAllToList() throws IOException {
+        recibirDatosFichero();
         return List.copyOf(listaAventuras.values());
     }
 
