@@ -105,7 +105,7 @@ public class mainPersonajes {
      * Se muestran todos los personajes
      * @param repo repositorio de personajes
      */
-    private static void mostrarTodos(RepoPersonaje repo) {
+    private static void mostrarTodos(RepoPersonaje repo) throws IOException {
         System.out.println("Mostrando todas los personajes (List):");
         List<Personaje> todas = repo.findAllToList();
         if (todas.isEmpty()) {

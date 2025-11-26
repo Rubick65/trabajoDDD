@@ -56,7 +56,8 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      * @return lista de personajes
      */
     @Override
-    public List<Personaje> findAllToList() {
+    public List<Personaje> findAllToList() throws IOException {
+        recibirDatosFichero();
         return List.copyOf(listaPersonajes.values());
     }
 
