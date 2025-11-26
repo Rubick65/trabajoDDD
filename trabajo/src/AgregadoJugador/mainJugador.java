@@ -286,7 +286,7 @@ public class mainJugador {
      * @param idJugador     Id del jugador a eliminar
      * @param repoPersonaje Repsoitorio de jugadores
      */
-    private static void eliminarJugadorPersonaje(int idJugador, RepoPersonaje repoPersonaje) {
+    private static void eliminarJugadorPersonaje(int idJugador, RepoPersonaje repoPersonaje) throws IOException {
         List<Personaje> listaGrupos = repoPersonaje.findAllToList();
 
         listaGrupos.forEach(personaje -> {
@@ -329,7 +329,7 @@ public class mainJugador {
      *
      * @param repoPersonaje Repositorio de los personajes
      */
-    private static void eliminarReferenciasEnPersonaje(RepoPersonaje repoPersonaje) {
+    private static void eliminarReferenciasEnPersonaje(RepoPersonaje repoPersonaje) throws IOException {
         List<Personaje> personajes = repoPersonaje.findAllToList();
         for (Personaje personaje : personajes) {
             personaje.setID_PERSONAJE(0);
