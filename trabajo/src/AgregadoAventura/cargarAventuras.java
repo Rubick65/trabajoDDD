@@ -29,7 +29,8 @@ public class cargarAventuras {
             repo.save(a3);
             repo.save(aa1);
             repo.save(am1);
-
+            am1.setDificultad(Aventura.Dificultad.DIFICIL);
+            repo.actualizarDatos(am1);
         } catch (Exception e) {
             System.err.println("Error cargando aventuras: " + e.getMessage());
             e.printStackTrace();
