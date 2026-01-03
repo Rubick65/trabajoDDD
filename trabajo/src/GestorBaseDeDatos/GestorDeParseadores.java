@@ -21,8 +21,10 @@ import java.util.function.Function;
 
 public class GestorDeParseadores {
 
+    // NO ES NECESARIO CREAR LA CONEXIÓN AQUÍ PARA ESO ES EL MÉTODO PÚBLICO DEL GESTOR DE BASE DE DATOS
     private static Connection conexion; // Conexion a la BD
 
+    // TIENEN QUE SER ESTÁTICOS NO DEBEN DEPENDER DE UN CONSTRUCTOR
     public GestorDeParseadores(Connection conexion) {
         this.conexion = conexion;
     }
@@ -95,6 +97,7 @@ public class GestorDeParseadores {
         };
     }
 
+    // EXTRAE A UNA FUNCIÓN LA PARTE DE EL SELECT NO JUNTES LAS LÓGICAS EN UNA MISMA FUNCIÓN
     public Function<ResultSet, GrupoJuego> parseadorGrupoJuego() {
         return rs -> {
             try {
@@ -102,6 +105,7 @@ public class GestorDeParseadores {
                 //Lista de miembros a sacar
                 List<Integer> miembros = new ArrayList<>();
 
+                // ESTO EXTRAELO
                 try (PreparedStatement ps = conexion.prepareStatement("SELECT ID_JUGADOR FROM Jugador WHERE ID_GRUPO = ?")) {
                     ps.setInt(1, idGrupo);
                     try (ResultSet rs2 = ps.executeQuery()) {
@@ -121,14 +125,14 @@ public class GestorDeParseadores {
             }
         };
     }
-
+    // AQUÍ IGUAL EXTRAE A FUNCIONES EXTERNAS LA PARTE DEL SELECT NO JUNTES LAS LÓGICAS
     public Function<ResultSet, Jugador> parseadorJugador() {
         return rs -> {
             try {
                 DireccionJuego direccion = null;
                 int idDireccion = rs.getInt("ID_DIRECCION");
 
-                //Si no es nulo se sigue
+                //Si no es nulo se sigue ESTO EXTRAELO
                 if (!rs.wasNull() && idDireccion > 0) {
                     try (PreparedStatement ps = conexion.prepareStatement("SELECT * FROM DireccionJuego WHERE ID_DIRECCION = ?")) {
                         ps.setInt(1, idDireccion);
@@ -152,13 +156,14 @@ public class GestorDeParseadores {
         };
     }
 
+    // IGUAL NO JUNTES LA LÓGICA EXTRAELO A UNA COMÚN
     public Function<ResultSet, DirectorDeJuego> parseadorDirectorDeJuego() {
         return rs -> {
             try {
                 DireccionJuego direccion = null;
                 int idDireccion = rs.getInt("ID_DIRECCION");
 
-                //Igualmente, si no es nulo se sigue
+                //Igualmente, si no es nulo se sigue EXTRAELO A UNA FUNCIÓN DIFERENTE
                 if (!rs.wasNull() && idDireccion > 0) {
                     try (PreparedStatement ps = conexion.prepareStatement("SELECT * FROM DireccionJuego WHERE ID_DIRECCION = ?")) {
                         ps.setInt(1, idDireccion);
@@ -173,6 +178,7 @@ public class GestorDeParseadores {
                 List<Integer> listaAventuras = new ArrayList<>();
                 int idDirector = rs.getInt("ID_JUGADOR");
 
+                // ESTO TAMBIÉN EXTRÁELO
                 try (PreparedStatement ps = conexion.prepareStatement("SELECT ID_AVENTURA FROM DirectorAventura WHERE ID_DIRECTOR = ?")) {
                     ps.setInt(1, idDirector);
                     try (ResultSet rs3 = ps.executeQuery()) {
@@ -195,6 +201,7 @@ public class GestorDeParseadores {
         };
     }
 
+    // IGUAL QUE EN LAS OTRAS
     public Function<ResultSet, Personaje> parseadorPersonaje() {
         return rs -> {
             try {
@@ -204,6 +211,7 @@ public class GestorDeParseadores {
                 //Lista de objetos a sacar
                 List<ObjetoInventario> inventario = new ArrayList<>();
 
+                // EXTRAELO A UNA FUNCIÓN APARTE
                 try (PreparedStatement ps = conexion.prepareStatement("SELECT * FROM ObjetoInventario WHERE ID_PERSONAJE = ?")) {
                     ps.setInt(1, idPersonaje);
                     try (ResultSet rs2 = ps.executeQuery()) {
