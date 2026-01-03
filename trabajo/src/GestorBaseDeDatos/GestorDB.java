@@ -155,6 +155,16 @@ public class GestorDB {
         }
     }
 
+    /**
+     * Busca un elemento en la tabla por un id
+     *
+     * @param idObjetivo Id a buscar
+     * @param nombreId   Nombre
+     * @param parseador  Parsea los datos al objeto requerido
+     * @param <R>        Devuelve cualquier tipo de dato
+     * @return Devuelve el objeto buscado
+     * @throws SQLException Lanza una excepción en caso de problemas con la conexión
+     */
     public <R> R findById(Integer idObjetivo, String nombreId, Function<ResultSet, R> parseador) throws SQLException {
         // Conexión
         try (Connection conn = crearConexion()) {
