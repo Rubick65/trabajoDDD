@@ -1,18 +1,17 @@
 package AgregadoAventura.Repositorio;
 
 import AgregadoAventura.Aventura;
+import GestorBaseDeDatos.GestorDB;
 import Interfaces.IRepositorioExtend;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.sql.*;
+import java.util.*;
+import java.util.function.Function;
 
 public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
 
@@ -20,13 +19,14 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
     private final ObjectMapper oM = new ObjectMapper();
     private static int contadorID;
     private Map<Integer, Aventura> listaAventuras;
+    private GestorDB gestorDB;
 
     /**
      * Se cargan los datos al crear el repositorio
      * @throws IOException si hay un error al cargar
      */
     public RepoAventura() throws IOException {
-        recibirDatosFichero();
+        this.gestorDB = new GestorDB("Aventura");
     }
 
     /**
@@ -34,9 +34,22 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      * @param dificultad dificultad a buscar
      * @return lista filtrada con todas esas dificultades
      */
-    public List<Aventura> buscarAventuraPorDificultad(Aventura.Dificultad dificultad) throws IOException {
-        recibirDatosFichero();
-        return listaAventuras.values().stream().filter(aventura -> aventura.getDificultad().equals(dificultad)).toList();
+    public List<Aventura> buscarAventuraPorDificultad(Aventura.Dificultad dificultad, Function <ResultSet,Aventura> parsearAventura) throws IOException, SQLException {
+       List<Aventura> listaAventuras = new ArrayList<>();
+       try (Connection conexion = gestorDB.crearConexion()) {
+
+           // Select ha realizar
+           String select = "select * from " + gestorDB.getTabla() + " where dificultad = ?";
+           PreparedStatement ps = conexion.prepareStatement(select);
+           ps.setString(1, dificultad.toString());
+
+           ResultSet rs = ps.executeQuery();
+           while (rs.next()) {
+               //Por cada linea, se parsea al objeto indicado
+               listaAventuras.add(parsearAventura.apply(rs));
+           }
+       }
+       return listaAventuras;
     }
 
     /**
@@ -46,8 +59,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public Optional<Aventura> findByIdOptional(Integer id) throws IOException {
-        recibirDatosFichero();
-        return Optional.ofNullable(listaAventuras.get(id));
+
     }
 
     /**
@@ -56,8 +68,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public List<Aventura> findAllToList() throws IOException {
-        recibirDatosFichero();
-        return List.copyOf(listaAventuras.values());
+
     }
 
     /**
@@ -67,8 +78,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public long count() throws IOException {
-        recibirDatosFichero();
-        return listaAventuras.size();
+
     }
 
     /**
@@ -78,10 +88,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public void deleteById(Integer id) throws IOException {
-        recibirDatosFichero();
-        comprobarExistenciaClave(id);
-        listaAventuras.remove(id);
-        guardarDatos();
+
     }
 
     /**
@@ -90,9 +97,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public void deleteAll() throws IOException {
-        contadorID = 0;
-        listaAventuras = new HashMap<>();
-        guardarDatos();
+
     }
 
     /**
@@ -102,8 +107,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public boolean existsById(Integer id) throws IOException {
-        recibirDatosFichero();
-        return listaAventuras.containsKey(id);
+
     }
 
     /**
@@ -114,8 +118,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public Aventura findById(Integer id) throws IOException {
-        comprobarExistenciaClave(id);
-        return listaAventuras.get(id);
+
     }
 
     /**
@@ -124,8 +127,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public Iterable<Aventura> findAll() throws IOException {
-        recibirDatosFichero();
-        return listaAventuras.values();
+
     }
 
     /**
@@ -137,14 +139,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public <S extends Aventura> S save(S entity) throws Exception {
-        recibirDatosFichero();
-        if (listaAventuras.containsValue(entity))
-            throw new IllegalArgumentException("La aventura " + entity.getNombreAventura() + " ya existe en el archivo");
 
-        entity.setID_AVENTURA(contadorID);
-        listaAventuras.put(entity.getID_AVENTURA(), entity);
-        guardarDatos();
-        return entity;
     }
 
     /**
@@ -156,10 +151,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      * @throws IOException Lanza excepción en caso de problemas a la hora de la escritura
      */
     public <S extends Aventura> S actualizarDatos(S entity) throws IOException {
-        comprobarExistenciaClave(entity.getID_AVENTURA());
-        listaAventuras.put(entity.getID_AVENTURA(), entity);
-        guardarDatos();
-        return entity;
+
     }
 
     /**
@@ -167,30 +159,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      * @throws IOException si ocurre un error al guardar
      */
     private void guardarDatos() throws IOException {
-        Map<Integer, JsonNode> jsonMap = new HashMap<>();
-        for (Map.Entry<Integer, Aventura> entry : listaAventuras.entrySet()) {
-            jsonMap.put(entry.getKey(), oM.valueToTree(entry.getValue()));
-        }
-        oM.writerWithDefaultPrettyPrinter().writeValue(archivo, jsonMap);
-    }
 
-    /**
-     * Se cargan los datos del json
-     * @throws IOException si ocurre un error al cargar
-     */
-    private void recibirDatosFichero() throws IOException {
-        if (archivo.exists() && archivo.length() > 0) {
-            listaAventuras = oM.readValue(archivo, new TypeReference<Map<Integer, Aventura>>() {
-            });
-        }
-        else {
-            listaAventuras = new HashMap<>();
-        }
-        /*
-         Saca todos los ids del Hash Map y los compara en caso de que la lista este vacía se pondrá por defecto 1
-          en caso contrario se pondrá último id + 1
-          */
-        contadorID = listaAventuras.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
     }
 
     /**
