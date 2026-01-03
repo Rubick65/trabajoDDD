@@ -21,24 +21,24 @@ import java.util.function.Function;
 
 public class GestorDeParseadores {
 
-    private static Connection conexion; //Conexion a la BD
+    private static Connection conexion; // Conexion a la BD
 
     public GestorDeParseadores(Connection conexion) {
         this.conexion = conexion;
     }
 
-    public static Function<ResultSet,Aventura> parseadorAventura() {
+    public static Function<ResultSet, Aventura> parseadorAventura() {
         return rs -> {
             try {
                 Aventura aventura = new Aventura(
                         rs.getString("nombreAventura"),
                         rs.getInt("duracionSesionesAprox"),
-                        Aventura.Dificultad.valueOf(rs.getString("dificultad")));
-
-                //Como no esta en el constructor, se obtiene con set
+                        Aventura.Dificultad.valueOf(rs.getString("dificultad"))
+                );
+                //Como no esta el ID en el constructor, se añade manualmente, igual
+                //Con sus hijas.
                 aventura.setID_AVENTURA(rs.getInt("ID_AVENTURA"));
                 return aventura;
-
             } catch (SQLException e) {
                 throw new RuntimeException("Error al parsear aventura", e);
             }
@@ -55,11 +55,8 @@ public class GestorDeParseadores {
                         rs.getInt("cantidadEnemigos"),
                         rs.getInt("cantidadUbicaciones")
                 );
-
-                //Como no esta en el constructor, se obtiene con set nuevamente
                 aventuraAccion.setID_AVENTURA(rs.getInt("ID_AVENTURA"));
                 return aventuraAccion;
-
             } catch (SQLException e) {
                 throw new RuntimeException("Error al parsear aventura Accion", e);
             }
@@ -75,11 +72,8 @@ public class GestorDeParseadores {
                         Aventura.Dificultad.valueOf(rs.getString("dificultad")),
                         rs.getString("enigmaPrincipal")
                 );
-
-                //Igualmente se obtiene con el set.
                 aventuraMisterio.setID_AVENTURA(rs.getInt("ID_AVENTURA"));
                 return aventuraMisterio;
-
             } catch (SQLException e) {
                 throw new RuntimeException("Error al parsear aventura misterio", e);
             }
@@ -89,15 +83,13 @@ public class GestorDeParseadores {
     public Function<ResultSet, DireccionJuego> parseadorDireccionJuego() {
         return rs -> {
             try {
-                DireccionJuego d = new DireccionJuego(
+                return new DireccionJuego(
                         rs.getString("ciudad"),
                         rs.getString("calle"),
                         rs.getString("piso"),
                         rs.getString("codigoPostal")
                 );
-                return d;
-            }
-            catch (SQLException e) {
+            } catch (SQLException e) {
                 throw new RuntimeException("Error al parsear DireccionJuego", e);
             }
         };
@@ -107,27 +99,24 @@ public class GestorDeParseadores {
         return rs -> {
             try {
                 int idGrupo = rs.getInt("ID_GRUPO");
+                //Lista de miembros a sacar
                 List<Integer> miembros = new ArrayList<>();
 
-                // creamos select para los id de los miembros
                 try (PreparedStatement ps = conexion.prepareStatement("SELECT ID_JUGADOR FROM Jugador WHERE ID_GRUPO = ?")) {
                     ps.setInt(1, idGrupo);
                     try (ResultSet rs2 = ps.executeQuery()) {
                         while (rs2.next()) {
+                            //Se obtiene los id de los jugadores
                             miembros.add(rs2.getInt("ID_JUGADOR"));
                         }
                     }
                 }
-                try {
-                    return new GrupoJuego(
-                            rs.getString("nombreGrupo"),
-                            rs.getString("descripcion"),
-                            miembros
-                    );
-                } catch (IOException i) {
-                    throw new RuntimeException("error al parsear GrupoJuego", i);
-                }
-            } catch (SQLException e) {
+                return new GrupoJuego(
+                        rs.getString("nombreGrupo"),
+                        rs.getString("descripcion"),
+                        miembros
+                );
+            } catch (SQLException | IOException e) {
                 throw new RuntimeException("Error al parsear GrupoJuego", e);
             }
         };
@@ -139,13 +128,12 @@ public class GestorDeParseadores {
                 DireccionJuego direccion = null;
                 int idDireccion = rs.getInt("ID_DIRECCION");
 
-                //Si no es nulo se buscan los datos de direccionJuego
+                //Si no es nulo se sigue
                 if (!rs.wasNull() && idDireccion > 0) {
                     try (PreparedStatement ps = conexion.prepareStatement("SELECT * FROM DireccionJuego WHERE ID_DIRECCION = ?")) {
                         ps.setInt(1, idDireccion);
                         try (ResultSet rs2 = ps.executeQuery()) {
                             if (rs2.next()) {
-                                //Se parsea la direccion reutilizando codigo
                                 direccion = parseadorDireccionJuego().apply(rs2);
                             }
                         }
@@ -170,19 +158,18 @@ public class GestorDeParseadores {
                 DireccionJuego direccion = null;
                 int idDireccion = rs.getInt("ID_DIRECCION");
 
-                //Si no es nulo, se sigue
+                //Igualmente, si no es nulo se sigue
                 if (!rs.wasNull() && idDireccion > 0) {
                     try (PreparedStatement ps = conexion.prepareStatement("SELECT * FROM DireccionJuego WHERE ID_DIRECCION = ?")) {
                         ps.setInt(1, idDireccion);
-                        //Por cada direccion, se parsea.
                         try (ResultSet rs2 = ps.executeQuery()) {
-                            //Si tiene una direccion, se parsea, no hace falta bucle al tener solo 1.
                             if (rs2.next()) {
                                 direccion = parseadorDireccionJuego().apply(rs2);
                             }
                         }
                     }
                 }
+                //Lista de aventuras con su id a sacar
                 List<Integer> listaAventuras = new ArrayList<>();
                 int idDirector = rs.getInt("ID_JUGADOR");
 
@@ -214,26 +201,21 @@ public class GestorDeParseadores {
                 int idPersonaje = rs.getInt("ID_PERSONAJE");
                 int idJugador = rs.getInt("ID_JUGADOR");
 
-                // cargamos el inventario
+                //Lista de objetos a sacar
                 List<ObjetoInventario> inventario = new ArrayList<>();
+
                 try (PreparedStatement ps = conexion.prepareStatement("SELECT * FROM ObjetoInventario WHERE ID_PERSONAJE = ?")) {
                     ps.setInt(1, idPersonaje);
-
                     try (ResultSet rs2 = ps.executeQuery()) {
                         while (rs2.next()) {
-                            ObjetoInventario objeto = new ObjetoInventario(
+                            inventario.add(new ObjetoInventario(
                                     rs2.getString("nombre"),
                                     rs2.getDouble("peso"),
                                     rs2.getString("descripcionObjeto")
-                            );
-                            inventario.add(objeto);
+                            ));
                         }
                     }
                 }
-                //Se parsean a Enum los datos necesarios
-                Personaje.Clase clase = Personaje.Clase.valueOf(rs.getString("clase"));
-                Personaje.Raza raza = Personaje.Raza.valueOf(rs.getString("raza"));
-
                 Personaje personaje = new Personaje(
                         idJugador,
                         inventario,
@@ -241,8 +223,8 @@ public class GestorDeParseadores {
                         rs.getString("nombrePersonaje"),
                         rs.getString("descripcion"),
                         rs.getString("historia"),
-                        clase,
-                        raza
+                        Personaje.Clase.valueOf(rs.getString("clase")),
+                        Personaje.Raza.valueOf(rs.getString("raza"))
                 );
                 personaje.setID_PERSONAJE(idPersonaje);
                 return personaje;
@@ -255,12 +237,11 @@ public class GestorDeParseadores {
     public Function<ResultSet, ObjetoInventario> parseadorObjetoInventario() {
         return rs -> {
             try {
-                ObjetoInventario objeto = new ObjetoInventario(
+                return new ObjetoInventario(
                         rs.getString("nombre"),
                         rs.getDouble("peso"),
                         rs.getString("descripcionObjeto")
                 );
-                return objeto;
             } catch (SQLException e) {
                 throw new RuntimeException("Error al parsear ObjetoInventario", e);
             }
