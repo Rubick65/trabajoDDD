@@ -21,15 +21,7 @@ import java.util.function.Function;
 
 public class GestorDeParseadores {
 
-    // NO ES NECESARIO CREAR LA CONEXIÓN AQUÍ PARA ESO ES EL MÉTODO PÚBLICO DEL GESTOR DE BASE DE DATOS
-    private static Connection conexion; // Conexion a la BD
-
-    // TIENEN QUE SER ESTÁTICOS NO DEBEN DEPENDER DE UN CONSTRUCTOR
-    public GestorDeParseadores(Connection conexion) {
-        this.conexion = conexion;
-    }
-
-    public static Function<ResultSet, Aventura> parseadorAventura() {
+    public static Function<ResultSet, Aventura> parseadorAventura(Connection conexion) {
         return rs -> {
             try {
                 Aventura aventura = new Aventura(
@@ -47,7 +39,7 @@ public class GestorDeParseadores {
         };
     }
 
-    public static Function<ResultSet, AventuraAccion> parseadorAventuraAccion() {
+    public static Function<ResultSet, AventuraAccion> parseadorAventuraAccion(Connection conex) {
         return rs -> {
             try {
                 AventuraAccion aventuraAccion = new AventuraAccion(
@@ -65,7 +57,7 @@ public class GestorDeParseadores {
         };
     }
 
-    public static Function<ResultSet, AventuraMisterio> parseadorAventuraMisterio() {
+    public static Function<ResultSet, AventuraMisterio> parseadorAventuraMisterio(Connection conexion) {
         return rs -> {
             try {
                 AventuraMisterio aventuraMisterio = new AventuraMisterio(
@@ -82,7 +74,7 @@ public class GestorDeParseadores {
         };
     }
 
-    public Function<ResultSet, DireccionJuego> parseadorDireccionJuego() {
+    public Function<ResultSet, DireccionJuego> parseadorDireccionJuego(Connection conexion) {
         return rs -> {
             try {
                 return new DireccionJuego(
@@ -98,7 +90,7 @@ public class GestorDeParseadores {
     }
 
     // EXTRAE A UNA FUNCIÓN LA PARTE DE EL SELECT NO JUNTES LAS LÓGICAS EN UNA MISMA FUNCIÓN
-    public Function<ResultSet, GrupoJuego> parseadorGrupoJuego() {
+    public Function<ResultSet, GrupoJuego> parseadorGrupoJuego(Connection conexion) {
         return rs -> {
             try {
                 int idGrupo = rs.getInt("ID_GRUPO");
@@ -126,7 +118,7 @@ public class GestorDeParseadores {
         };
     }
     // AQUÍ IGUAL EXTRAE A FUNCIONES EXTERNAS LA PARTE DEL SELECT NO JUNTES LAS LÓGICAS
-    public Function<ResultSet, Jugador> parseadorJugador() {
+    public Function<ResultSet, Jugador> parseadorJugador(Connection conexion) {
         return rs -> {
             try {
                 DireccionJuego direccion = null;
@@ -138,7 +130,7 @@ public class GestorDeParseadores {
                         ps.setInt(1, idDireccion);
                         try (ResultSet rs2 = ps.executeQuery()) {
                             if (rs2.next()) {
-                                direccion = parseadorDireccionJuego().apply(rs2);
+                                direccion = parseadorDireccionJuego(conexion).apply(rs2);
                             }
                         }
                     }
@@ -157,7 +149,7 @@ public class GestorDeParseadores {
     }
 
     // IGUAL NO JUNTES LA LÓGICA EXTRAELO A UNA COMÚN
-    public Function<ResultSet, DirectorDeJuego> parseadorDirectorDeJuego() {
+    public Function<ResultSet, DirectorDeJuego> parseadorDirectorDeJuego(Connection conexion) {
         return rs -> {
             try {
                 DireccionJuego direccion = null;
@@ -169,7 +161,7 @@ public class GestorDeParseadores {
                         ps.setInt(1, idDireccion);
                         try (ResultSet rs2 = ps.executeQuery()) {
                             if (rs2.next()) {
-                                direccion = parseadorDireccionJuego().apply(rs2);
+                                direccion = parseadorDireccionJuego(conexion).apply(rs2);
                             }
                         }
                     }
@@ -202,7 +194,7 @@ public class GestorDeParseadores {
     }
 
     // IGUAL QUE EN LAS OTRAS
-    public Function<ResultSet, Personaje> parseadorPersonaje() {
+    public Function<ResultSet, Personaje> parseadorPersonaje(Connection conexion) {
         return rs -> {
             try {
                 int idPersonaje = rs.getInt("ID_PERSONAJE");
@@ -242,7 +234,7 @@ public class GestorDeParseadores {
         };
     }
 
-    public Function<ResultSet, ObjetoInventario> parseadorObjetoInventario() {
+    public Function<ResultSet, ObjetoInventario> parseadorObjetoInventario(Connection conexion) {
         return rs -> {
             try {
                 return new ObjetoInventario(
