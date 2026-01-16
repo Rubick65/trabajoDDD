@@ -124,8 +124,10 @@ public class GestorDeParseadores {
                 DireccionJuego direccion = null;
                 int idDireccion = rs.getInt("ID_DIRECCION");
 
-                //Si no es nulo se sigue ESTO EXTRAELO
+                //Si no es nulo se sigue
+
                 if (!rs.wasNull() && idDireccion > 0) {
+                    // ESTO EXTRAELO
                     try (PreparedStatement ps = conexion.prepareStatement("SELECT * FROM DireccionJuego WHERE ID_DIRECCION = ?")) {
                         ps.setInt(1, idDireccion);
                         try (ResultSet rs2 = ps.executeQuery()) {
@@ -148,15 +150,15 @@ public class GestorDeParseadores {
         };
     }
 
-    // IGUAL NO JUNTES LA LÓGICA EXTRAELO A UNA COMÚN
     public Function<ResultSet, DirectorDeJuego> parseadorDirectorDeJuego(Connection conexion) {
         return rs -> {
             try {
                 DireccionJuego direccion = null;
                 int idDireccion = rs.getInt("ID_DIRECCION");
 
-                //Igualmente, si no es nulo se sigue EXTRAELO A UNA FUNCIÓN DIFERENTE
+                //Igualmente, si no es nulo se sigue
                 if (!rs.wasNull() && idDireccion > 0) {
+                    // EXTRAELO A UNA FUNCIÓN DIFERENTE
                     try (PreparedStatement ps = conexion.prepareStatement("SELECT * FROM DireccionJuego WHERE ID_DIRECCION = ?")) {
                         ps.setInt(1, idDireccion);
                         try (ResultSet rs2 = ps.executeQuery()) {
@@ -193,7 +195,6 @@ public class GestorDeParseadores {
         };
     }
 
-    // IGUAL QUE EN LAS OTRAS
     public Function<ResultSet, Personaje> parseadorPersonaje(Connection conexion) {
         return rs -> {
             try {
