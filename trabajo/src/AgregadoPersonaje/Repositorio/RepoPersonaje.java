@@ -1,151 +1,135 @@
 package AgregadoPersonaje.Repositorio;
 
 import AgregadoPersonaje.Personaje;
+import GestorBaseDeDatos.GestorDB;
 import Interfaces.IRepositorioExtend;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
 
 
-    private final File archivo = new File("trabajo/src/AgregadoPersonaje/Personajes.json");
-    private final ObjectMapper oM = new ObjectMapper();
-    private final ObjectWriter writer = oM.writerWithDefaultPrettyPrinter();
-    private static int contadorID;
-    private Map<Integer, Personaje> listaPersonajes;
+    private GestorDB gestorPersonajes;
+    private final String nombreID = "ID_PERSONAJE";
 
     /**
      * Se cargan los datos del json
+     *
      * @throws IOException si ocurre un error al cargar
      */
     public RepoPersonaje() throws IOException {
-        recibirDatosFichero();
+        this.gestorPersonajes = new GestorDB("Personaje");
     }
 
     /**
      * Se buscan los personajes por su clase
+     *
      * @param clase a buscar
      * @return lista filtrada por clases
      */
     public List<Personaje> buscarPersonajesPorClases(Personaje.Clase clase) throws IOException {
-        recibirDatosFichero();
-        return listaPersonajes.values().stream().filter(personaje -> personaje.getClase().equals(clase)).toList();
+        return null;
     }
 
     /**
      * Se obtiene mediante optional un personaje
+     *
      * @param id a buscar
      * @return personaje a buscar
      */
     @Override
     public Optional<Personaje> findByIdOptional(Integer id) throws IOException {
-        recibirDatosFichero();
-        return Optional.ofNullable(listaPersonajes.get(id));
+        return Optional.empty();
     }
 
     /**
      * Se obtiene una lista de todos los personajes
+     *
      * @return lista de personajes
      */
     @Override
     public List<Personaje> findAllToList() throws IOException {
-        recibirDatosFichero();
-        return List.copyOf(listaPersonajes.values());
+        return null;
     }
 
     /**
      * Se cuenta la cantidad de personajes
+     *
      * @return cantidad
      * @throws IOException si no hay personajes
      */
     @Override
     public long count() throws IOException {
-        recibirDatosFichero();
-        return listaPersonajes.size();
+        return gestorPersonajes.count();
     }
 
     /**
      * Se elimina un personaje mediante su id
+     *
      * @param id del personaje a eliminar
      * @throws IOException si no existe el id
      */
     @Override
     public void deleteById(Integer id) throws IOException {
-        recibirDatosFichero();
-        comprobarExistenciaClave(id);
-        listaPersonajes.remove(id);
-        guardarDatos();
+        gestorPersonajes.deleteById(id, nombreID);
     }
 
     /**
      * Se eliminan todos los personajes
+     *
      * @throws IOException si ocurre un error al guardar
      */
     @Override
     public void deleteAll() throws IOException {
-        contadorID = 0;
-        listaPersonajes = new HashMap<>();
-        guardarDatos();
+        gestorPersonajes.deleteAll();
     }
 
     /**
      * Se comprueba la existencia de un personaje mediante su id
+     *
      * @param id a comprobar
      * @return si existe o no
      */
     @Override
     public boolean existsById(Integer id) throws IOException {
-        recibirDatosFichero();
-        return listaPersonajes.containsKey(id);
+        return gestorPersonajes.existById(id, nombreID);
     }
 
     /**
      * Se obtiene un personaje por su id
+     *
      * @param id a buscar
      * @return personaje con ese id
      * @throws IOException si no existe ese id
      */
     @Override
     public Personaje findById(Integer id) throws IOException {
-        comprobarExistenciaClave(id);
-        return listaPersonajes.get(id);
+        return null;
     }
 
     /**
      * Se obtiene la lista de personajes mediante iterable
+     *
      * @return lista de personajes
      */
     @Override
     public Iterable<Personaje> findAll() throws IOException {
-        recibirDatosFichero();
-        return listaPersonajes.values();
+        return null;
     }
 
     /**
      * Se guardan los datos en el json
+     *
      * @param entity personaje a actualizar
+     * @param <S>    entidad e hijos
      * @return devuelve el personaje actualizado
-     * @param <S> entidad e hijos
      * @throws Exception en caso de problemas al actualizar
      */
     @Override
     public <S extends Personaje> S save(S entity) throws Exception {
-        recibirDatosFichero();
-        if (listaPersonajes.containsValue(entity))
-            throw new IllegalArgumentException("El personaje " + entity.getNombrePersonaje() + " ya existe en el archivo");
-
-        entity.setID_PERSONAJE(contadorID);
-        listaPersonajes.put(entity.getID_PERSONAJE(), entity);
-        guardarDatos();
-        return entity;
+        return null;
     }
 
     /**
@@ -157,41 +141,28 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      * @throws IOException Lanza excepción en caso de problemas a la hora de la escritura
      */
     public <S extends Personaje> S actualizarDatos(S entity) throws IOException {
-        comprobarExistenciaClave(entity.getID_PERSONAJE());
-        listaPersonajes.put(entity.getID_PERSONAJE(), entity);
-        guardarDatos();
-        return entity;
+        return null;
     }
 
     /**
      * Se guardan los datos en el json
+     *
      * @throws IOException en caso de error de escritura
      */
     private void guardarDatos() throws IOException {
-        writer.writeValue(archivo, listaPersonajes);
     }
 
     /**
      * Se cargan los datos del json
+     *
      * @throws IOException en caso de error al cargar los datos
      */
     private void recibirDatosFichero() throws IOException {
-        if (archivo.exists() && archivo.length() > 0) {
-            listaPersonajes = oM.readValue(archivo, new TypeReference<Map<Integer, Personaje>>() {
-            });
-        }
-        else {
-            listaPersonajes = new HashMap<>();
-        }
-        /*
-        Saca todos los ids del Hash Map y los compara en caso de que la lista este vacía se pondrá por defecto 1
-        en caso contrario se pondrá último id + 1
-        */
-        contadorID = listaPersonajes.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
     }
 
     /**
      * Se comprueba la existencia del personaje mediante su id
+     *
      * @param id id a buscar
      * @throws IOException en caso de no existir
      */

@@ -67,7 +67,10 @@ public class GestorDB {
             ResultSet rs = st.executeQuery(select);
 
             // Devolvemos el resultado del count
-            return rs.getInt(1);
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            return 0;
         } catch (SQLException e) {
             System.err.println("Error a la hora de realizar la conexión" + e.getMessage());
             return -1;
@@ -84,18 +87,12 @@ public class GestorDB {
     public boolean existById(Integer idObjetivo, String nombreId) {
         // Conexión
         try (Connection conn = crearConexion()) {
-            // Se crea el select
-            String select = "SELECT EXIST(SELECT 1 FROM " + this.tabla + " WHERE " + nombreId + " = ?)";
-
-            // Se prepara el select y se añade el parámetro faltante
+            String select = "SELECT 1 FROM " + this.tabla + " WHERE " + nombreId + " = ? LIMIT 1";
             PreparedStatement ps = conn.prepareStatement(select);
             ps.setInt(1, idObjetivo);
 
-            // Se ejecuta el select
             ResultSet rs = ps.executeQuery();
-
-            // Devuelve un boolean que indica la existencia del objetivo
-            return rs.next();
+            return rs.next(); // true si hay al menos un registro
 
         } catch (SQLException e) {
             System.err.println("Error a la hora de realizar la conexión" + e.getMessage());
@@ -109,22 +106,33 @@ public class GestorDB {
      * @return Devuelve 0 si no pudo eliminar nada, 1 si sí se eliminó correctamente y -1 si ocurrió algún error en el
      * proceso
      */
-    public int deleteAll() {
+    public void deleteAll() {
         // Conexión
         try (Connection conn = crearConexion()) {
 
             // Delete de todos los objetos de una tabla
             String delete = "DELETE FROM " + this.tabla;
 
-            // Se crea el delete
-            try (Statement st = conn.createStatement()) {
+            // Quitamos el auto commit
+            conn.setAutoCommit(false);
+            // Se prepara el delete
+            try (PreparedStatement ps = conn.prepareStatement(delete)) {
                 // Y se ejecuta el delete
-                return st.executeUpdate(delete);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                try {
+                    conn.rollback();
+                } catch (SQLException excep) {
+                    //código adicional
+                }
+            } finally {
+                //insertar codigo para cerrar todo
+                conn.setAutoCommit(true);
             }
 
         } catch (SQLException e) {
             System.err.println("Error a la hora de realizar la conexión" + e.getMessage());
-            return -1;
         }
     }
 
@@ -135,27 +143,41 @@ public class GestorDB {
      * @param nombreId   Nombre del id en la tabla
      * @return Devuelve la cantidad de elementos eliminados o -1 en caso de error
      */
-    public int deleteById(Integer idObjetivo, String nombreId) {
+    public void deleteById(Integer idObjetivo, String nombreId) {
         // Conexión
         try (Connection conn = crearConexion()) {
             // Se crea el select
             String delete = "DELETE FROM " + this.tabla + " WHERE " + nombreId + " = ?";
 
+            // Quitamos el auto commit
+            conn.setAutoCommit(false);
             // Se prepara el delete
             try (PreparedStatement ps = conn.prepareStatement(delete)) {
+
                 // Se añade el parámetro faltante
                 ps.setInt(1, idObjetivo);
                 // Y se ejecuta el delete
-                return ps.executeUpdate(delete);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                try {
+                    conn.rollback();
+                } catch (SQLException excep) {
+                    //código adicional
+                }
+            } finally {
+                //insertar codigo para cerrar todo
+                conn.setAutoCommit(true);
             }
 
         } catch (SQLException e) {
             System.err.println("Error a la hora de realizar la conexión" + e.getMessage());
-            return -1;
         }
     }
 
-    public <R> R findById(Integer idObjetivo, String nombreId, Function<ResultSet, R> parseador) throws SQLException {
+
+    public <R> R findById(Integer idObjetivo, String nombreId, Function<ResultSet, R> parseador) throws
+            SQLException {
         // Conexión
         try (Connection conn = crearConexion()) {
             // Se crea el select
@@ -218,7 +240,8 @@ public class GestorDB {
      * @return Devuelve la lista con los datos
      * @throws SQLException Lanza excepción cuando aparece un problema con la conexión a la a base de datos
      */
-    public <R> List<R> buscarPorDato(R dato, Function<ResultSet, R> parseador, String nombreObjetivo) throws SQLException {
+    public <R> List<R> buscarPorDato(R dato, Function<ResultSet, R> parseador, String nombreObjetivo) throws
+            SQLException {
         List<R> listaDeDatos = new ArrayList<>();
         try (Connection conexion = crearConexion()) {
             // Select ha realizar
