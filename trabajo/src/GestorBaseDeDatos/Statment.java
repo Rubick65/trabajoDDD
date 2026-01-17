@@ -12,14 +12,14 @@ import static GestorBaseDeDatos.GestorDeParseadores.parseadorDireccionJuego;
 
 public class Statment {
 
-    public static void aniadirAListaEnteros(Connection conexion, List<Integer> listaAniadir, String IdBuscar, String tabla, String IdCondicion, int valorCondicion) {
-        try (PreparedStatement ps = conexion.prepareStatement("SELECT " + IdBuscar + " FROM " + tabla + " WHERE " + IdCondicion + " = ?")) {
+    public static void aniadirAListaEnteros(Connection conexion, List<Integer> listaAniadir, String idBuscar, String tabla, String idCondicion, int valorCondicion) {
+        try (PreparedStatement ps = conexion.prepareStatement("SELECT " + idBuscar + " FROM " + tabla + " WHERE " + idCondicion + " = ?")) {
             ps.setInt(1, valorCondicion);
 
             try (ResultSet rs2 = ps.executeQuery()) {
                 while (rs2.next()) {
                     //Se obtiene los id de los jugadores
-                    listaAniadir.add(rs2.getInt(IdBuscar));
+                    listaAniadir.add(rs2.getInt(idBuscar));
                 }
             }
         }
@@ -28,11 +28,11 @@ public class Statment {
         }
     }
 
-    public static DireccionJuego parsearDireccionJuego(Connection conexion, int IdBuscar) {
+    public static DireccionJuego obtenerDireccionDeJuego(Connection conexion, int idBuscar) {
         DireccionJuego direccion = null; //Quitar del otro
 
         try (PreparedStatement ps = conexion.prepareStatement("SELECT * FROM DireccionJuego WHERE ID_DIRECCION = ?")) {
-            ps.setInt(1, IdBuscar);
+            ps.setInt(1, idBuscar);
             try (ResultSet rs2 = ps.executeQuery()) {
                 if (rs2.next()) {
                     direccion = parseadorDireccionJuego(conexion).apply(rs2);
