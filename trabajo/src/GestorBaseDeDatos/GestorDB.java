@@ -35,7 +35,7 @@ public class GestorDB {
      * @return Connection devuelve la conexión a la base de datos
      * @throws SQLException Lanza una excepción en caso de problemas con la conexión
      */
-    public Connection crearConexion() throws SQLException {
+    public Connection crearConexion() {
         // Datos de conexión
         String servidor = "localhost";
         String puerto = "3306";
@@ -50,7 +50,11 @@ public class GestorDB {
         connectionProps.setProperty("serverTimezone", "UTC");
 
         // Devuelve la conexión a la base de datos para ser usada
-        return DriverManager.getConnection("jdbc:mysql://" + servidor + ":" + puerto + "/" + nombreBD, connectionProps);
+        try {
+            return DriverManager.getConnection("jdbc:mysql://" + servidor + ":" + puerto + "/" + nombreBD, connectionProps);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -176,8 +180,7 @@ public class GestorDB {
     }
 
 
-    public <R> R findById(Integer idObjetivo, String nombreId, Function<ResultSet, R> parseador) throws
-            SQLException {
+    public <R> R findById(Integer idObjetivo, String nombreId, Function<ResultSet, R> parseador) {
         // Conexión
         try (Connection conn = crearConexion()) {
             // Se crea el select
@@ -192,12 +195,13 @@ public class GestorDB {
 
             // Si existe el next
             if (rs.next()) {
-                // Devuelve un boolean que indica la existencia del objetivo
                 return parseador.apply(rs);
             } else {
                 // En caso contrario se devuelve un nulo
                 return null;
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -209,7 +213,7 @@ public class GestorDB {
      * @return Devuelve la lista con los datos parseados
      * @throws SQLException Lanza excepción si ocurre algún error con la conexión
      */
-    public <R> List<R> findAllToList(Function<ResultSet, R> parseador) throws SQLException {
+    public <R> List<R> findAllToList(Function<ResultSet, R> parseador) {
         // Lista de objetos a devolver
         List<R> listaObjetos = new ArrayList<>();
         // Select para buscar todos los datos de la tabla
@@ -225,6 +229,8 @@ public class GestorDB {
                 // Añadimos el siguiente objeto a la lista de objetos
                 listaObjetos.add(parseador.apply(rs));
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         // Se devuelve la lista
         return listaObjetos;
@@ -240,12 +246,11 @@ public class GestorDB {
      * @return Devuelve la lista con los datos
      * @throws SQLException Lanza excepción cuando aparece un problema con la conexión a la a base de datos
      */
-    public <R> List<R> buscarPorDato(R dato, Function<ResultSet, R> parseador, String nombreObjetivo) throws
-            SQLException {
-        List<R> listaDeDatos = new ArrayList<>();
+    public <R, T> List<T> buscarPorDato(R dato, Function<ResultSet, T> parseador, String nombreObjetivo) {
+        List<T> listaDeDatos = new ArrayList<>();
         try (Connection conexion = crearConexion()) {
             // Select ha realizar
-            String select = "select * from " + this.tabla + " where nombreObjetivo = ?";
+            String select = "select * from " + this.tabla + " where " + nombreObjetivo + " = ?";
             // Se prepara el select
             PreparedStatement ps = conexion.prepareStatement(select);
             // Se indica el tipo de dato faltante y se pone
@@ -257,6 +262,8 @@ public class GestorDB {
                 // Se va añadiendo los datos parseados a la lista
                 listaDeDatos.add(parseador.apply(rs));
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         // Se devuelve la lista de datos
         return listaDeDatos;

@@ -2,6 +2,7 @@ package AgregadoPersonaje.Repositorio;
 
 import AgregadoPersonaje.Personaje;
 import GestorBaseDeDatos.GestorDB;
+import GestorBaseDeDatos.GestorDeParseadores;
 import Interfaces.IRepositorioExtend;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      * @return lista filtrada por clases
      */
     public List<Personaje> buscarPersonajesPorClases(Personaje.Clase clase) throws IOException {
-        return null;
+        return gestorPersonajes.buscarPorDato(clase, GestorDeParseadores.parseadorPersonaje(this.gestorPersonajes.crearConexion()), "clase");
     }
 
     /**
@@ -41,7 +42,7 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      */
     @Override
     public Optional<Personaje> findByIdOptional(Integer id) throws IOException {
-        return Optional.empty();
+        return Optional.ofNullable(gestorPersonajes.findById(id, nombreID, GestorDeParseadores.parseadorPersonaje(this.gestorPersonajes.crearConexion())));
     }
 
     /**
@@ -51,7 +52,7 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      */
     @Override
     public List<Personaje> findAllToList() throws IOException {
-        return null;
+        return gestorPersonajes.findAllToList(GestorDeParseadores.parseadorPersonaje(this.gestorPersonajes.crearConexion()));
     }
 
     /**
@@ -106,7 +107,8 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      */
     @Override
     public Personaje findById(Integer id) throws IOException {
-        return null;
+        return gestorPersonajes.findById(id, nombreID, GestorDeParseadores.parseadorPersonaje(gestorPersonajes.crearConexion()));
+
     }
 
     /**
@@ -116,7 +118,7 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      */
     @Override
     public Iterable<Personaje> findAll() throws IOException {
-        return null;
+        return gestorPersonajes.findAllToList(GestorDeParseadores.parseadorPersonaje(this.gestorPersonajes.crearConexion()));
     }
 
     /**
@@ -144,31 +146,5 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
         return null;
     }
 
-    /**
-     * Se guardan los datos en el json
-     *
-     * @throws IOException en caso de error de escritura
-     */
-    private void guardarDatos() throws IOException {
-    }
-
-    /**
-     * Se cargan los datos del json
-     *
-     * @throws IOException en caso de error al cargar los datos
-     */
-    private void recibirDatosFichero() throws IOException {
-    }
-
-    /**
-     * Se comprueba la existencia del personaje mediante su id
-     *
-     * @param id id a buscar
-     * @throws IOException en caso de no existir
-     */
-    private void comprobarExistenciaClave(Integer id) throws IOException {
-        if (!existsById(id))
-            throw new IllegalArgumentException("En la lista no existe ningún personaje con este id");
-    }
 }
 
