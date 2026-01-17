@@ -116,7 +116,7 @@ public class GestorDeParseadores {
 
                 //Si no es nulo se sigue
                 if (!rs.wasNull() && idDireccion > 0) {
-                    direccion = Statment.parsearDireccionJuego(conexion, idDireccion);
+                    direccion = Statment.obtenerDireccionDeJuego(conexion, idDireccion);
                 }
 
                 Jugador jugador = new Jugador(
@@ -140,7 +140,7 @@ public class GestorDeParseadores {
 
                 //Igualmente, si no es nulo se sigue
                 if (!rs.wasNull() && idDireccion > 0) {
-                    direccion = Statment.parsearDireccionJuego(conexion, idDireccion);
+                    direccion = Statment.obtenerDireccionDeJuego(conexion, idDireccion);
                 }
 
                 //Lista de aventuras con su id a sacar
