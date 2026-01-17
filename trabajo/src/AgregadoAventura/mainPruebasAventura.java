@@ -34,7 +34,7 @@ public class mainPruebasAventura {
 
             System.out.println();
             System.out.println("Aventuras dificiles:");
-            repo.buscarAventuraPorDificultad(Dificultad.DIFICIL).forEach(System.out::println);
+//            repo.buscarAventuraPorDificultad(Dificultad.DIFICIL).forEach(System.out::println);
 
             System.out.println("\nDespués de guardar una nueva aventura (autoincremento ID):");
             repo.findAllToList().forEach(System.out::println);

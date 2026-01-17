@@ -59,6 +59,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public Optional<Aventura> findByIdOptional(Integer id) throws IOException {
+        return Optional.empty();
 
     }
 
@@ -68,6 +69,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public List<Aventura> findAllToList() throws IOException {
+        return null;
 
     }
 
@@ -78,6 +80,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public long count() throws IOException {
+        return 0;
 
     }
 
@@ -107,6 +110,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public boolean existsById(Integer id) throws IOException {
+        return false;
 
     }
 
@@ -118,6 +122,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public Aventura findById(Integer id) throws IOException {
+        return null;
 
     }
 
@@ -127,6 +132,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public Iterable<Aventura> findAll() throws IOException {
+        return null;
 
     }
 
@@ -139,6 +145,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public <S extends Aventura> S save(S entity) throws Exception {
+        return null;
 
     }
 
@@ -151,6 +158,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      * @throws IOException Lanza excepción en caso de problemas a la hora de la escritura
      */
     public <S extends Aventura> S actualizarDatos(S entity) throws IOException {
+        return null;
 
     }
 
