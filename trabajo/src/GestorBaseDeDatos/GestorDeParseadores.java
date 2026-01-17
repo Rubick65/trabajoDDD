@@ -89,7 +89,7 @@ public class GestorDeParseadores {
         };
     }
 
-    public Function<ResultSet, GrupoJuego> parseadorGrupoJuego(Connection conexion) {
+    public static Function<ResultSet, GrupoJuego> parseadorGrupoJuego(Connection conexion) {
         return rs -> {
             try {
                 int idGrupo = rs.getInt("ID_GRUPO");
@@ -108,7 +108,7 @@ public class GestorDeParseadores {
             }
         };
     }
-    public Function<ResultSet, Jugador> parseadorJugador(Connection conexion) {
+    public static Function<ResultSet, Jugador> parseadorJugador(Connection conexion) {
         return rs -> {
             try {
                 DireccionJuego direccion = null;
@@ -132,7 +132,7 @@ public class GestorDeParseadores {
         };
     }
 
-    public Function<ResultSet, DirectorDeJuego> parseadorDirectorDeJuego(Connection conexion) {
+    public static Function<ResultSet, DirectorDeJuego> parseadorDirectorDeJuego(Connection conexion) {
         return rs -> {
             try {
                 DireccionJuego direccion = null;
@@ -163,7 +163,7 @@ public class GestorDeParseadores {
         };
     }
 
-    public Function<ResultSet, Personaje> parseadorPersonaje(Connection conexion) {
+    public static Function<ResultSet, Personaje> parseadorPersonaje(Connection conexion) {
         return rs -> {
             try {
                 int idPersonaje = rs.getInt("ID_PERSONAJE");
@@ -202,7 +202,7 @@ public class GestorDeParseadores {
         };
     }
 
-    public Function<ResultSet, ObjetoInventario> parseadorObjetoInventario(Connection conexion) {
+    public static Function<ResultSet, ObjetoInventario> parseadorObjetoInventario(Connection conexion) {
         return rs -> {
             try {
                 return new ObjetoInventario(
