@@ -1,19 +1,22 @@
 package AgregadoPersonaje.Repositorio;
 
+import AgregadoPersonaje.ObjetoInventario;
 import AgregadoPersonaje.Personaje;
 import GestorBaseDeDatos.GestorDB;
 import GestorBaseDeDatos.GestorDeParseadores;
 import Interfaces.IRepositorioExtend;
 
 import java.io.IOException;
+import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
 public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
 
 
-    private GestorDB gestorPersonajes;
+    private final GestorDB gestorPersonajes;
     private final String nombreID = "ID_PERSONAJE";
+    private final String tabla = "Personaje";
 
     /**
      * Se cargan los datos del json
@@ -21,7 +24,7 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      * @throws IOException si ocurre un error al cargar
      */
     public RepoPersonaje() throws IOException {
-        this.gestorPersonajes = new GestorDB("Personaje");
+        this.gestorPersonajes = new GestorDB(tabla);
     }
 
     /**
@@ -30,7 +33,7 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      * @param clase a buscar
      * @return lista filtrada por clases
      */
-    public List<Personaje> buscarPersonajesPorClases(Personaje.Clase clase) throws IOException {
+    public List<Personaje> buscarPersonajesPorClases(Personaje.Clase clase) {
         return gestorPersonajes.buscarPorDato(clase, GestorDeParseadores.parseadorPersonaje(this.gestorPersonajes.crearConexion()), "clase");
     }
 
@@ -122,29 +125,117 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
     }
 
     /**
-     * Se guardan los datos en el json
+     * Se guardan los datos en la base de datos
      *
-     * @param entity personaje a actualizar
+     * @param entity personaje a actualizar o guardar
      * @param <S>    entidad e hijos
-     * @return devuelve el personaje actualizado
-     * @throws Exception en caso de problemas al actualizar
+     * @return devuelve el personaje actualizado o guardado
      */
     @Override
-    public <S extends Personaje> S save(S entity) throws Exception {
+    public <S extends Personaje> S save(S entity) {
+        int idGenerado = 0;
+        try (Connection con = gestorPersonajes.crearConexion()) {
+
+            // Insert o Update para guardar o actualizar datos en la base de datos
+            String insert = "INSERT INTO " + tabla + " (ID_JUGADOR, CAPACIDADCARGA, NOMBREPERSONAJE, DESCRIPCION, HISTORIA, CLASE, RAZA) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?) AS nuevo " +
+                    "ON DUPLICATE KEY UPDATE " +
+                    "capacidadCarga = nuevo.capacidadCarga, " +
+                    "nombrePersonaje = nuevo.nombrePersonaje, " +
+                    "descripcion = nuevo.descripcion, " +
+                    "historia = nuevo.historia, " +
+                    "clase = nuevo.clase, " +
+                    "raza = nuevo.raza";
+
+
+            // Se quita el autocommit
+            con.setAutoCommit(false);
+            // En caso de que si se haya podido guardar los objetos preparamos el insert del personaje
+            try (PreparedStatement ps = con.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS)) {
+                // Se añaden todos los valores del personaje a insertar o actualizar
+                ps.setInt(1, entity.getID_JUGADOR());
+                ps.setDouble(2, entity.getCapacidadCarga());
+                ps.setString(3, entity.getNombrePersonaje());
+                ps.setString(4, entity.getDescripcion());
+                ps.setString(5, entity.getHistoria());
+                ps.setString(6, entity.getClase().toString());
+                ps.setString(7, entity.getRaza().toString());
+                ps.executeUpdate();
+
+                // Sacamos la key que se ha generado con el insert
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next())
+                        idGenerado = rs.getInt(1); // Sacamos el key generado
+                }
+
+            } catch (SQLException e) {
+                con.rollback();
+                throw new SQLException("Error al insertar el personaje " + e.getMessage());
+            } finally {
+                con.setAutoCommit(true);
+            }
+
+            // Intentamos guardar los objetos del inventario en caso de error lanzará excepción
+            guardarObjetosInventario(entity.getInventario(), con, idGenerado);
+
+            return entity;
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
         return null;
     }
 
     /**
-     * Actualiza la entidad si ya existía antes
+     * Guarda los objetos del inventario del personaje
      *
-     * @param entity Entidad a actualizar
-     * @param <S>    Entidad he hijos
-     * @return Devuelve la entidad actualizada
-     * @throws IOException Lanza excepción en caso de problemas a la hora de la escritura
+     * @param objetosInventario Lista de objetos del inventario
+     * @param con               Conexión a la base de datos
+     * @param id_personaje      Id del personaje al que pertenece el objeto
+     * @throws SQLException Lanza una excepción en caso de error durante el insert
      */
-    public <S extends Personaje> S actualizarDatos(S entity) throws IOException {
-        return null;
+    private void guardarObjetosInventario(List<ObjetoInventario> objetosInventario, Connection con, int id_personaje) throws SQLException {
+        String insertObjetos = insertTablaObjetosInventario();
+
+        // Quitamos el autoCommit
+        con.setAutoCommit(false);
+        for (ObjetoInventario obj : objetosInventario) {
+            // Preparamos el insert o update de los objetos del inventario
+            try (PreparedStatement psO = con.prepareStatement(insertObjetos)) {
+                // Indicamos los valores a guardar
+                psO.setInt(1, id_personaje);
+                psO.setString(2, obj.getNombre());
+                psO.setString(3, obj.getDescripcionObjeto());
+                psO.setDouble(4, obj.getPeso());
+                psO.executeUpdate();
+
+            } catch (SQLException e) {
+                // Damos marcha atrás
+                con.rollback();
+                // En caso de error
+                throw new SQLException("No se ha podido guardar los objetos: " + e.getMessage());
+            } finally {
+                con.setAutoCommit(true);
+            }
+        }
     }
 
+    /**
+     * Crea el insert a la tabla de objetos
+     *
+     * @return Devuelve un string con el insert a la tabla de objetos
+     */
+    private String insertTablaObjetosInventario() {
+        // Tabla para guardar los objetos del inventario
+        String tablaObjetos = "ObjetoInventario";
+
+        // Insert o update para guardar o actualizar los objetos del inventario del jugador
+        return "INSERT INTO " + tablaObjetos + " (ID_PERSONAJE, NOMBRE, DESCRIPCIONOBJETO, PESO) " +
+                "VALUES (?, ?, ?, ?) AS fila_nueva " +
+                "ON DUPLICATE KEY UPDATE " +
+                "NOMBRE = fila_nueva.NOMBRE, " +
+                "DESCRIPCIONOBJETO = fila_nueva.DESCRIPCIONOBJETO, " +
+                "PESO = fila_nueva.PESO";
+    }
 }
 

@@ -86,7 +86,7 @@ public class GestorDB {
      *
      * @param idObjetivo Id a comprobar
      * @param nombreId   nombre del id en la tabla
-     * @return
+     * @return Devuelve true si existe y false en caso contrario
      */
     public boolean existById(Integer idObjetivo, String nombreId) {
         // Conexión
