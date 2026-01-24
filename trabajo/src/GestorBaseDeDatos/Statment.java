@@ -44,4 +44,15 @@ public class Statment {
         }
         return direccion;
     }
+
+    public static boolean existeEn(Connection conexion,String tablaBuscar, String idBuscar ,int idCondicion) {
+        String sql = "SELECT 1 FROM " + tablaBuscar + " WHERE " + idBuscar + " = ?";
+        
+        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+            ps.setInt(1, idCondicion);
+            return ps.executeQuery().next();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
