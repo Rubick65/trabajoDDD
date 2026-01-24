@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Objects;
 
 
-
 public class Personaje {
 
     //Posibles clases a elegir
     public enum Clase {
         MAGO, GUERRERO, PALADIN, PICARO, DRUIDA, BARDO, CLERIGO, RANGER
     }
+
     //Posibles razas a elegir
     public enum Raza {
         HUMANO, ORCO, ELFO, ENANO
@@ -28,14 +28,15 @@ public class Personaje {
 
     /**
      * Constructor que da valores iniciales a los atributos de clase
-     * @param ID_JUGADOR id del jugador
-     * @param inventario inventario de objetos
-     * @param capacidadCarga capacidad de carga de objetos del personaje
+     *
+     * @param ID_JUGADOR      id del jugador
+     * @param inventario      inventario de objetos
+     * @param capacidadCarga  capacidad de carga de objetos del personaje
      * @param nombrePersonaje nombre del personaje
-     * @param descripcion descripcion del personaje
-     * @param historia historia de trasfondo del personaje
-     * @param clase clase del personaje
-     * @param raza raza del personaje
+     * @param descripcion     descripcion del personaje
+     * @param historia        historia de trasfondo del personaje
+     * @param clase           clase del personaje
+     * @param raza            raza del personaje
      */
     public Personaje(int ID_JUGADOR, List<ObjetoInventario> inventario, double capacidadCarga, String nombrePersonaje, String descripcion, String historia, Clase clase, Raza raza) {
         this.ID_JUGADOR = ID_JUGADOR;
@@ -97,6 +98,7 @@ public class Personaje {
 
     /**
      * Se modifica la capacidad de carga
+     *
      * @param capacidadCarga capacidad actualizada
      * @throws IllegalArgumentException si es carga negativa da error
      */
@@ -109,6 +111,7 @@ public class Personaje {
 
     /**
      * Se modifica la descripcion
+     *
      * @param descripcion a actualizar
      * @throws IllegalArgumentException en caso de estar vacia
      */
@@ -121,6 +124,7 @@ public class Personaje {
 
     /**
      * Se modifica la historia
+     *
      * @param historia a actualizar
      * @throws IllegalArgumentException no puede estar vacia
      */
@@ -153,6 +157,7 @@ public class Personaje {
 
     /**
      * Se tira un objeto del inventario en caso de tenerlo, se actualiza la capacidad de carga
+     *
      * @param objeto objeto a tirar
      */
     public void tirarObjeto(ObjetoInventario objeto) {
@@ -166,6 +171,7 @@ public class Personaje {
 
     /**
      * Se agrega un objeto al inventario en caso de no tenerlo, se actualiza la capacidad de carga
+     *
      * @param objetoInventario
      */
     public void agregarObjeto(ObjetoInventario objetoInventario) {
@@ -205,6 +211,7 @@ public class Personaje {
     @Override
     public String toString() {
         return "Personaje{" +
+                "ID_JUGADOR=" + ID_JUGADOR +
                 ", ID_PERSONAJE=" + ID_PERSONAJE +
                 ", inventario=" + inventario +
                 ", capacidadCarga=" + capacidadCarga +

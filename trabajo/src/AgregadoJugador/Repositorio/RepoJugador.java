@@ -1,33 +1,28 @@
 package AgregadoJugador.Repositorio;
 
 import AgregadoJugador.Jugador;
+import GestorBaseDeDatos.GestorDB;
+import GestorBaseDeDatos.GestorDeParseadores;
 import Interfaces.IRepositorioExtend;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
 
-    // XX Borrar todos los atributos de clase
-    private final File archivo = new File("trabajo/src/AgregadoJugador/Jugadores.json");// Fichero donde se guardan los jugadores
-    private final ObjectMapper oM = new ObjectMapper(); // Objeto que permite parsear los datos a json y de json a java
-    private static int contadorID;// Contador auto incremental para los jugadores
-    private Map<Integer, Jugador> listaJugadores; // Clave id de jugadores y el valor el jugador
+    private final GestorDB gestorJugador;
+    private final String nombreId = "ID_JUGADOR";
+    private final String tabla = "Jugador";
+
 
     /**
      * Constructor que saca los datos del fichero
      *
      * @throws IOException Lanza una excepción en caso de no haber encontrado el fichero
      */
-    public RepoJugador() throws IOException {
-        recibirDatosFichero();
+    public RepoJugador() {
+        gestorJugador = new GestorDB(tabla);
     }
 
     /**
@@ -38,8 +33,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      */
     @Override
     public Optional<Jugador> findByIdOptional(Integer id) throws IOException {
-        recibirDatosFichero();
-        return Optional.ofNullable(listaJugadores.get(id));
+        return Optional.ofNullable(gestorJugador.findById(id, nombreId, GestorDeParseadores.parseadorJugador(this.gestorJugador.crearConexion())));
     }
 
     /**
@@ -49,8 +43,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      */
     @Override
     public List<Jugador> findAllToList() throws IOException {
-        recibirDatosFichero();
-        return List.copyOf(listaJugadores.values());
+        return gestorJugador.findAllToList(GestorDeParseadores.parseadorJugador(gestorJugador.crearConexion()));
     }
 
     /**
@@ -60,8 +53,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      */
     @Override
     public long count() throws IOException {
-        recibirDatosFichero();
-        return listaJugadores.size();
+        return gestorJugador.count();
     }
 
     /**
@@ -72,14 +64,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      */
     @Override
     public void deleteById(Integer id) throws IOException {
-        //lee el archivo
-        recibirDatosFichero();
-        // Se asegura de que el id si exista en el archivo
-        comprobarExistenciaClave(id);
-        // En caso de si existir lo elimina
-        listaJugadores.remove(id);
-        // Y escribe esos datos en el fichero
-        guardarDatos();
+        gestorJugador.deleteById(id, nombreId);
     }
 
     /**
@@ -89,10 +74,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      */
     @Override
     public void deleteAll() throws IOException {
-        // Primero vacía la lista de jugadores
-        listaJugadores = new HashMap<>();
-        // Luego escribe esa lista vacía en el fichero
-        guardarDatos();
+        gestorJugador.deleteAll();
     }
 
     /**
@@ -103,8 +85,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      */
     @Override
     public boolean existsById(Integer id) throws IOException {
-        recibirDatosFichero();
-        return listaJugadores.containsKey(id);
+        return gestorJugador.existById(id, nombreId);
     }
 
     /**
@@ -115,9 +96,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      */
     @Override
     public Jugador findById(Integer id) throws IOException {
-        recibirDatosFichero();
-        comprobarExistenciaClave(id);
-        return listaJugadores.get(id);
+        return gestorJugador.findById(id, nombreId, GestorDeParseadores.parseadorJugador(this.gestorJugador.crearConexion()));
     }
 
     /**
@@ -127,8 +106,8 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      */
     @Override
     public Iterable<Jugador> findAll() throws IOException {
-        recibirDatosFichero();
-        return listaJugadores.values();
+        return gestorJugador.findAllToList(GestorDeParseadores.parseadorJugador(this.gestorJugador.crearConexion()));
+
     }
 
     /**
@@ -142,93 +121,10 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      */
     @Override
     public <S extends Jugador> S save(S entity) throws IllegalArgumentException, IOException {
-        // Actualizamos los datos del fichero
-        recibirDatosFichero();
-        // Si la lista de jugadores contiene al jugador pasado como parámetro
-        if (listaJugadores.containsValue(entity))
-            // Se lanza una excepción que indica que este jugador ya existe
-            throw new IllegalArgumentException("El jugador " + entity.getNombre() + " ya existe en el archivo");
-
-        // En caso de que no exista se le pone un id
-        entity.setID_JUGADOR(contadorID);
-        // Se añade el jugador a la lista
-        listaJugadores.put(entity.getID_JUGADOR(), entity);
-        // Y se sobreescribe la lista en el fichero
-        guardarDatos();
-        // Devolvemos la entidad guardada
-        return entity;
-    }
-
-    /**
-     * Actualiza la entidad si ya existía antes
-     *
-     * @param entity Entidad a actualizar
-     * @param <S>    Entidad he hijos
-     * @return Devuelve la entidad actualizada
-     * @throws IOException Lanza excepción en caso de problemas a la hora de la escritura
-     */
-    public <S extends Jugador> S actualizarDatos(S entity) throws IOException {
-        comprobarExistenciaClave(entity.getID_JUGADOR());
-        listaJugadores.put(entity.getID_JUGADOR(), entity);
-        guardarDatos();
-        return entity;
-    }
-
-
-    /**
-     * Escribe los datos en el archivo
-     *
-     * @throws IOException Lanza excepción en caso de que la escritura falle
-     */
-    private void guardarDatos() throws IOException {
-        // Creamos un map con Json node
-        Map<Integer, JsonNode> jsonMap = new HashMap<>();
-        // Recorremos toda la lista de jugadores
-        for (Map.Entry<Integer, Jugador> entry : listaJugadores.entrySet()) {
-            // Y vamos añadiendo cada posición al Json Map, esto fuerza a que se apliquen las anotaciones
-            jsonMap.put(entry.getKey(), oM.valueToTree(entry.getValue()));
-        }
-
-        // Guardar JSON en archivo con pretty print,esto hace que el archivo sea más bonito y legible
-        oM.writerWithDefaultPrettyPrinter().writeValue(archivo, jsonMap);
-    }
-
-
-    /**
-     * Recibe los datos del archivo
-     * XX BORRAR Método
-     *
-     * @throws IOException Lanza excepción en caso de que la lectura del archivo falle
-     */
-    private void recibirDatosFichero() throws IOException {
-        // Si el archivo existe y su longitud es mayor que cero
-        if (archivo.exists() && archivo.length() > 0) {
-            // Sacamos del archivo la lista de jugadores
-            listaJugadores = oM.readValue(archivo, new TypeReference<Map<Integer, Jugador>>() {
-            });
-
-        } else {
-            // En caso contrario inicializamos la lista vacía
-            listaJugadores = new HashMap<>();
-        }
-         /*
-             Saca todos los ids del Hash Map y los compara, sacando el mayor
-             en caso de que la lista este vacía se pondrá por defecto 1,
-             en caso contrario se pondrá último id + 1
-             */
-        contadorID = listaJugadores.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
+        return null;
 
     }
 
-    /**
-     * Se asegura de que la clave pasada exista dentro del fichero
-     *
-     * @param id a comprobar
-     */
-    private void comprobarExistenciaClave(Integer id) throws IllegalArgumentException, IOException {
-        if (!existsById(id))
-            throw new IllegalArgumentException("En la lista no existe ningún jugador con id " + id);
-    }
 
     /**
      * Método añadido que se encarga de buscar jugadores por su calle
@@ -237,9 +133,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      * @return Devuelve una lista con todos los jugadores que viven en la calle seleccionada
      */
     public List<Jugador> buscarJugadorPorDireccion(String calle) throws IOException {
-        recibirDatosFichero();
-        // Filtramos la lista de jugadores por aquellos que vivan en la calle pasada como parámetro
-        return listaJugadores.values().stream().filter(jugador -> jugador.getDireccionJuego().getCalle().equalsIgnoreCase(calle)).toList();
+        return findAllToList().stream().filter(jugador -> jugador.getDireccionJuego().getCalle().equalsIgnoreCase(calle)).toList();
     }
 
 }

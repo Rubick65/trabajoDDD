@@ -32,6 +32,10 @@ public class ObjetoInventario {
         return peso;
     }
 
+    public String getDescripcionObjeto() {
+        return descripcionObjeto;
+    }
+
     @Override
     public String toString() {
         return "ObjetoInventario{" +
