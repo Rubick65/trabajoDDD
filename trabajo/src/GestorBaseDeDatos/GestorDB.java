@@ -1,5 +1,6 @@
 package GestorBaseDeDatos;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -147,7 +148,7 @@ public class GestorDB {
      * @param nombreId   Nombre del id en la tabla
      * @return Devuelve la cantidad de elementos eliminados o -1 en caso de error
      */
-    public void deleteById(Integer idObjetivo, String nombreId) {
+    public void deleteById(Integer idObjetivo, String nombreId) throws IOException {
         // Conexión
         try (Connection conn = crearConexion()) {
             // Se crea el select
@@ -161,7 +162,10 @@ public class GestorDB {
                 // Se añade el parámetro faltante
                 ps.setInt(1, idObjetivo);
                 // Y se ejecuta el delete
-                ps.executeUpdate();
+                int eliminados = ps.executeUpdate();
+
+                if (eliminados == 0)
+                    throw new IOException();
             } catch (SQLException e) {
                 System.err.println(e.getMessage());
                 try {
@@ -169,6 +173,8 @@ public class GestorDB {
                 } catch (SQLException excep) {
                     //código adicional
                 }
+            } catch (IOException e) {
+                throw new IOException();
             } finally {
                 //insertar codigo para cerrar todo
                 conn.setAutoCommit(true);
@@ -287,5 +293,16 @@ public class GestorDB {
             case Enum e -> ps.setString(1, e.toString());
             default -> throw new IllegalStateException("Unexpected value: " + dato);
         }
+    }
+
+    public int sacarId(PreparedStatement ps) {
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
     }
 }

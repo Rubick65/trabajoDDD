@@ -15,14 +15,14 @@ public class PruebaTemporal {
             System.out.println(repoPersonaje.count());
             System.out.println(repoPersonaje.existsById(6));
 
-//            List<ObjetoInventario> objetos = new ArrayList<>();
-//
-//            objetos.add(new ObjetoInventario("Palo", 20.5, "Un palo muy pesado"));
-//
-//
-//            Personaje personaje = new Personaje(15, objetos, 250, "Jose Manuel", "Completamente esquizofrénico", "Enano fan de la minería", Personaje.Clase.MAGO, Personaje.Raza.ENANO);
-//
-//            repoPersonaje.save(personaje);
+            List<ObjetoInventario> objetos = new ArrayList<>();
+
+            objetos.add(new ObjetoInventario("Palo", 20.5, "Un palo muy pesado"));
+
+
+            Personaje personaje = new Personaje(15, objetos, 250, "Jose Manuel", "Completamente esquizofrénico", "Enano fan de la minería", Personaje.Clase.MAGO, Personaje.Raza.ENANO);
+
+            repoPersonaje.save(personaje);
 
             Personaje personajeNuevo = repoPersonaje.findById(17);
 

@@ -8,18 +8,9 @@ import java.util.Objects;
 
 
 // Anotaciones necesarias para poder parsear tanto Jugadores como clases hijo
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.CLASS,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "@type"
-)
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = DirectorDeJuego.class, name = "DirectorDeJuego"),
-        @JsonSubTypes.Type(value = Jugador.class, name = "Jugador")
-})
+
 public class Jugador {
     private int ID_JUGADOR;// Id del jugador
-    @JsonProperty("dni")
     private String DNI; // DNI del jugador
     private String nombre; // Nombre del jugador
     private DireccionJuego direccionJuego;// Dirección del jugador
