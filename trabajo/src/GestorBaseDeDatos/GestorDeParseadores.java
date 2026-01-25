@@ -96,7 +96,7 @@ public class GestorDeParseadores {
                 //Lista de miembros a sacar
                 List<Integer> miembros = new ArrayList<>();
 
-                Statment.aniadirAListaEnteros(conexion, miembros, "ID_JUGADOR", "Jugador", "ID_GRUPO", idGrupo);
+                Statment.aniadirAListaEnteros(conexion, miembros, "ID_JUGADOR", "JUGADOR_GRUPOJUEGO", "ID_GRUPOJUEGO", idGrupo);
 
                 return new GrupoJuego(
                         rs.getString("nombreGrupo"),
@@ -108,6 +108,7 @@ public class GestorDeParseadores {
             }
         };
     }
+
     public static Function<ResultSet, Jugador> parseadorJugador(Connection conexion) {
         return rs -> {
             try {
