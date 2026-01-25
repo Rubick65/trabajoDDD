@@ -1,38 +1,34 @@
 package AgregadoGrupoJuego.Repositorio;
 
 import AgregadoGrupoJuego.GrupoJuego;
+import GestorBaseDeDatos.GestorDB;
+import GestorBaseDeDatos.GestorDeParseadores;
 import Interfaces.IRepositorioExtend;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
 
-    private final File archivo = new File("trabajo/src/AgregadoGrupoJuego/GruposDeJuego.json");// Archivo donde se guardan los grupos
-    private final ObjectMapper oM = new ObjectMapper(); // Mapper para leer y guardar los datos
-    private final ObjectWriter writer = oM.writerWithDefaultPrettyPrinter(); // Para escribir y que quede bonito
-    private static int contadorID; // Contador para el id de cada grupo
-    private Map<Integer, GrupoJuego> listaGrupoDeJuego; // Lista con los grupos de los jugadors
+
+    private final GestorDB gestorGrupoDeJuego;
+    private final String tabla = "GrupoJuego";
+    private final String nombreId = "ID_GRUPO";
 
 
     /**
-     * Comprueba si existe un grupo con el id pasado como parámetro
+     * Constructor que inicializa la lista de grupos
      *
-     * @param id id a comprobar
+     * @throws IOException Lanza una excepción si ocurre un error a la hora de leer la lista
      */
-    private void comprobarExistenciaClave(Integer id) throws IOException {
-        // Si el id no existe
-        if (!existsById(id))
-            // Lanza una excepción
-            throw new IllegalArgumentException("En la lista no existe ningún grupo de juego con este id");
+    public RepoGrupoJuego() throws IOException {
+        gestorGrupoDeJuego = new GestorDB(tabla);
     }
+
 
     /**
      * Busca un jugador por id
@@ -42,8 +38,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      */
     @Override
     public Optional<GrupoJuego> findByIdOptional(Integer id) throws IOException {
-        recibirDatosFichero();
-        return Optional.ofNullable(listaGrupoDeJuego.get(id));
+        return Optional.ofNullable(gestorGrupoDeJuego.findById(id, nombreId, GestorDeParseadores.parseadorGrupoJuego(gestorGrupoDeJuego.crearConexion())));
     }
 
     /**
@@ -53,8 +48,8 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      */
     @Override
     public List<GrupoJuego> findAllToList() throws IOException {
-        recibirDatosFichero();
-        return List.copyOf(listaGrupoDeJuego.values());
+        return gestorGrupoDeJuego.findAllToList(GestorDeParseadores.parseadorGrupoJuego(gestorGrupoDeJuego.crearConexion()));
+
     }
 
     /**
@@ -64,8 +59,8 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      */
     @Override
     public long count() throws IOException {
-        recibirDatosFichero();
-        return listaGrupoDeJuego.size();
+        return gestorGrupoDeJuego.count();
+
     }
 
     /**
@@ -76,14 +71,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      */
     @Override
     public void deleteById(Integer id) throws IOException {
-        // Actulizamos los datos
-        recibirDatosFichero();
-        // Comprobamos si existe algún grupo con este id
-        comprobarExistenciaClave(id);
-        // Si exsite lo eliminamos
-        listaGrupoDeJuego.remove(id);
-        // Actulizamos los datos
-        guardarDatos();
+        gestorGrupoDeJuego.deleteById(id, nombreId);
     }
 
     /**
@@ -93,10 +81,8 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      */
     @Override
     public void deleteAll() throws IOException {
-        // Vaciamos la lista
-        listaGrupoDeJuego = new HashMap<>();
-        // Actualizamos los datos del fichero
-        guardarDatos();
+        gestorGrupoDeJuego.deleteAll();
+
     }
 
     /**
@@ -107,8 +93,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      */
     @Override
     public boolean existsById(Integer id) throws IOException {
-        recibirDatosFichero();
-        return listaGrupoDeJuego.containsKey(id);
+        return gestorGrupoDeJuego.existById(id, nombreId);
     }
 
     /**
@@ -119,9 +104,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      */
     @Override
     public GrupoJuego findById(Integer id) throws IOException {
-        recibirDatosFichero();
-        comprobarExistenciaClave(id);
-        return listaGrupoDeJuego.get(id);
+        return gestorGrupoDeJuego.findById(id, nombreId, GestorDeParseadores.parseadorGrupoJuego(gestorGrupoDeJuego.crearConexion()));
     }
 
     /**
@@ -131,8 +114,8 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      */
     @Override
     public Iterable<GrupoJuego> findAll() throws IOException {
-        recibirDatosFichero();
-        return listaGrupoDeJuego.values();
+        return gestorGrupoDeJuego.findAllToList(GestorDeParseadores.parseadorGrupoJuego(gestorGrupoDeJuego.crearConexion()));
+
     }
 
     /**
@@ -145,82 +128,72 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      */
     @Override
     public <S extends GrupoJuego> S save(S entity) throws IOException {
+        Connection conn = null;
+        try {
+            conn = gestorGrupoDeJuego.crearConexion();
+            conn.setAutoCommit(false);
 
-        // Actualizamos los datos
-        recibirDatosFichero();
-        // Si la lista ya contiene un grupo igual
-        if (listaGrupoDeJuego.containsValue(entity))
-            // Lanza una excepción
-            throw new IllegalArgumentException("El grupo de juego ya existe en el archivo");
+            int idGrupoJuego = guardarGrupoJuego(entity, conn);
 
-        // Si el grupo no existe le ponemos un id
-        entity.setID_GRUPO(contadorID);
-        // Introducimos el grupo a la lista
-        listaGrupoDeJuego.put(entity.getID_GRUPO(), entity);
-        // Actualizamos los datos del grupo
-        guardarDatos();
-        // Devolvemos la entidad guardada
-        return entity;
+            guardarListaJugadores(entity, idGrupoJuego, conn);
+
+            conn.commit();
+            return entity;
+
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                System.err.println("Error al hacer rollback: " + ex.getMessage());
+            }
+            System.err.println("Error: " + e.getMessage());
+
+        }
+        return null;
+
     }
 
+    private int guardarGrupoJuego(GrupoJuego grupoJuego, Connection con) throws SQLException {
+        String sql = """
+                INSERT INTO GRUPOJUEGO (NOMBREGRUPO, DESCRIPCION)
+                VALUES (?, ?)
+                ON DUPLICATE KEY UPDATE
+                DESCRIPCION = VALUES(DESCRIPCION)
+                """;
 
-    /**
-     * Constructor que inicializa la lista de grupos
-     *
-     * @throws IOException Lanza una excepción si ocurre un error a la hora de leer la lista
-     */
-    public RepoGrupoJuego() throws IOException {
-        recibirDatosFichero();
-    }
-
-
-    /**
-     * Actualiza la entidad si ya existía antes
-     *
-     * @param entity Entidad a actualizar
-     * @param <S>    Entidad he hijos
-     * @return Devuelve la entidad actualizada
-     * @throws IOException Lanza excepción en caso de problemas a la hora de la escritura
-     */
-    public <S extends GrupoJuego> S actualizarDatos(S entity) throws IOException {
-        comprobarExistenciaClave(entity.getID_GRUPO());
-        listaGrupoDeJuego.put(entity.getID_GRUPO(), entity);
-        guardarDatos();
-        return entity;
-    }
-
-    /**
-     * Actualiza los datos del fichero
-     *
-     * @throws IOException Lanza una excepción si a la hora de actualizar ocurre algún problema con el fichero
-     */
-    private void guardarDatos() throws IOException {
-        writer.writeValue(archivo, listaGrupoDeJuego);
-    }
-
-    /**
-     * Recibe los datos del fichero
-     *
-     * @throws IOException Lanza excepción si ocurre algún problema a la hora de sacar los datos del fichero
-     */
-    private void recibirDatosFichero() throws IOException {
-        // Si el archivo existe y es mayor que cero
-        if (archivo.exists() && archivo.length() > 0) {
-            // Cargamos los datos
-            listaGrupoDeJuego = oM.readValue(archivo, new TypeReference<>() {
-            });
-
-        } else {
-            // Si no simplemente inicializamos vacío
-            listaGrupoDeJuego = new HashMap<>();
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, grupoJuego.getNombreGrupo());
+            ps.setString(2, grupoJuego.getDescripcion());
+            ps.executeUpdate();
         }
 
-         /*
-             Saca todos los ids del Hash Map y los compara en caso de que la lista este vacía se pondrá por defecto 1
-             en caso contrario se pondrá último id + 1
-          */
-        contadorID = listaGrupoDeJuego.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
+        String select = """
+                    SELECT %s
+                    FROM %s
+                    WHERE NOMBREGRUPO = ?
+                """.formatted("ID_GRUPO", tabla);
+
+        PreparedStatement ps = con.prepareStatement(select);
+        ps.setString(1, grupoJuego.getNombreGrupo());
+
+        return gestorGrupoDeJuego.sacarId(ps);
     }
+
+    private void guardarListaJugadores(GrupoJuego grupoJuego, int idGrupo, Connection con) throws SQLException {
+        String sql = """
+                INSERT INTO JUGADOR_GRUPOJUEGO (ID_JUGADOR, ID_GRUPO)
+                VALUES (?, ?)
+                """;
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            for (int idJugador : grupoJuego.getListaMiembros()) {
+                ps.setInt(1, idJugador);
+                ps.setInt(2, idGrupo);
+                ps.executeUpdate();
+            }
+        }
+    }
+
 
     /**
      * Busca todos los grupos de juego que contengan al jugador pasado como parámetro
@@ -229,9 +202,8 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      * @return Devuelve los grupos de los jugadores pasados como parámetros
      */
     public List<GrupoJuego> buscarGruposPorIdJugador(int idJugadorSeleccionado) {
-        return listaGrupoDeJuego.values().stream()
+        return gestorGrupoDeJuego.findAllToList(GestorDeParseadores.parseadorGrupoJuego(gestorGrupoDeJuego.crearConexion())).stream()
                 .filter(grupo -> grupo.getListaMiembros().contains(idJugadorSeleccionado))
                 .toList();
-
     }
 }
