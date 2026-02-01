@@ -1,13 +1,12 @@
 package AgregadoAventura.Repositorio;
 
 import AgregadoAventura.Aventura;
+import AgregadoAventura.AventuraAccion;
+import AgregadoAventura.AventuraMisterio;
 import GestorBaseDeDatos.GestorDB;
+import GestorBaseDeDatos.GestorDeParseadores;
 import Interfaces.IRepositorioExtend;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
@@ -15,18 +14,16 @@ import java.util.function.Function;
 
 public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
 
-    private final File archivo = new File("trabajo/src/AgregadoAventura/Aventura.json");
-    private final ObjectMapper oM = new ObjectMapper();
-    private static int contadorID;
-    private Map<Integer, Aventura> listaAventuras;
-    private GestorDB gestorDB;
+    private final GestorDB gestorAventura;
+    private final String nombreId = "ID_AVENTURA";
+    private final String tabla = "Aventura";
 
     /**
      * Se cargan los datos al crear el repositorio
      * @throws IOException si hay un error al cargar
      */
     public RepoAventura() throws IOException {
-        this.gestorDB = new GestorDB("Aventura");
+        this.gestorAventura = new GestorDB(tabla);
     }
 
     /**
@@ -36,10 +33,10 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     public List<Aventura> buscarAventuraPorDificultad(Aventura.Dificultad dificultad, Function <ResultSet,Aventura> parsearAventura) throws IOException, SQLException {
        List<Aventura> listaAventuras = new ArrayList<>();
-       try (Connection conexion = gestorDB.crearConexion()) {
+       try (Connection conexion = gestorAventura.crearConexion()) {
 
            // Select ha realizar
-           String select = "select * from " + gestorDB.getTabla() + " where dificultad = ?";
+           String select = "select * from " + gestorAventura.getTabla() + " where dificultad = ?";
            PreparedStatement ps = conexion.prepareStatement(select);
            ps.setString(1, dificultad.toString());
 
@@ -59,8 +56,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public Optional<Aventura> findByIdOptional(Integer id) throws IOException {
-        return Optional.empty();
-
+        return Optional.ofNullable(gestorAventura.findById(id, nombreId, GestorDeParseadores.parseadorAventura(this.gestorAventura.crearConexion())));
     }
 
     /**
@@ -69,8 +65,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public List<Aventura> findAllToList() throws IOException {
-        return null;
-
+        return gestorAventura.findAllToList(GestorDeParseadores.parseadorAventura(gestorAventura.crearConexion()));
     }
 
     /**
@@ -80,8 +75,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public long count() throws IOException {
-        return 0;
-
+        return gestorAventura.count();
     }
 
     /**
@@ -91,7 +85,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public void deleteById(Integer id) throws IOException {
-
+        gestorAventura.deleteById(id, nombreId);
     }
 
     /**
@@ -100,7 +94,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public void deleteAll() throws IOException {
-
+        gestorAventura.deleteAll();
     }
 
     /**
@@ -110,8 +104,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public boolean existsById(Integer id) throws IOException {
-        return false;
-
+        return gestorAventura.existById(id, nombreId);
     }
 
     /**
@@ -122,8 +115,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public Aventura findById(Integer id) throws IOException {
-        return null;
-
+        return gestorAventura.findById(id,nombreId,GestorDeParseadores.parseadorAventura(this.gestorAventura.crearConexion()));
     }
 
     /**
@@ -132,8 +124,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public Iterable<Aventura> findAll() throws IOException {
-        return null;
-
+        return gestorAventura.findAllToList(GestorDeParseadores.parseadorAventura(this.gestorAventura.crearConexion()));
     }
 
     /**
@@ -145,38 +136,90 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      */
     @Override
     public <S extends Aventura> S save(S entity) throws Exception {
+        Connection conn = null;
+        try {
+            conn = gestorAventura.crearConexion();
+            conn.setAutoCommit(false);
+
+            int idAventura = guardarAventura(entity, conn);
+
+            if (entity instanceof AventuraAccion aA) {
+                guardarAventuraAccion(aA,idAventura,conn);
+            }
+            else if (entity instanceof AventuraMisterio aM) {
+                guardarAventuraMisterio(aM,idAventura,conn);
+            }
+
+            conn.commit();
+            return entity;
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                System.err.println("Error al hacer rollback "+ ex.getMessage());
+            }
+            System.err.println("Error: " + e.getMessage());
+        }
         return null;
-
     }
 
-    /**
-     * Actualiza la entidad si ya existía antes
-     *
-     * @param entity Entidad a actualizar
-     * @param <S>    Entidad he hijos
-     * @return Devuelve la entidad actualizada
-     * @throws IOException Lanza excepción en caso de problemas a la hora de la escritura
-     */
-    public <S extends Aventura> S actualizarDatos(S entity) throws IOException {
-        return null;
+    private int guardarAventura(Aventura aventura, Connection conn) throws SQLException {
+        String sql = """
+                INSERT INTO aventura (nombreAventura,duracionSesionesAprox,dificultad)
+                VALUES (?,?,?)
+                ON DUPLICATE KEY UPDATE
+                nombreAventura = VALUES(nombreAventura)
+                dificultad = VALUES(dificultad)
+                """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, aventura.getNombreAventura());
+            ps.setInt(2, aventura.getDuracionSesionesAprox());
+            ps.setString(3, aventura.getDificultad().toString());
+            ps.executeUpdate();
+        }
 
+        // Select para sacar el ID de la aventura recién guardado
+        String select = """
+                    SELECT %s
+                    FROM %s
+                    WHERE nombreAventura = ?
+                """.formatted(nombreId, this.tabla); //AYUDAAAAAAAAAAAAAAAAAAA
+
+        // Preparamos el select
+        PreparedStatement ps = conn.prepareStatement(select);
+        ps.setString(1, aventura.getNombreAventura());
+        return gestorAventura.sacarId(ps);
     }
 
-    /**
-     * Se guardan los datos en el json
-     * @throws IOException si ocurre un error al guardar
-     */
-    private void guardarDatos() throws IOException {
-
+    private void guardarAventuraAccion(AventuraAccion aA, int idAventura,Connection conn) throws SQLException {
+        String sql = """
+                INSERT INTO AventuraAccion (ID_AVENTURA,cantidadEnemigos,cantidadUbicaciones)
+                VALUES (?,?,?)
+                ON DUPLICATE KEY UPDATE
+                ID_AVENTURA =  VALUES(ID_AVENTURA)
+                """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1,idAventura);
+            ps.setInt(2,aA.getCantidadEnemigos());
+            ps.setInt(3,aA.getCantidadUbicaciones());
+            ps.executeUpdate();
+        }
     }
 
-    /**
-     * Se comprueba si existe una aventura por su id
-     * @param id id a buscar
-     */
-    private void comprobarExistenciaClave(Integer id) throws IOException {
-        if (!existsById(id))
-            throw new IllegalArgumentException("En la lista no existe ninguna aventura con este id");
+    private void guardarAventuraMisterio(AventuraMisterio aM, int idAventura,Connection conn) throws SQLException {
+        String sql = """
+                INSERT INTO AventuraMisterio (ID_AVENTURA,enigmaPrincipal)
+                VALUES (?,?)
+                ON DUPLICATE KEY UPDATE
+                ID_AVENTURA =  VALUES(ID_AVENTURA)
+                """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1,idAventura);
+            ps.setString(2,aM.getEnigmaPrincipal());
+            ps.executeUpdate();
+        }
     }
+
+
 }
 
