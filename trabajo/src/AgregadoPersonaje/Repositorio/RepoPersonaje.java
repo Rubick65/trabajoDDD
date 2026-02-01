@@ -76,7 +76,7 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      * Se elimina un personaje mediante su id
      *
      * @param id del personaje a eliminar
-     * @throws IOException si no existe el id
+     * @throws IOException si no existe el ID
      */
     @Override
     public void deleteById(Integer id) throws IOException {
@@ -136,7 +136,7 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
      */
     @Override
     public <S extends Personaje> S save(S entity) {
-        int idPersonaje = 0;
+        int idPersonaje;
         try (Connection con = gestorPersonajes.crearConexion()) {
             // Se quita el autocommit
             con.setAutoCommit(false);
