@@ -32,21 +32,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      * @return lista filtrada con todas esas dificultades
      */
     public List<Aventura> buscarAventuraPorDificultad(Aventura.Dificultad dificultad, Function <ResultSet,Aventura> parsearAventura) throws IOException, SQLException {
-       List<Aventura> listaAventuras = new ArrayList<>();
-       try (Connection conexion = gestorAventura.crearConexion()) {
-
-           // Select ha realizar
-           String select = "select * from " + gestorAventura.getTabla() + " where dificultad = ?";
-           PreparedStatement ps = conexion.prepareStatement(select);
-           ps.setString(1, dificultad.toString());
-
-           ResultSet rs = ps.executeQuery();
-           while (rs.next()) {
-               //Por cada linea, se parsea al objeto indicado
-               listaAventuras.add(parsearAventura.apply(rs));
-           }
-       }
-       return listaAventuras;
+       return findAllToList().stream().filter(aventura -> aventura.getDificultad().equals(dificultad)).toList();
     }
 
     /**
