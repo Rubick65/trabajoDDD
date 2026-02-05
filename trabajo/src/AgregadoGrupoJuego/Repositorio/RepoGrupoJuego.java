@@ -119,7 +119,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
     }
 
     /**
-     * Guarda los datos en el fichero
+     * Guarda los datos en la base de datos
      *
      * @param entity Entidad a guardar
      * @param <S>    Grupo a guardar
@@ -128,20 +128,28 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
      */
     @Override
     public <S extends GrupoJuego> S save(S entity) throws IOException {
+        // Conexión para la base de datos
         Connection conn = null;
         try {
+            // Crea la conexión a la base de datos
             conn = gestorGrupoDeJuego.crearConexion();
+            // Indica que no se guarden los cambios automáticamente
             conn.setAutoCommit(false);
 
+            // Guarda el grupo de juego en la base de datos y devuelve su id
             int idGrupoJuego = guardarGrupoJuego(entity, conn);
 
+            // Guarda el id del grupo de juego relacionandolo con todos sus jugadores
             guardarListaJugadores(entity, idGrupoJuego, conn);
 
+            // En caso de que todo salga correcto se guardan los cambios
             conn.commit();
+            // Y se devuelve la entidad guardada
             return entity;
 
         } catch (SQLException e) {
             try {
+                // En caso de que salte un error, se eliminan todos los cambios
                 conn.rollback();
             } catch (SQLException ex) {
                 System.err.println("Error al hacer rollback: " + ex.getMessage());
@@ -149,11 +157,13 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
             System.err.println("Error: " + e.getMessage());
 
         }
+        //  Y se devuelve null
         return null;
 
     }
 
     private int guardarGrupoJuego(GrupoJuego grupoJuego, Connection con) throws SQLException {
+        // Sentencia para insertar los datos en la base de datos si no existían antes, en caso de existir se actualizan
         String sql = """
                 INSERT INTO GRUPOJUEGO (NOMBREGRUPO, DESCRIPCION)
                 VALUES (?, ?)
@@ -161,12 +171,16 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
                 DESCRIPCION = VALUES(DESCRIPCION)
                 """;
 
+        // Perpara la sentencia
         try (PreparedStatement ps = con.prepareStatement(sql)) {
+            // Indica los atributos faltantes
             ps.setString(1, grupoJuego.getNombreGrupo());
             ps.setString(2, grupoJuego.getDescripcion());
+            // Y ejecuta la sentencia
             ps.executeUpdate();
         }
 
+        // Select para sacar el último id
         String select = """
                     SELECT %s
                     FROM %s
@@ -175,17 +189,20 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
 
         PreparedStatement ps = con.prepareStatement(select);
         ps.setString(1, grupoJuego.getNombreGrupo());
-
+        // Devuelve el último id introducido
         return gestorGrupoDeJuego.sacarId(ps);
     }
 
     private void guardarListaJugadores(GrupoJuego grupoJuego, int idGrupo, Connection con) throws SQLException {
+        // Sentencia para guardar la lista de jugadores
         String sql = """
                 INSERT INTO JUGADOR_GRUPOJUEGO (ID_JUGADOR, ID_GRUPO)
                 VALUES (?, ?)
                 """;
 
+        // Se prepara la sentencia
         try (PreparedStatement ps = con.prepareStatement(sql)) {
+            // Y se guarda los datos en la tabla
             for (int idJugador : grupoJuego.getListaMiembros()) {
                 ps.setInt(1, idJugador);
                 ps.setInt(2, idGrupo);

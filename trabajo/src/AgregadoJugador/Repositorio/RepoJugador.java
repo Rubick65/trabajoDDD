@@ -116,7 +116,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
     }
 
     /**
-     * Guarda el jugador en el fichero
+     * Guarda el jugador en la base de datos
      *
      * @param entity Entidad que se va a guardar
      * @param <S>    Objeto que extiende de jugador
@@ -126,18 +126,27 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      */
     @Override
     public <S extends Jugador> S save(S entity) throws IllegalArgumentException, IOException {
+        // Conexión a la base de datos
         Connection conn = null;
         try {
+            // Crea la conexión a la base de datos
             conn = gestorJugador.crearConexion();
+            // Se quita el autoguardado
             conn.setAutoCommit(false);
 
+            // Guarda la dirección en la base de datos y saca el id
             int idDireccion = guardarDireccion(entity.getDireccionJuego(), conn);
+            // Guarda el jugador en la base de datos y devuelve su id
             int idJugador = guardarJugador(entity, idDireccion, conn);
 
+            // En caso de que sea un director de juego
             if (entity instanceof DirectorDeJuego dj)
+                // Se guardan los datos específicos en la base de datos
                 guardarDirectorDeJuego(dj, idJugador, conn);
 
+            // Guarda los datos en la base de datos
             conn.commit();
+            // Devuelve la entidad
             return entity;
 
         } catch (SQLException e) {
@@ -153,9 +162,17 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
 
     }
 
+    /**
+     * Guarda la dirección de juego en la base de datos
+     *
+     * @param d    Dirección de juegeo
+     * @param conn Conexión a la base de datos
+     * @return Devuelve el id de la dirección guardada
+     * @throws SQLException
+     */
     private int guardarDireccion(DireccionJuego d, Connection conn) throws SQLException {
 
-
+        // Inserta los datos de la dirección de juego en la base de datos
         String sql = """
                     INSERT INTO DireccionJuego (CIUDAD, CALLE, PISO, CODIGOPOSTAL)
                     VALUES (?, ?, ?, ?)
@@ -166,6 +183,8 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
                     CODIGOPOSTAL = VALUES(CODIGOPOSTAL)
                 """;
 
+
+        // Prepara la setencia y la ejecuta
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, d.getCiudad());
             ps.setString(2, d.getCalle());
@@ -190,10 +209,22 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
         ps.setString(2, d.getCalle());
         ps.setString(3, d.getPiso());
 
+        // Devuelve el id de la última dirección guardada
         return gestorJugador.sacarId(ps);
     }
 
+    /**
+     * Guarda el jugador en la base de datos
+     *
+     * @param jugador     Jugador a guardar
+     * @param idDireccion Id de la dirección de juego
+     * @param conn        Conexión a la base de datos
+     * @return Devuelve el id del jugador guardado
+     * @throws SQLException
+     */
     private int guardarJugador(Jugador jugador, int idDireccion, Connection conn) throws SQLException {
+
+        // Inserta los datos del jugador en la base de datos
         String sql = """
                     INSERT INTO Jugador (DNI, nombre, ID_DIRECCION)
                     VALUES (?, ?, ?)
@@ -202,6 +233,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
                     ID_DIRECCION = VALUES(ID_DIRECCION)
                 """;
 
+        // Prepara el insert y lo ejecuta
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, jugador.getDNI());
             ps.setString(2, jugador.getNombre());
@@ -220,11 +252,20 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
         PreparedStatement ps = conn.prepareStatement(select);
         ps.setString(1, jugador.getDNI());
 
+        // Devuelve el id del último jugador guardado en la base de datos
         return gestorJugador.sacarId(ps);
     }
 
-
+    /**
+     * Guarda el director de juego en la base de datos
+     *
+     * @param directorDeJuego Director de juego a guardar
+     * @param idJugador       id del jugador
+     * @param conn            Conexión a la base de datosl
+     * @throws SQLException
+     */
     private void guardarDirectorDeJuego(DirectorDeJuego directorDeJuego, int idJugador, Connection conn) throws SQLException {
+        // Guarda los datos del director de juego en la base de datos
         String sql = """
                     INSERT INTO DirectorDeJuego (ID_JUGADOR, ID_AVENTURA)
                     VALUES (?, ?)
@@ -232,25 +273,38 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
                     ID_AVENTURA = VALUES(ID_AVENTURA)
                 """;
 
+        // Prepara el insert y lo ejecuta
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idJugador);
             ps.setInt(2, directorDeJuego.getAventuraSeleccionada());
             ps.executeUpdate();
         }
 
+        // En caso de que la lista de aventuras no este vacía
         if (!directorDeJuego.getListaAventuras().isEmpty())
+            // Guarda la lista de aventuras
             guardarListaAventuras(directorDeJuego, idJugador, conn);
 
     }
 
-
+    /**
+     * Guarda la lista de aventuras en la base de datos
+     *
+     * @param directorDeJuego Director de juego
+     * @param idJugador       Id del director de jeugo
+     * @param conn            Conexión a la base de datos
+     * @throws SQLException
+     */
     private void guardarListaAventuras(DirectorDeJuego directorDeJuego, int idJugador, Connection conn) throws SQLException {
+        // Crea el insert para guardar los datos en la base de datos
         String sql = """
                 INSERT INTO DIRECTORAVENTURA (ID_DIRECTOR, ID_AVENTURA)
                 VALUES (?, ?)
                 """;
 
+        // Recorre todos los ids de todas las aventuras
         for (int id_aventura : directorDeJuego.getListaAventuras()) {
+            // Prepara el insert por cada id y guarda los datos
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, idJugador);
                 ps.setInt(2, id_aventura);
