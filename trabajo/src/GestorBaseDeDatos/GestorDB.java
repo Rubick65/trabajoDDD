@@ -128,8 +128,7 @@ public class GestorDB {
                 System.err.println(e.getMessage());
                 try {
                     conn.rollback();
-                } catch (SQLException excep) {
-                    //código adicional
+                } catch (SQLException _) {
                 }
             } finally {
                 //insertar codigo para cerrar todo

@@ -34,7 +34,7 @@ public class GestorDeParseadores {
                 boolean existeEnAccion = Statment.existeEn(conexion, "AventuraAccion", "ID_AVENTURA", id);
                 boolean existeEnMisterio = Statment.existeEn(conexion, "AventuraMisterio", "ID_AVENTURA", id);
 
-                //Dependiendo del resultado de los boolean, se generara el tipo adecuado de objeto y se devolverá
+                //Dependiendo del resultado de los boolean, se generará el tipo adecuado de objeto y se devolverá
                 if (existeEnAccion) {
                     String sql = "SELECT cantidadEnemigos,cantidadUbicaciones FROM AventuraAccion WHERE ID_AVENTURA = ?";
 
@@ -78,41 +78,41 @@ public class GestorDeParseadores {
             }
         };
     }
-
-    public static Function<ResultSet, AventuraAccion> parseadorAventuraAccion(Connection conex) {
-        return rs -> {
-            try {
-                AventuraAccion aventuraAccion = new AventuraAccion(
-                        rs.getString("nombreAventura"),
-                        rs.getInt("duracionSesionesAprox"),
-                        Aventura.Dificultad.valueOf(rs.getString("dificultad")),
-                        rs.getInt("cantidadEnemigos"),
-                        rs.getInt("cantidadUbicaciones")
-                );
-                aventuraAccion.setID_AVENTURA(rs.getInt("ID_AVENTURA"));
-                return aventuraAccion;
-            } catch (SQLException e) {
-                throw new RuntimeException("Error al parsear aventura Accion", e);
-            }
-        };
-    }
-
-    public static Function<ResultSet, AventuraMisterio> parseadorAventuraMisterio(Connection conexion) {
-        return rs -> {
-            try {
-                AventuraMisterio aventuraMisterio = new AventuraMisterio(
-                        rs.getString("nombreAventura"),
-                        rs.getInt("duracionSesionesAprox"),
-                        Aventura.Dificultad.valueOf(rs.getString("dificultad")),
-                        rs.getString("enigmaPrincipal")
-                );
-                aventuraMisterio.setID_AVENTURA(rs.getInt("ID_AVENTURA"));
-                return aventuraMisterio;
-            } catch (SQLException e) {
-                throw new RuntimeException("Error al parsear aventura misterio", e);
-            }
-        };
-    }
+//
+//    public static Function<ResultSet, AventuraAccion> parseadorAventuraAccion(Connection conex) {
+//        return rs -> {
+//            try {
+//                AventuraAccion aventuraAccion = new AventuraAccion(
+//                        rs.getString("nombreAventura"),
+//                        rs.getInt("duracionSesionesAprox"),
+//                        Aventura.Dificultad.valueOf(rs.getString("dificultad")),
+//                        rs.getInt("cantidadEnemigos"),
+//                        rs.getInt("cantidadUbicaciones")
+//                );
+//                aventuraAccion.setID_AVENTURA(rs.getInt("ID_AVENTURA"));
+//                return aventuraAccion;
+//            } catch (SQLException e) {
+//                throw new RuntimeException("Error al parsear aventura Accion", e);
+//            }
+//        };
+//    }
+//
+//    public static Function<ResultSet, AventuraMisterio> parseadorAventuraMisterio(Connection conexion) {
+//        return rs -> {
+//            try {
+//                AventuraMisterio aventuraMisterio = new AventuraMisterio(
+//                        rs.getString("nombreAventura"),
+//                        rs.getInt("duracionSesionesAprox"),
+//                        Aventura.Dificultad.valueOf(rs.getString("dificultad")),
+//                        rs.getString("enigmaPrincipal")
+//                );
+//                aventuraMisterio.setID_AVENTURA(rs.getInt("ID_AVENTURA"));
+//                return aventuraMisterio;
+//            } catch (SQLException e) {
+//                throw new RuntimeException("Error al parsear aventura misterio", e);
+//            }
+//        };
+//    }
 
     public static Function<ResultSet, DireccionJuego> parseadorDireccionJuego(Connection conexion) {
         return rs -> {
@@ -161,10 +161,11 @@ public class GestorDeParseadores {
 
                 boolean direccionEsNula = rs.wasNull();
 
+
                 //Si no es nulo se sigue
-                if (!direccionEsNula && idDireccion > 0) {
+                if (!direccionEsNula && idDireccion > 0)
                     direccion = Statment.obtenerDireccionDeJuego(conexion, idDireccion);
-                }
+
                 //Comprobamos si el id esta en director de juego
                 boolean existeEnDirectorJuego = Statment.existeEn(conexion, "DirectorDeJuego", "ID_JUGADOR", idJugador);
 
