@@ -169,7 +169,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
                     SELECT %s
                     FROM %s
                     WHERE nombreAventura = ?
-                """.formatted(nombreId, this.tabla); //AYUDAAAAAAAAAAAAAAAAAAA
+                """.formatted(nombreId, this.tabla);
 
         // Preparamos el select
         PreparedStatement ps = conn.prepareStatement(select);

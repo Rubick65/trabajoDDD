@@ -59,8 +59,6 @@ public class Personaje {
         this.raza = raza;
     }
 
-    public Personaje() {
-    }
 
     //Getters y setters
 
@@ -103,9 +101,9 @@ public class Personaje {
      * @throws IllegalArgumentException si es carga negativa da error
      */
     public void setCapacidadCarga(double capacidadCarga) throws IllegalArgumentException {
-        if (capacidadCarga < 0) {
+        if (capacidadCarga < 0)
             throw new IllegalArgumentException("Error, llevas mas de lo que puedes cargar");
-        }
+
         this.capacidadCarga = capacidadCarga;
     }
 
@@ -116,9 +114,9 @@ public class Personaje {
      * @throws IllegalArgumentException en caso de estar vacia
      */
     public void setDescripcion(String descripcion) throws IllegalArgumentException {
-        if (descripcion.isEmpty()) {
+        if (descripcion.isEmpty())
             throw new IllegalArgumentException("Descripcion no puede estar vacio");
-        }
+
         this.descripcion = descripcion;
     }
 
@@ -129,9 +127,9 @@ public class Personaje {
      * @throws IllegalArgumentException no puede estar vacia
      */
     public void setHistoria(String historia) throws IllegalArgumentException {
-        if (historia.isEmpty()) {
-            throw new IllegalArgumentException("Historia no puede estar vacio");
-        }
+        if (historia.isEmpty())
+            throw new IllegalArgumentException("Historia no puede estar vacío");
+
         this.historia = historia;
     }
 
@@ -163,7 +161,7 @@ public class Personaje {
     public void tirarObjeto(ObjetoInventario objeto) {
         if (inventario.contains(objeto)) {
             setCapacidadCarga(capacidadCarga + inventario.get(inventario.indexOf(objeto)).getPeso());
-            inventario.remove(inventario.indexOf(objeto));
+            inventario.remove(objeto);
         } else {
             System.out.println("Objeto no encontrado");
         }
@@ -175,9 +173,13 @@ public class Personaje {
      * @param objetoInventario
      */
     public void agregarObjeto(ObjetoInventario objetoInventario) {
-        if (!inventario.contains(objetoInventario)) {
+        if ((objetoInventario.getPeso() > this.getCapacidadCarga() / 2)) {
+            setCapacidadCarga(0);
             inventario.add(objetoInventario);
+
+        } else {
             setCapacidadCarga(capacidadCarga - objetoInventario.getPeso());
+            inventario.add(objetoInventario);
         }
     }
 
@@ -200,7 +202,9 @@ public class Personaje {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Personaje personaje = (Personaje) o;
-        return Objects.equals(nombrePersonaje, personaje.nombrePersonaje) && Objects.equals(descripcion, personaje.descripcion) && Objects.equals(historia, personaje.historia);
+        return Objects.equals(nombrePersonaje, personaje.nombrePersonaje)
+                && Objects.equals(descripcion, personaje.descripcion)
+                && Objects.equals(historia, personaje.historia);
     }
 
     @Override
