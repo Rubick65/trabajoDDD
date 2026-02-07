@@ -110,9 +110,6 @@ public class Personaje {
     }
 
     public void restarCapacidadDeCarga(double nuevaCapacidad) {
-        if (nuevaCapacidad > this.getCapacidadCarga())
-            throw new IllegalArgumentException("No tienes espacio para este objeto");
-
         this.capacidadCarga = capacidadCarga - nuevaCapacidad;
     }
 

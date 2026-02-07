@@ -27,7 +27,7 @@ public class GestorInventario {
         if (pesoLimite(personaje, pesoObjeto))
             personaje.restarCapacidadDeCarga(personaje.getCapacidadCarga());
         else
-            personaje.restarCapacidadDeCarga(personaje.getCapacidadCarga() - pesoObjeto);
+            personaje.restarCapacidadDeCarga(pesoObjeto);
 
         if (objetoInventario.getCategoria() == ObjetoInventario.Categoria.MALDITO)
             efectoMaldito(personaje.getInventario(), objetoInventario);
