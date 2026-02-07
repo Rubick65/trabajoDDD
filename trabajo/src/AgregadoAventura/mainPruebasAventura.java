@@ -13,10 +13,9 @@ public class mainPruebasAventura {
             RepoAventura repo = new RepoAventura();
 
             // Borrar todos los jugadores al inicio
-            repo.deleteAll();
             System.out.println("Fichero inicializado vacío.");
 
-            Aventura a1 = new Aventura("El comeCocos",3, Dificultad.FACIL);
+            Aventura a1 = new Aventura("El Capibara",2, Dificultad.FACIL);
             Aventura a2 = new Aventura("El lameVacas",1, Dificultad.NORMAL);
             Aventura a3 = new Aventura("El PateaPerros",5, Dificultad.DIFICIL);
 
@@ -34,7 +33,7 @@ public class mainPruebasAventura {
 
             System.out.println();
             System.out.println("Aventuras dificiles:");
-//            repo.buscarAventuraPorDificultad(Dificultad.DIFICIL).forEach(System.out::println);
+            repo.buscarAventuraPorDificultad(Dificultad.DIFICIL).forEach(System.out::println);
 
             System.out.println("\nDespués de guardar una nueva aventura (autoincremento ID):");
             repo.findAllToList().forEach(System.out::println);

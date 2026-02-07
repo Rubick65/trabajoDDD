@@ -331,6 +331,7 @@ public class mainJugador {
      */
     private static void sacarJugadoresIterable(RepoJugador repoJugador) throws IOException {
         Iterable<Jugador> jugadores = repoJugador.findAll();
+
         boolean vacio = true;
         for (Jugador j : jugadores) {
             System.out.println(j);
@@ -339,7 +340,6 @@ public class mainJugador {
 
         if (vacio)
             System.out.println("La lista está vacía");
-
 
     }
 
@@ -361,8 +361,6 @@ public class mainJugador {
             } catch (IllegalArgumentException e) {
                 System.err.println(e.getMessage());
             }
-
-
             System.out.println("Se ha terminado el guardado");
         }
         jugs.clear();
@@ -380,10 +378,12 @@ public class mainJugador {
         System.out.println("Introduce la calle de los jugadores que quieras buscar:");
         calle = teclado.nextLine();
         jugadores = repoJugador.buscarJugadorPorDireccion(calle);
+
         if (jugadores.isEmpty()) {
             System.out.println("No existen jugadores con esa dirección de juego");
             return;
         }
+
         for (Jugador jugador : jugadores) {
             System.out.println(jugador);
         }

@@ -5,7 +5,7 @@ import java.util.Objects;
 public class ObjetoInventario {
 
     public enum Categoria {
-        MALDITO,MAGICO,NORMAL
+        MALDITO, MAGICO, NORMAL
     }
 
     private String nombre, descripcionObjeto; //Nombre y descripcion del objeto
@@ -33,9 +33,6 @@ public class ObjetoInventario {
         this.categoria = categoria;
     }
 
-    public ObjetoInventario() {
-    }
-
     //Getters y setters
 
     public String getNombre() {
@@ -50,7 +47,9 @@ public class ObjetoInventario {
         return descripcionObjeto;
     }
 
-    public Categoria getCategoria() { return categoria; }
+    public Categoria getCategoria() {
+        return categoria;
+    }
 
     @Override
     public String toString() {

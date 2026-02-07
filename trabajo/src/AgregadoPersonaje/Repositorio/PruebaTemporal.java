@@ -13,7 +13,9 @@ public class PruebaTemporal {
         try {
             RepoPersonaje repoPersonaje = new RepoPersonaje();
             System.out.println(repoPersonaje.count());
-            System.out.println(repoPersonaje.existsById(6));
+//            System.out.println(repoPersonaje.existsById(6));
+            repoPersonaje.deleteAll();
+
 
             List<ObjetoInventario> objetos = new ArrayList<>();
 
@@ -56,7 +58,7 @@ public class PruebaTemporal {
 //            repoPersonaje.deleteById(4);
 //            System.out.println(repoPersonaje.count());
 //            System.out.println(repoPersonaje.existsById(4));
-//            repoPersonaje.deleteAll();
+
 
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -1,6 +1,5 @@
 package AgregadoPersonaje;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -42,22 +41,24 @@ public class Personaje {
     public Personaje(int ID_JUGADOR, List<ObjetoInventario> inventario, double capacidadCarga, String nombrePersonaje, String descripcion, String historia, Clase clase, Raza raza) {
         this.ID_JUGADOR = ID_JUGADOR;
         this.inventario = inventario;
+        this.raza = raza;
         setCapacidadCarga(capacidadCarga);
         this.nombrePersonaje = nombrePersonaje;
         setDescripcion(descripcion);
         setHistoria(historia);
         this.clase = clase;
-        this.raza = raza;
+
     }
 
     public Personaje(List<ObjetoInventario> inventario, double capacidadCarga, String nombrePersonaje, String descripcion, String historia, Clase clase, Raza raza) {
         this.inventario = inventario;
+        this.raza = raza;
         setCapacidadCarga(capacidadCarga);
         this.nombrePersonaje = nombrePersonaje;
         setDescripcion(descripcion);
         setHistoria(historia);
         this.clase = clase;
-        this.raza = raza;
+
     }
 
 
@@ -102,10 +103,32 @@ public class Personaje {
      * @throws IllegalArgumentException si es carga negativa da error
      */
     public void setCapacidadCarga(double capacidadCarga) throws IllegalArgumentException {
-        if (capacidadCarga < 0)
-            throw new IllegalArgumentException("Error, llevas mas de lo que puedes cargar");
+        if (capacidadCarga <= 10)
+            throw new IllegalArgumentException("Ningún personaje puede empezar con menos de 10 en la capacidad de carga");
 
-        this.capacidadCarga = capacidadCarga;
+        capacidadCargaRaza(capacidadCarga);
+    }
+
+    public void restarCapacidadDeCarga(double nuevaCapacidad) {
+        if (nuevaCapacidad > this.getCapacidadCarga())
+            throw new IllegalArgumentException("No tienes espacio para este objeto");
+
+        this.capacidadCarga = capacidadCarga - nuevaCapacidad;
+    }
+
+    private void capacidadCargaRaza(double capacidadCarga) {
+        switch (this.raza) {
+            case Personaje.Raza.ENANO:
+                this.capacidadCarga = (capacidadCarga * 0.2) + capacidadCarga;
+                break;
+            case Personaje.Raza.ELFO:
+                this.capacidadCarga = capacidadCarga - (capacidadCarga * 0.2);
+                break;
+            default:
+                this.capacidadCarga = capacidadCarga;
+                break;
+
+        }
     }
 
     /**
@@ -154,75 +177,23 @@ public class Personaje {
         return inventario.toString();
     }
 
-    /**
-     * Se tira un objeto del inventario en caso de tenerlo, se actualiza la capacidad de carga
-     *
-     * @param objeto objeto a tirar
-     */
-    public void tirarObjeto(ObjetoInventario objeto) {
-        if (inventario.contains(objeto)) {
-            setCapacidadCarga(capacidadCarga + inventario.get(inventario.indexOf(objeto)).getPeso());
-            inventario.remove(objeto);
-        } else {
-            System.out.println("Objeto no encontrado");
-        }
-    }
-
-    private boolean pesoLimite(double peso) {
-        return ((peso > this.getCapacidadCarga() / 2) &&
-                (peso < this.getCapacidadCarga())
-        );
-    }
-
-    private void efectoMaldito(List<ObjetoInventario> inventario, ObjetoInventario objetoInventario) {
-        if (!inventario.isEmpty() && !inventario.contains(objetoInventario)) {
-            inventario.remove((int) (Math.random() * inventario.size()));
-        }
-    }
-
-    private double pesoSegunRaza(ObjetoInventario objetoInventario) {
-        double peso = objetoInventario.getPeso();
-        if (this.raza == Raza.ELFO && objetoInventario.getCategoria() ==  ObjetoInventario.Categoria.MAGICO) {
-            peso *= 0.8;
-        }
-        if (this.raza == Raza.ORCO && objetoInventario.getCategoria() ==  ObjetoInventario.Categoria.NORMAL) {
-            peso *= 0.8;
-        }
-        return peso;
-    }
-
-    /**
-     * Se agrega un objeto al inventario en caso de no tenerlo, se actualiza la capacidad de carga
-     *
-     * @param objetoInventario
-     */
-    public void agregarObjeto(ObjetoInventario objetoInventario) {
-        double pesoObjeto = pesoSegunRaza(objetoInventario);
-
-        if (pesoLimite(pesoObjeto)) {
-            setCapacidadCarga(0);
-        }
-        else {
-            setCapacidadCarga(capacidadCarga - pesoObjeto);
-        }
-        if (objetoInventario.getCategoria() == ObjetoInventario.Categoria.MALDITO) {
-            efectoMaldito(this.inventario,objetoInventario);
-        }
-        inventario.add(objetoInventario);
-    }
 
     /**
      * Se ordena el inventario alfabeticamente
      */
     public void ordenarInventarioPorNombre() {
-        inventario.sort(Comparator.comparing(ObjetoInventario::getNombre));
+        setInventario(inventario.stream().sorted(Comparator.comparing(ObjetoInventario::getNombre)).toList());
     }
 
     /**
      * Se ordena el inventario por peso
      */
     public void ordenarInventarioPorPeso() {
-        inventario.sort(Comparator.comparingDouble(a -> a.getPeso()));
+        setInventario(inventario.stream().sorted(Comparator.comparingDouble(ObjetoInventario::getPeso)).toList());
+    }
+
+    public void agregarObjeto(ObjetoInventario objetoInventario) {
+        this.inventario.add(objetoInventario);
     }
 
 

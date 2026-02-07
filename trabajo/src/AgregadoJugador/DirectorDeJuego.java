@@ -37,12 +37,6 @@ public class DirectorDeJuego extends Jugador {
         super(DNI, nombre, direccionJuego);
     }
 
-    /**
-     * Constructor por defecto para él parseo de datos del json
-     */
-    public DirectorDeJuego() {
-
-    }
 
     // Getters y Setters de los atributos
     public List<Integer> getListaAventuras() {

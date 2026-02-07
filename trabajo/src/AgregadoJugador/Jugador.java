@@ -28,12 +28,6 @@ public class Jugador {
         setDireccionJuego(direccionJuego);
     }
 
-    /**
-     * Constructor vacío para poder parsear con Json
-     */
-    public Jugador() {
-    }
-
 
     // Getters y Setters de los atributos
     public String getDNI() {
