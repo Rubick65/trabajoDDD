@@ -1,5 +1,6 @@
 package AgregadoPersonaje;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -167,10 +168,27 @@ public class Personaje {
         }
     }
 
-    private boolean pesoLimite(ObjetoInventario objetoInventario) {
-        return ((objetoInventario.getPeso() > this.getCapacidadCarga() / 2) &&
-                (objetoInventario.getPeso() < this.getCapacidadCarga())
+    private boolean pesoLimite(double peso) {
+        return ((peso > this.getCapacidadCarga() / 2) &&
+                (peso < this.getCapacidadCarga())
         );
+    }
+
+    private void efectoMaldito(List<ObjetoInventario> inventario, ObjetoInventario objetoInventario) {
+        if (!inventario.isEmpty() && !inventario.contains(objetoInventario)) {
+            inventario.remove((int) (Math.random() * inventario.size()));
+        }
+    }
+
+    private double pesoSegunRaza(ObjetoInventario objetoInventario) {
+        double peso = objetoInventario.getPeso();
+        if (this.raza == Raza.ELFO && objetoInventario.getCategoria() ==  ObjetoInventario.Categoria.MAGICO) {
+            peso *= 0.8;
+        }
+        if (this.raza == Raza.ORCO && objetoInventario.getCategoria() ==  ObjetoInventario.Categoria.NORMAL) {
+            peso *= 0.8;
+        }
+        return peso;
     }
 
     /**
@@ -179,13 +197,18 @@ public class Personaje {
      * @param objetoInventario
      */
     public void agregarObjeto(ObjetoInventario objetoInventario) {
-        if (pesoLimite(objetoInventario)) {
+        double pesoObjeto = pesoSegunRaza(objetoInventario);
+
+        if (pesoLimite(pesoObjeto)) {
             setCapacidadCarga(0);
-            inventario.add(objetoInventario);
-        } else {
-            setCapacidadCarga(capacidadCarga - objetoInventario.getPeso());
-            inventario.add(objetoInventario);
         }
+        else {
+            setCapacidadCarga(capacidadCarga - pesoObjeto);
+        }
+        if (objetoInventario.getCategoria() == ObjetoInventario.Categoria.MALDITO) {
+            efectoMaldito(this.inventario,objetoInventario);
+        }
+        inventario.add(objetoInventario);
     }
 
     /**
