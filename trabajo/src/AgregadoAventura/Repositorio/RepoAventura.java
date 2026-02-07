@@ -31,7 +31,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
      * @param dificultad dificultad a buscar
      * @return lista filtrada con todas esas dificultades
      */
-    public List<Aventura> buscarAventuraPorDificultad(Aventura.Dificultad dificultad, Function <ResultSet,Aventura> parsearAventura) throws IOException, SQLException {
+    public List<Aventura> buscarAventuraPorDificultad(Aventura.Dificultad dificultad) throws IOException, SQLException {
        return findAllToList().stream().filter(aventura -> aventura.getDificultad().equals(dificultad)).toList();
     }
 
@@ -128,6 +128,7 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
             conn.setAutoCommit(false);
 
             int idAventura = guardarAventura(entity, conn);
+            entity.setID_AVENTURA(idAventura);
 
             if (entity instanceof AventuraAccion aA) {
                 guardarAventuraAccion(aA,idAventura,conn);
@@ -150,18 +151,22 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
     }
 
     private int guardarAventura(Aventura aventura, Connection conn) throws SQLException {
-        String sql = """
-                INSERT INTO aventura (nombreAventura,duracionSesionesAprox,dificultad)
-                VALUES (?,?,?)
-                ON DUPLICATE KEY UPDATE
-                nombreAventura = VALUES(nombreAventura)
-                dificultad = VALUES(dificultad)
-                """;
+        String sql = "INSERT INTO " + this.tabla + " (nombreAventura, duracionSesionesAprox, dificultad) " +
+                "VALUES (?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE " +
+                "nombreAventura = VALUES(nombreAventura), " +
+                "duracionSesionesAprox = VALUES(duracionSesionesAprox), " +
+                "dificultad = VALUES(dificultad)";
+
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, aventura.getNombreAventura());
             ps.setInt(2, aventura.getDuracionSesionesAprox());
             ps.setString(3, aventura.getDificultad().toString());
             ps.executeUpdate();
+        }
+        catch (SQLException e) {
+            conn.rollback();
+            throw new SQLException("Error al insertar la aventura " + e.getMessage());
         }
 
         // Select para sacar el ID de la aventura recién guardado
@@ -169,21 +174,23 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
                     SELECT %s
                     FROM %s
                     WHERE nombreAventura = ?
+                    AND dificultad = ?
                 """.formatted(nombreId, this.tabla);
 
         // Preparamos el select
         PreparedStatement ps = conn.prepareStatement(select);
         ps.setString(1, aventura.getNombreAventura());
+        ps.setString(2, aventura.getDificultad().toString());
         return gestorAventura.sacarId(ps);
     }
 
     private void guardarAventuraAccion(AventuraAccion aA, int idAventura,Connection conn) throws SQLException {
-        String sql = """
-                INSERT INTO AventuraAccion (ID_AVENTURA,cantidadEnemigos,cantidadUbicaciones)
-                VALUES (?,?,?)
-                ON DUPLICATE KEY UPDATE
-                ID_AVENTURA =  VALUES(ID_AVENTURA)
-                """;
+        String sql = "INSERT INTO AventuraAccion (ID_AVENTURA, cantidadEnemigos, cantidadUbicaciones) " +
+                "VALUES (?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE " +
+                "cantidadEnemigos = VALUES(cantidadEnemigos), " +
+                "cantidadUbicaciones = VALUES(cantidadUbicaciones)";
+
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1,idAventura);
             ps.setInt(2,aA.getCantidadEnemigos());
@@ -193,19 +200,16 @@ public class RepoAventura implements IRepositorioExtend<Aventura, Integer> {
     }
 
     private void guardarAventuraMisterio(AventuraMisterio aM, int idAventura,Connection conn) throws SQLException {
-        String sql = """
-                INSERT INTO AventuraMisterio (ID_AVENTURA,enigmaPrincipal)
-                VALUES (?,?)
-                ON DUPLICATE KEY UPDATE
-                ID_AVENTURA =  VALUES(ID_AVENTURA)
-                """;
+        String sql = "INSERT INTO AventuraMisterio (ID_AVENTURA, enigmaPrincipal) " +
+                "VALUES (?, ?) " +
+                "ON DUPLICATE KEY UPDATE " +
+                "enigmaPrincipal = VALUES(enigmaPrincipal)";
+
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1,idAventura);
             ps.setString(2,aM.getEnigmaPrincipal());
             ps.executeUpdate();
         }
     }
-
-
 }
 

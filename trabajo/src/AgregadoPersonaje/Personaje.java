@@ -167,16 +167,21 @@ public class Personaje {
         }
     }
 
+    private boolean pesoLimite(ObjetoInventario objetoInventario) {
+        return ((objetoInventario.getPeso() > this.getCapacidadCarga() / 2) &&
+                (objetoInventario.getPeso() < this.getCapacidadCarga())
+        );
+    }
+
     /**
      * Se agrega un objeto al inventario en caso de no tenerlo, se actualiza la capacidad de carga
      *
      * @param objetoInventario
      */
     public void agregarObjeto(ObjetoInventario objetoInventario) {
-        if ((objetoInventario.getPeso() > this.getCapacidadCarga() / 2)) {
+        if (pesoLimite(objetoInventario)) {
             setCapacidadCarga(0);
             inventario.add(objetoInventario);
-
         } else {
             setCapacidadCarga(capacidadCarga - objetoInventario.getPeso());
             inventario.add(objetoInventario);

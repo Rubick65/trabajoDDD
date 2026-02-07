@@ -230,6 +230,7 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
                 psO.setString(2, obj.getNombre());
                 psO.setString(3, obj.getDescripcionObjeto());
                 psO.setDouble(4, obj.getPeso());
+                psO.setString(5, obj.getCategoria().toString());
                 psO.executeUpdate();
 
             } catch (SQLException e) {
@@ -251,12 +252,13 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
         String tablaObjetos = "ObjetoInventario";
 
         // Insert o update para guardar o actualizar los objetos del inventario del jugador
-        return "INSERT INTO " + tablaObjetos + " (ID_PERSONAJE, NOMBRE, DESCRIPCIONOBJETO, PESO) " +
-                "VALUES (?, ?, ?, ?) AS fila_nueva " +
+        return "INSERT INTO " + tablaObjetos + " (ID_PERSONAJE, NOMBRE, DESCRIPCIONOBJETO, PESO,CATEGORIA) " +
+                "VALUES (?, ?, ?, ?, ?) AS fila_nueva " +
                 "ON DUPLICATE KEY UPDATE " +
                 "NOMBRE = fila_nueva.NOMBRE, " +
                 "DESCRIPCIONOBJETO = fila_nueva.DESCRIPCIONOBJETO, " +
-                "PESO = fila_nueva.PESO";
+                "PESO = fila_nueva.PESO, " +
+                "CATEGORIA = fila_nueva.CATEGORIA";
     }
 }
 

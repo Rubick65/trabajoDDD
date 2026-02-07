@@ -1,31 +1,36 @@
 package AgregadoPersonaje;
 
-import java.util.List;
 import java.util.Objects;
 
 public class ObjetoInventario {
+
+    public enum Categoria {
+        MALDITO,MAGICO,NORMAL
+    }
+
     private String nombre, descripcionObjeto; //Nombre y descripcion del objeto
     private double peso; //Peso del objeto
-    private boolean maldito;
+    private Categoria categoria;
 
     /**
      * Constructor que da valores iniciales a los atributos de clase
-     * @param nombre del objeto
-     * @param peso peso del objeto
+     *
+     * @param nombre            del objeto
+     * @param peso              peso del objeto
      * @param descripcionObjeto descripcion del objeto
      */
     public ObjetoInventario(String nombre, double peso, String descripcionObjeto) {
         this.nombre = nombre;
         this.peso = peso;
         this.descripcionObjeto = descripcionObjeto;
-        this.maldito = false;
+        this.categoria = Categoria.NORMAL;
     }
 
-    public ObjetoInventario(String nombre, double peso, String descripcionObjeto, boolean maldito) {
+    public ObjetoInventario(String nombre, double peso, String descripcionObjeto, Categoria categoria) {
         this.nombre = nombre;
         this.peso = peso;
         this.descripcionObjeto = descripcionObjeto;
-        this.maldito = maldito;
+        this.categoria = categoria;
     }
 
     public ObjetoInventario() {
@@ -45,7 +50,7 @@ public class ObjetoInventario {
         return descripcionObjeto;
     }
 
-    public boolean getMaldito() { return maldito; }
+    public Categoria getCategoria() { return categoria; }
 
     @Override
     public String toString() {
@@ -53,7 +58,7 @@ public class ObjetoInventario {
                 "nombre='" + nombre + '\'' +
                 ", descripcionObjeto='" + descripcionObjeto + '\'' +
                 ", peso=" + peso +
-                ", maldito=" + maldito +
+                ", Categoria=" + categoria +
                 '}';
     }
 
@@ -61,13 +66,15 @@ public class ObjetoInventario {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ObjetoInventario that = (ObjetoInventario) o;
-        return Double.compare(peso, that.peso) == 0 && maldito == that.maldito && Objects.equals(nombre, that.nombre) && Objects.equals(descripcionObjeto, that.descripcionObjeto);
+        return Double.compare(peso, that.peso) == 0 && Objects.equals(nombre, that.nombre) && Objects.equals(descripcionObjeto, that.descripcionObjeto) && categoria == that.categoria;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nombre, descripcionObjeto, peso, maldito);
+        return Objects.hash(nombre, descripcionObjeto, peso, categoria);
     }
 }
+
+
 
 
