@@ -236,7 +236,8 @@ public class GestorDeParseadores {
                             inventario.add(new ObjetoInventario(
                                     rs2.getString("nombre"),
                                     rs2.getDouble("peso"),
-                                    rs2.getString("descripcionObjeto")
+                                    rs2.getString("descripcionObjeto"),
+                                    ObjetoInventario.Categoria.valueOf(rs2.getString("categoria"))
                             ));
                         }
                     }
@@ -265,7 +266,8 @@ public class GestorDeParseadores {
                 return new ObjetoInventario(
                         rs.getString("nombre"),
                         rs.getDouble("peso"),
-                        rs.getString("descripcionObjeto")
+                        rs.getString("descripcionObjeto"),
+                        ObjetoInventario.Categoria.valueOf(rs.getString("categoria"))
                 );
             } catch (SQLException e) {
                 throw new RuntimeException("Error al parsear ObjetoInventario", e);
