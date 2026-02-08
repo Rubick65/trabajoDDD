@@ -321,7 +321,8 @@ public class mainJugador {
         if (jugador == null)
             System.out.println("El jugador no existe");
         else
-            System.out.println("Jugador: ");
+            System.out.println("Jugador encontrado");
+            System.out.println(jugador);
     }
 
     /**
