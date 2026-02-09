@@ -196,7 +196,7 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
     private void guardarListaJugadores(GrupoJuego grupoJuego, int idGrupo, Connection con) throws SQLException {
         // Sentencia para guardar la lista de jugadores
         String sql = """
-                INSERT INTO JUGADOR_GRUPOJUEGO (ID_JUGADOR, ID_GRUPO)
+                INSERT INTO JUGADOR_GRUPOJUEGO (ID_JUGADOR, ID_GRUPOJUEGO)
                 VALUES (?, ?)
                 """;
 

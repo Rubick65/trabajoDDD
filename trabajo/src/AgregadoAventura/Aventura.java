@@ -1,22 +1,9 @@
 package AgregadoAventura;
 
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import java.util.Objects;
 
 
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.CLASS,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "@type"
-)
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = AventuraAccion.class, name = "AventuraAccion"),
-        @JsonSubTypes.Type(value = AventuraMisterio.class, name = "AventuraMisterio"),
-        @JsonSubTypes.Type(value = Aventura.class, name = "Aventura")
-})
 public class Aventura {
 
     //Dificultad a elegir
@@ -40,9 +27,6 @@ public class Aventura {
         setNombreAventura(nombreAventura);
         setDuracionSesionesAprox(duracionSesionesAprox);
         this.dificultad = dificultad;
-    }
-
-    public Aventura() {
     }
 
     //Getters y setters

@@ -15,7 +15,6 @@ public class mainGrupoJuego {
     public static void main(String[] args) {
         try {
             RepoGrupoJuego repoGrupoJuego = new RepoGrupoJuego();
-            repoGrupoJuego.deleteAll();
             menuPrincipal(repoGrupoJuego);
         } catch (IOException e) {
             System.err.println("Fallo a la hora de leer el archivo " + e.getMessage());

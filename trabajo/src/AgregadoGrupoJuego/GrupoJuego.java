@@ -26,11 +26,6 @@ public class GrupoJuego {
         inicializarMiembros(listaMiembros);
     }
 
-    /**
-     * Constructor por defecto para él parseo a jSon
-     */
-    protected GrupoJuego() {
-    }
 
     // Getters y Setters de los atributos
     public String getDescripcion() {
@@ -61,13 +56,12 @@ public class GrupoJuego {
      * @throws IOException Lanza excepción en caso de problemas en la lectura de los juagadores
      */
     public void inicializarMiembros(List<Integer> listaMiembros) throws IOException {
-        RepoJugador gruposJugadores = new RepoJugador();
         if (listaMiembros.isEmpty())
             throw new IllegalArgumentException("La lista de jugadores debe tener por lo menos un jugador");
 
         this.listaMiembros.clear();
         for (Integer id : listaMiembros) {
-            agregarJugador(id, gruposJugadores);
+            agregarJugador(id);
         }
     }
 
@@ -82,11 +76,9 @@ public class GrupoJuego {
     /**
      * Comprueba la existencia del jugador que se quiere añadir
      *
-     * @param idJugador   Id del jugador a añadir
-     * @param repoJugador Repositorio del jugador a añadir
+     * @param idJugador Id del jugador a añadir
      */
-    public void agregarJugador(int idJugador, RepoJugador repoJugador) throws IOException {
-        comprobareExistenciaJugador(idJugador, repoJugador);
+    public void agregarJugador(int idJugador) throws IOException {
         listaMiembros.add(idJugador);
     }
 
