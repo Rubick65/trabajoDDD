@@ -211,8 +211,8 @@ public class Personaje {
     @Override
     public String toString() {
         return "Personaje{" +
-                "ID_JUGADOR=" + ID_JUGADOR +
-                ", ID_PERSONAJE=" + ID_PERSONAJE +
+                "ID_PERSONAJE=" + ID_PERSONAJE +
+                ", ID_JUGADOR=" + ID_JUGADOR +
                 ", inventario=" + inventario +
                 ", capacidadCarga=" + capacidadCarga +
                 ", nombrePersonaje='" + nombrePersonaje + '\'' +

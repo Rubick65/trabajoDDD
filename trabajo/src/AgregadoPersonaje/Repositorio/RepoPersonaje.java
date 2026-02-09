@@ -145,10 +145,8 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
 
             guardarObjetosInventario(entity.getInventario(), con, idPersonaje);
 
-            con.setAutoCommit(true);
             con.commit();
             return entity;
-
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
@@ -166,14 +164,14 @@ public class RepoPersonaje implements IRepositorioExtend<Personaje, Integer> {
     private int guardarPersonaje(Personaje entity, Connection con) throws SQLException {
         // Insert o Update para guardar o actualizar datos en la base de datos
         String insert = "INSERT INTO " + this.tabla + " (ID_JUGADOR, CAPACIDADCARGA, NOMBREPERSONAJE, DESCRIPCION, HISTORIA, CLASE, RAZA) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?) AS nuevo " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE " +
-                "capacidadCarga = nuevo.capacidadCarga, " +
-                "nombrePersonaje = nuevo.nombrePersonaje, " +
-                "descripcion = nuevo.descripcion, " +
-                "historia = nuevo.historia, " +
-                "clase = nuevo.clase, " +
-                "raza = nuevo.raza";
+                "capacidadCarga = VALUES(capacidadCarga), " +
+                "descripcion = VALUES(descripcion), " +
+                "historia = VALUES(historia), " +
+                "clase = VALUES(clase), " +
+                "raza = VALUES(raza), " +
+                "ID_PERSONAJE = LAST_INSERT_ID(ID_PERSONAJE)";
 
         // En caso de que si se haya podido guardar los objetos preparamos el insert del personaje
         try (PreparedStatement ps = con.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS)) {
