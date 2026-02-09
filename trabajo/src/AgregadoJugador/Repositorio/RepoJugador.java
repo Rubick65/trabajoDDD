@@ -320,7 +320,6 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
      * @return Devuelve una lista con todos los jugadores que viven en la calle seleccionada
      */
     public List<Jugador> buscarJugadorPorDireccion(String calle) throws IOException {
-        return findAllToList().stream().filter(jugador -> jugador.getDireccionJuego().getCalle().equalsIgnoreCase(calle)).toList();
+        return findAllToList().stream().filter(jugador -> jugador.getDireccionJuego() != null && jugador.getDireccionJuego().getCalle().equalsIgnoreCase(calle)).toList();
     }
-
 }

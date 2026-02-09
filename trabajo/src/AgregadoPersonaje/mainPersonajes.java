@@ -3,6 +3,7 @@ package AgregadoPersonaje;
 import AgregadoAventura.Aventura;
 import AgregadoAventura.Repositorio.RepoAventura;
 import AgregadoJugador.Jugador;
+import AgregadoJugador.Repositorio.RepoJugador;
 import AgregadoPersonaje.Repositorio.RepoPersonaje;
 
 import java.io.IOException;
@@ -15,16 +16,20 @@ import java.util.Scanner;
 public class mainPersonajes {
     static Scanner teclado = new Scanner(System.in);
     static List<Personaje> personajes = new ArrayList<>();
+    static List<Jugador> jugadores = new ArrayList<>();
 
     public static void main(String[] args) {
-        RepoPersonaje repo = null;
+        RepoPersonaje repoPersonajes = null;
+        RepoJugador repoJugadores = null;
         try {
-            repo = new RepoPersonaje();
+            repoPersonajes = new RepoPersonaje();
+            repoJugadores = new RepoJugador();
             // Cargar personajes desde JSON
-            personajes = new ArrayList<>(repo.findAllToList());
+            personajes = new ArrayList<>(repoPersonajes.findAllToList());
+            jugadores = new ArrayList<>(repoJugadores.findAllToList());
             System.out.println("Se han cargado " + personajes.size() + " personajes del archivo.");
 
-            menuPrincipal(repo);
+            menuPrincipal(repoPersonajes);
 
         } catch (IOException e) {
             System.err.println("Error al leer o crear el archivo: " + e.getMessage());
@@ -138,7 +143,12 @@ public class mainPersonajes {
             System.out.println("Introduce raza (HUMANO, ORCO, ELFO, ENANO):");
             Personaje.Raza raza = Personaje.Raza.valueOf(teclado.nextLine().trim().toUpperCase());
 
-            Personaje p = new Personaje(new ArrayList<>(), carga, nombre, descripcion, historia, clase, raza);
+            jugadores.forEach(System.out::println);
+            System.out.println();
+            System.out.println("Introduce el ID del jugador al que se le asignara este personaje");
+            int idJugador = teclado.nextInt();
+
+            Personaje p = new Personaje(idJugador,new ArrayList<>(), carga, nombre, descripcion, historia, clase, raza);
 
             // Recargar lista actualizada
             personajes.add(p);
@@ -254,8 +264,10 @@ public class mainPersonajes {
         }
         for (Personaje personaje : personajes) {
             try {
-                repo.save(personaje);
-                System.out.println("El personaje " + personaje.getNombrePersonaje() + " se ha guardado");
+                if (!repo.existsById(personaje.getID_PERSONAJE())) {
+                    repo.save(personaje);
+                    System.out.println("El personaje " + personaje.getNombrePersonaje() + " se ha guardado");
+                }
             } catch (IllegalArgumentException e) {
                 System.err.println(e.getMessage());
             } catch (Exception e) {

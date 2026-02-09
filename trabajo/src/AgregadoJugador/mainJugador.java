@@ -320,9 +320,10 @@ public class mainJugador {
         Jugador jugador = repoJugador.findById(idJugador);
         if (jugador == null)
             System.out.println("El jugador no existe");
-        else
+        else {
             System.out.println("Jugador encontrado");
             System.out.println(jugador);
+        }
     }
 
     /**
@@ -379,12 +380,15 @@ public class mainJugador {
         System.out.println("Introduce la calle de los jugadores que quieras buscar:");
         calle = teclado.nextLine();
         jugadores = repoJugador.buscarJugadorPorDireccion(calle);
+        System.out.println();
 
         if (jugadores.isEmpty()) {
             System.out.println("No existen jugadores con esa dirección de juego");
             return;
         }
 
+        System.out.println("Jugadores encontrados con esa calle");
+        System.out.println();
         for (Jugador jugador : jugadores) {
             System.out.println(jugador);
         }
