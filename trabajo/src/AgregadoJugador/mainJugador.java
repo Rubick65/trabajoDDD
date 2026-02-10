@@ -360,10 +360,10 @@ public class mainJugador {
         for (Jugador jugador : jugs) {
             try {
                 repoJugador.save(jugador);
+                System.out.println("Jugador " + jugador.getNombre() + " guardado");
             } catch (IllegalArgumentException e) {
                 System.err.println(e.getMessage());
             }
-            System.out.println("Se ha terminado el guardado");
         }
         jugs.clear();
     }
