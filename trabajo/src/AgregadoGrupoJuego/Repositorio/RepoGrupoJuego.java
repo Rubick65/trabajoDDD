@@ -139,8 +139,9 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
             // Guarda el grupo de juego en la base de datos y devuelve su id
             int idGrupoJuego = guardarGrupoJuego(entity, conn);
 
-            // Guarda el id del grupo de juego relacionandolo con todos sus jugadores
-            guardarListaJugadores(entity, idGrupoJuego, conn);
+            if (!entity.getListaMiembros().isEmpty())
+                // Guarda el id del grupo de juego relacionandolo con todos sus jugadores
+                guardarListaJugadores(entity, idGrupoJuego, conn);
 
             // En caso de que todo salga correcto se guardan los cambios
             conn.commit();
@@ -194,6 +195,8 @@ public class RepoGrupoJuego implements IRepositorioExtend<GrupoJuego, Integer> {
     }
 
     private void guardarListaJugadores(GrupoJuego grupoJuego, int idGrupo, Connection con) throws SQLException {
+
+
         // Sentencia para guardar la lista de jugadores
         String sql = """
                 INSERT INTO JUGADOR_GRUPOJUEGO (ID_JUGADOR, ID_GRUPOJUEGO)

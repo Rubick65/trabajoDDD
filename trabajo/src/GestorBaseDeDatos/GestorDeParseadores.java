@@ -114,7 +114,7 @@ public class GestorDeParseadores {
 //        };
 //    }
 
-    public static Function<ResultSet, DireccionJuego> parseadorDireccionJuego(Connection conexion) {
+    public static Function<ResultSet, DireccionJuego> parseadorDireccionJuego() {
         return rs -> {
             try {
                 return new DireccionJuego(
@@ -189,36 +189,36 @@ public class GestorDeParseadores {
         };
     }
 
-    public static Function<ResultSet, DirectorDeJuego> parseadorDirectorDeJuego(Connection conexion) {
-        return rs -> {
-            try {
-                DireccionJuego direccion = null;
-                int idDireccion = rs.getInt("ID_DIRECCION");
-
-                //Igualmente, si no es nulo se sigue
-                if (!rs.wasNull() && idDireccion > 0) {
-                    direccion = Statment.obtenerDireccionDeJuego(conexion, idDireccion);
-                }
-
-                //Lista de aventuras con su id a sacar
-                List<Integer> listaAventuras = new ArrayList<>();
-                int idDirector = rs.getInt("ID_JUGADOR");
-
-                Statment.aniadirAListaEnteros(conexion, listaAventuras, "ID_AVENTURA", "DirectorAventura", "ID_DIRECTOR", idDirector);
-
-                DirectorDeJuego director = new DirectorDeJuego(
-                        rs.getString("DNI"),
-                        rs.getString("nombre"),
-                        direccion,
-                        listaAventuras
-                );
-                director.setID_JUGADOR(idDirector);
-                return director;
-            } catch (SQLException e) {
-                throw new RuntimeException("Error al parsear DirectorDeJuego", e);
-            }
-        };
-    }
+//    public static Function<ResultSet, DirectorDeJuego> parseadorDirectorDeJuego(Connection conexion) {
+//        return rs -> {
+//            try {
+//                DireccionJuego direccion = null;
+//                int idDireccion = rs.getInt("ID_DIRECCION");
+//
+//                //Igualmente, si no es nulo se sigue
+//                if (!rs.wasNull() && idDireccion > 0) {
+//                    direccion = Statment.obtenerDireccionDeJuego(conexion, idDireccion);
+//                }
+//
+//                //Lista de aventuras con su id a sacar
+//                List<Integer> listaAventuras = new ArrayList<>();
+//                int idDirector = rs.getInt("ID_JUGADOR");
+//
+//                Statment.aniadirAListaEnteros(conexion, listaAventuras, "ID_AVENTURA", "DirectorAventura", "ID_DIRECTOR", idDirector);
+//
+//                DirectorDeJuego director = new DirectorDeJuego(
+//                        rs.getString("DNI"),
+//                        rs.getString("nombre"),
+//                        direccion,
+//                        listaAventuras
+//                );
+//                director.setID_JUGADOR(idDirector);
+//                return director;
+//            } catch (SQLException e) {
+//                throw new RuntimeException("Error al parsear DirectorDeJuego", e);
+//            }
+//        };
+//    }
 
     public static Function<ResultSet, Personaje> parseadorPersonaje(Connection conexion) {
         return rs -> {
@@ -260,18 +260,18 @@ public class GestorDeParseadores {
         };
     }
 
-    public static Function<ResultSet, ObjetoInventario> parseadorObjetoInventario(Connection conexion) {
-        return rs -> {
-            try {
-                return new ObjetoInventario(
-                        rs.getString("nombre"),
-                        rs.getDouble("peso"),
-                        rs.getString("descripcionObjeto"),
-                        ObjetoInventario.Categoria.valueOf(rs.getString("categoria"))
-                );
-            } catch (SQLException e) {
-                throw new RuntimeException("Error al parsear ObjetoInventario", e);
-            }
-        };
-    }
+//    public static Function<ResultSet, ObjetoInventario> parseadorObjetoInventario(Connection conexion) {
+//        return rs -> {
+//            try {
+//                return new ObjetoInventario(
+//                        rs.getString("nombre"),
+//                        rs.getDouble("peso"),
+//                        rs.getString("descripcionObjeto"),
+//                        ObjetoInventario.Categoria.valueOf(rs.getString("categoria"))
+//                );
+//            } catch (SQLException e) {
+//                throw new RuntimeException("Error al parsear ObjetoInventario", e);
+//            }
+//        };
+//    }
 }

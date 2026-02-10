@@ -22,8 +22,7 @@ public class Statment {
                     listaAniadir.add(rs2.getInt(idBuscar));
                 }
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -35,19 +34,18 @@ public class Statment {
             ps.setInt(1, idBuscar);
             try (ResultSet rs2 = ps.executeQuery()) {
                 if (rs2.next()) {
-                    direccion = parseadorDireccionJuego(conexion).apply(rs2);
+                    direccion = parseadorDireccionJuego().apply(rs2);
                 }
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return direccion;
     }
 
-    public static boolean existeEn(Connection conexion,String tablaBuscar, String idBuscar ,int idCondicion) {
+    public static boolean existeEn(Connection conexion, String tablaBuscar, String idBuscar, int idCondicion) {
         String sql = "SELECT 1 FROM " + tablaBuscar + " WHERE " + idBuscar + " = ?";
-        
+
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             ps.setInt(1, idCondicion);
             return ps.executeQuery().next();
