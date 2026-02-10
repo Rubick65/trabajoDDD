@@ -139,6 +139,7 @@ public class GestorDeParseadores {
                 Statment.aniadirAListaEnteros(conexion, miembros, "ID_JUGADOR", "JUGADOR_GRUPOJUEGO", "ID_GRUPOJUEGO", idGrupo);
 
                 return new GrupoJuego(
+                        rs.getInt("ID_GRUPO"),
                         rs.getString("nombreGrupo"),
                         rs.getString("descripcion"),
                         miembros

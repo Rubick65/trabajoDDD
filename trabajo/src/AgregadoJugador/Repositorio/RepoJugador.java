@@ -280,10 +280,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idJugador);
 
-            // En caso de que si tenga una
-            if (idAventuraSeleccionada != 0)
-                // La ponemos
-                ps.setInt(2, directorDeJuego.getAventuraSeleccionada());
+            ps.setObject(2, idAventuraSeleccionada != 0 ? idAventuraSeleccionada : null, java.sql.Types.INTEGER);
 
             ps.executeUpdate();
         }

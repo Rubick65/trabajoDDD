@@ -26,6 +26,13 @@ public class GrupoJuego {
         inicializarMiembros(listaMiembros);
     }
 
+    public GrupoJuego(int idGrupo,String nombreGrupo, String descripcion, List<Integer> listaMiembros) throws IOException {
+        this.ID_GRUPO = idGrupo;
+        setNombreGrupo(nombreGrupo);
+        setDescripcion(descripcion);
+        inicializarMiembros(listaMiembros);
+    }
+
 
     // Getters y Setters de los atributos
     public String getDescripcion() {
