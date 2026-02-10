@@ -17,7 +17,6 @@ public class AventuraMisterio extends Aventura {
         this.enigmaPrincipal = enigmaPrincipal;
     }
 
-    public AventuraMisterio() {}
 
     //Getter
 

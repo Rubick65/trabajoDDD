@@ -273,10 +273,18 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
                     ID_AVENTURA = VALUES(ID_AVENTURA)
                 """;
 
+        // Sacamos la aventura seleccionada
+        int idAventuraSeleccionada = directorDeJuego.getAventuraSeleccionada();
+
         // Prepara el insert y lo ejecuta
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idJugador);
-            ps.setInt(2, directorDeJuego.getAventuraSeleccionada());
+
+            // En caso de que si tenga una
+            if (idAventuraSeleccionada != 0)
+                // La ponemos
+                ps.setInt(2, directorDeJuego.getAventuraSeleccionada());
+
             ps.executeUpdate();
         }
 

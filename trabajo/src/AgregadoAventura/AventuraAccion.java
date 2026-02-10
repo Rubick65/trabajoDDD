@@ -20,7 +20,6 @@ public class AventuraAccion extends Aventura{
         this.cantidadUbicaciones = cantidadUbicaciones;
     }
 
-    public AventuraAccion() {}
 
     //Getters y setters
 
