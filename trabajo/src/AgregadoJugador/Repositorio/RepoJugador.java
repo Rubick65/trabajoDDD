@@ -282,6 +282,7 @@ public class RepoJugador implements IRepositorioExtend<Jugador, Integer> {
 
             ps.setObject(2, idAventuraSeleccionada != 0 ? idAventuraSeleccionada : null, java.sql.Types.INTEGER);
 
+
             ps.executeUpdate();
         }
 
